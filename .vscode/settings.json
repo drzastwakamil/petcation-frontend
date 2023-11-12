@@ -1,0 +1,9 @@
+{
+  "editor.inlineSuggest.enabled": true,
+  "eslint.lintTask.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "typescript.updateImportsOnFileMove.enabled": true,
+    "javascript.updateImportsOnFileMove.enabled": true,
+  },
+}
