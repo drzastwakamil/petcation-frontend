@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     },
   },
   components: [
-    { path: '~/components/' },
+    { path: '~/components/**' },
     {
       path: '~/components/Icons',
       global: true,
