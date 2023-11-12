@@ -1,0 +1,43 @@
+# logs
+*.log*
+/logs
+
+.nuxt
+.nitro
+
+# Bundles
+dist/
+.cache
+.output
+
+# env & config
+*.env*
+config/local*
+*/config/local*
+
+# Misc
+.cache/
+.DS_Store
+
+# IDE
+.vscode
+.idea
+
+# Storybook build outputs
+.out
+.storybook-out
+storybook-static
+
+# Lint directories
+.eslintcache
+.stylelintcache
+
+# npm & yarn
+.npm
+npm-debug.log*
+package-lock.json
+.yarn-integrity
+yarn-debug.log*
+yarn-error.log*
+node_modules
+dist
