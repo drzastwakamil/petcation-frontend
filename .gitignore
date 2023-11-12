@@ -1,24 +1,43 @@
-# Nuxt dev/build outputs
-.output
-.data
+# logs
+*.log*
+/logs
+
 .nuxt
 .nitro
+
+# Bundles
+dist/
 .cache
-dist
+.output
 
-# Node dependencies
-node_modules
-
-# Logs
-logs
-*.log
+# env & config
+*.env*
+config/local*
+*/config/local*
 
 # Misc
+.cache/
 .DS_Store
-.fleet
+
+# IDE
+.vscode
 .idea
 
-# Local env files
-.env
-.env.*
-!.env.example
+# Storybook build outputs
+.out
+.storybook-out
+storybook-static
+
+# Lint directories
+.eslintcache
+.stylelintcache
+
+# npm & yarn
+.npm
+npm-debug.log*
+package-lock.json
+.yarn-integrity
+yarn-debug.log*
+yarn-error.log*
+node_modules
+dist
