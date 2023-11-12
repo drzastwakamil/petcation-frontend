@@ -1,3 +1,5 @@
 <template>
-  <div />
+  <div class="bg-red-100">
+    Petcation
+  </div>
 </template>
