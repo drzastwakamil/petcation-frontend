@@ -4,6 +4,6 @@
 
 <script setup lang="ts">
 defineProps<{
-  content: Array<{ id: string; value: string }>;
+  content: string;
 }>();
 </script>

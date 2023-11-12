@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  modules: ['@nuxt/devtools', '@nuxtjs/tailwindcss', 'nuxt-icon', '@nuxt/image'],
+  modules: ['@nuxt/devtools', '@nuxtjs/tailwindcss', 'nuxt-icon', '@nuxt/image', '@nuxtjs/eslint-module'],
   devtools: {
     enabled: true,
     timeline: {
