@@ -13,6 +13,9 @@ export default defineNuxtConfig({
       enabled: true,
     },
   },
+  nitro: {
+    preset: 'netlify',
+  },
   components: [
     { path: '~/components/**' },
     {
