@@ -1,28 +1,71 @@
 <template>
-  <UiAccordion class="w-full" collapsible :default-value="defaultValue" type="single">
-    <UiAccordionItem v-for="item in accordionItems" :key="item.value" :value="item.value">
-      <UiAccordionTrigger>{{ item.title }}</UiAccordionTrigger>
-      <UiAccordionContent>
-        {{ item.content }}
-      </UiAccordionContent>
-    </UiAccordionItem>
-  </UiAccordion>
+  <div class="flex min-h-screen flex-col">
+    <div class="absolute w-full border-b">
+      <div class="container mx-auto">
+        <div class="flex h-20 w-full py-4">
+          <div class="z-10">
+            <NuxtImg class="h-full" src="/images/logo5.svg" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-r from-white to-[#FFC6C6]">
+      <div class="container mx-auto bg-transparent pt-20">
+        <div class="grid max-h-[80vh] grid-cols-2 gap-16">
+          <div class="flex flex-col justify-center">
+            <h1 class="pb-10 text-6xl font-bold">Znajdź idealne miejsce dla Twojego pupila</h1>
+            <p class="text-xl">
+              Nasza platforma zawiera tylko sprawdzone i renomowane hotele dla zwierząt, abyś mógł podróżować z pełnym
+              spokojem.
+            </p>
+          </div>
+          <NuxtImg class="max-h-[80vh]" src="/images/dog_n_cat.png" />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-center gap-16 pt-16">
+      <NuxtImg height="400" src="/images/search_image.svg" width="400" />
+      <div class="flex max-w-[400px] flex-col justify-center">
+        <h1 class="pb-10 text-6xl font-bold">Wyszukaj</h1>
+        <p class="text-xl">Wprowadź swoje preferencje i przeszukaj naszą bazę hoteli dla zwierząt.</p>
+      </div>
+    </div>
+
+    <div class="flex justify-center gap-16 pt-16">
+      <div class="flex max-w-[400px] flex-col justify-center">
+        <h1 class="pb-10 text-6xl font-bold">Wybierz</h1>
+        <p class="text-xl">Porównaj różne hotele i wybierz ten, który najbardziej Ci odpowiada.</p>
+      </div>
+      <NuxtImg height="400" src="/images/choose_image.svg" width="400" />
+    </div>
+
+    <div class="flex justify-center gap-16 py-16">
+      <NuxtImg height="400" src="/images/book_image.svg" width="400" />
+      <div class="flex max-w-[400px] flex-col justify-center">
+        <h1 class="pb-10 text-6xl font-bold">Rezerwuj</h1>
+        <p class="text-xl">
+          Dokonaj rezerwacji online i zapewnij swojemu zwierzakowi komfortowy pobyt podczas Twojej nieobecności.
+        </p>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-r from-[#E1EBFB] to-white">
+      <div class="container mx-auto bg-transparent">
+        <div class="grid grid-cols-2 gap-16 pt-16">
+          <NuxtImg class="" src="/images/home_image.png" />
+          <div class="flex flex-col justify-center">
+            <h1 class="pb-10 text-6xl font-bold">Bezpieczeństwo ponad wszystko</h1>
+            <p class="text-xl">
+              Nasz system oceniania gwarantuje spokój. Tylko zwierzęta z dobrymi opiniami znajdują miejsce w naszych
+              hotelach.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script setup lang="ts">
-const defaultValue = 'item-1';
-
-const accordionItems = [
-  { value: 'item-1', title: 'Is it accessible?', content: 'Yes. It adheres to the WAI-ARIA design pattern.' },
-  {
-    value: 'item-2',
-    title: 'Is it unstyled?',
-    content: "Yes. It's unstyled by default, giving you freedom over the look and feel.",
-  },
-  {
-    value: 'item-3',
-    title: 'Can it be animated?',
-    content: 'Yes! You can use the transition prop to configure the animation.',
-  },
-];
-</script>
+<script setup lang="ts"></script>
