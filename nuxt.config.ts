@@ -16,6 +16,7 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'netlify',
   },
+  css: ['@/assets/css/tailwind.css'],
   components: [
     { path: '~/components/**' },
     {

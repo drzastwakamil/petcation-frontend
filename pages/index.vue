@@ -1,15 +1,5 @@
 <template>
-  <div class="flex min-h-screen flex-col">
-    <div class="absolute w-full border-b">
-      <div class="container mx-auto">
-        <div class="flex h-20 w-full py-4">
-          <div class="z-10">
-            <NuxtImg class="h-full" src="/images/logo5.svg" />
-          </div>
-        </div>
-      </div>
-    </div>
-
+  <div>
     <div class="bg-gradient-to-r from-white to-[#FFC6C6]">
       <div class="container mx-auto bg-transparent pt-20">
         <div class="grid max-h-[80vh] grid-cols-2 gap-16">
