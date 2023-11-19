@@ -1,7 +1,7 @@
 <template>
   <NuxtLink to="/hotels/123">
     <Card class="overflow-hidden">
-      <NuxtImg class="h-60 w-full" src="/images/mock_hotel.webp" />
+      <img class="h-60 w-full" src="/images/mock_hotel.webp" />
       <CardHeader>
         <CardTitle>Card Title</CardTitle>
         <CardDescription>Card Description</CardDescription>

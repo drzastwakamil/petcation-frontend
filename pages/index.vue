@@ -10,13 +10,13 @@
               spokojem.
             </p>
           </div>
-          <NuxtImg class="max-h-[80vh]" src="/images/dog_n_cat.png" />
+          <img class="max-h-[80vh]" src="/images/dog_n_cat.png" />
         </div>
       </div>
     </div>
 
     <div class="flex justify-center gap-16 pt-16">
-      <NuxtImg height="400" src="/images/search_image.svg" width="400" />
+      <img height="400" src="/images/search_image.svg" width="400" />
       <div class="flex max-w-[400px] flex-col justify-center">
         <h1 class="pb-10 text-6xl font-bold">Wyszukaj</h1>
         <p class="text-xl">Wprowadź swoje preferencje i przeszukaj naszą bazę hoteli dla zwierząt.</p>
@@ -28,11 +28,11 @@
         <h1 class="pb-10 text-6xl font-bold">Wybierz</h1>
         <p class="text-xl">Porównaj różne hotele i wybierz ten, który najbardziej Ci odpowiada.</p>
       </div>
-      <NuxtImg height="400" src="/images/choose_image.svg" width="400" />
+      <img height="400" src="/images/choose_image.svg" width="400" />
     </div>
 
     <div class="flex justify-center gap-16 py-16">
-      <NuxtImg height="400" src="/images/book_image.svg" width="400" />
+      <img height="400" src="/images/book_image.svg" width="400" />
       <div class="flex max-w-[400px] flex-col justify-center">
         <h1 class="pb-10 text-6xl font-bold">Rezerwuj</h1>
         <p class="text-xl">
@@ -44,7 +44,7 @@
     <div class="bg-gradient-to-r from-[#E1EBFB] to-white">
       <div class="container mx-auto bg-transparent">
         <div class="grid grid-cols-2 gap-16 pt-16">
-          <NuxtImg class="" src="/images/home_image.png" />
+          <img class="" src="/images/home_image.png" />
           <div class="flex flex-col justify-center">
             <h1 class="pb-10 text-6xl font-bold">Bezpieczeństwo ponad wszystko</h1>
             <p class="text-xl">

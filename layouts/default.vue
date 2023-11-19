@@ -4,7 +4,7 @@
       <div class="container mx-auto">
         <div class="flex h-20 w-full py-4">
           <div class="z-10">
-            <NuxtImg class="h-full" src="/images/logo5.svg" />
+            <img class="h-full" src="/images/logo5.svg" />
           </div>
         </div>
       </div>
