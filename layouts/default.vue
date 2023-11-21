@@ -3,7 +3,7 @@
     <div class="absolute w-full border-b">
       <div class="container z-10 mx-auto flex h-20 w-full justify-between py-4">
         <NuxtLink class="select-none" to="/">
-          <img class="h-full" src="/images/Logo.svg" />
+          <img class="h-full" src="/images/logo.svg" />
         </NuxtLink>
 
         <div class="flex items-center gap-5">
