@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div class="flex justify-center gap-16 pt-16">
+    <div id="features" class="flex justify-center gap-16 pt-16">
       <img height="400" src="/images/search_image.svg" width="400" />
       <div class="flex max-w-[400px] flex-col justify-center">
         <h1 class="pb-10 text-6xl font-bold">Wyszukaj</h1>
@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <div class="bg-gradient-to-r from-[#E1EBFB] to-white">
+    <div id="security" class="bg-gradient-to-r from-[#E1EBFB] to-white">
       <div class="container mx-auto bg-transparent">
         <div class="grid grid-cols-2 gap-16 pt-16">
           <img class="" src="/images/home_image.png" />

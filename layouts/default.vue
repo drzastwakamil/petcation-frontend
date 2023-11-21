@@ -1,11 +1,31 @@
 <template>
   <div class="flex min-h-screen flex-col">
     <div class="absolute w-full border-b">
-      <div class="container mx-auto">
-        <div class="flex h-20 w-full py-4">
-          <div class="z-10">
-            <img class="h-full" src="/images/logo5.svg" />
-          </div>
+      <div class="container z-10 mx-auto flex h-20 w-full justify-between py-4">
+        <NuxtLink class="select-none" to="/">
+          <img class="h-full" src="/images/Logo.svg" />
+        </NuxtLink>
+
+        <div class="flex items-center gap-5">
+          <NuxtLink active-class="text-[#C28686] underline" to="/hotels"> Oferta </NuxtLink>
+          <NuxtLink :to="{ path: '/', hash: '#features' }">
+            <h5
+              :class="{
+                'text-[#C28686] underline': currentHash === '#features',
+              }"
+            >
+              Funkcjonalności
+            </h5>
+          </NuxtLink>
+          <NuxtLink :to="{ path: '/', hash: '#security' }">
+            <h5
+              :class="{
+                'text-[#C28686] underline': currentHash === '#security',
+              }"
+            >
+              Bezpieczeństwo
+            </h5>
+          </NuxtLink>
         </div>
       </div>
     </div>
@@ -13,4 +33,10 @@
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { useRoute } from 'nuxt/app';
+
+const currentHash = computed(() => {
+  return useRoute().hash;
+});
+</script>
