@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
+    "@tanstack/vue-query": "^5.8.4",
     "@vueuse/core": "^10.6.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",

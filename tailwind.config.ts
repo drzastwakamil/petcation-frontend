@@ -13,6 +13,7 @@ module.exports = {
     fontFamily: {
       geist: 'Geist',
     },
+
     // container: {
     //   center: true,
     //   padding: '2rem',
@@ -21,7 +22,11 @@ module.exports = {
     //   },
     // },
     extend: {
+      height: {
+        header: '80px',
+      },
       colors: {
+        pinky: 'hsl(var(--pinky))',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
