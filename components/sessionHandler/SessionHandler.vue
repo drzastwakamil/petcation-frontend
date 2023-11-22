@@ -1,9 +1,9 @@
 <template>
   <div>
-    <LoginOrRegister v-if="true" />
+    <LoginOrRegister v-if="!userSessionStore.isLoggedIn" />
     <DropdownMenu v-else>
       <DropdownMenuTrigger as-child :disabled="false">
-        <Button :variant="null">
+        <Button size="icon" :variant="null">
           <Avatar>
             <AvatarImage alt="avatar" src="" />
             <AvatarFallback>
@@ -16,11 +16,12 @@
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <User class="mr-2 h-4 w-4" />
-            <span>Profile</span>
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-          </DropdownMenuItem>
+          <NuxtLink to="/profile">
+            <DropdownMenuItem>
+              <User class="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </DropdownMenuItem>
+          </NuxtLink>
           <DropdownMenuItem>
             <CreditCard class="mr-2 h-4 w-4" />
             <span>Billing</span>
@@ -86,10 +87,15 @@
           <span>API</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          @select="
+            () => {
+              userSessionStore.logOut();
+            }
+          "
+        >
           <LogOut class="mr-2 h-4 w-4" />
           <span>Log out</span>
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -131,4 +137,5 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+const userSessionStore = useUserSessionStore();
 </script>

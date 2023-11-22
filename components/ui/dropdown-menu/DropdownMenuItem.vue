@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import { DropdownMenuItem, type DropdownMenuItemProps } from 'radix-vue'
-import { cn } from '@/utils/shadcn/utils'
-
-const props = defineProps<DropdownMenuItemProps & { inset?: boolean; class?: string }>()
-</script>
-
 <template>
   <DropdownMenuItem
     v-bind="props"
@@ -19,3 +12,10 @@ const props = defineProps<DropdownMenuItemProps & { inset?: boolean; class?: str
     <slot />
   </DropdownMenuItem>
 </template>
+
+<script setup lang="ts">
+import { DropdownMenuItem, type DropdownMenuItemProps } from 'radix-vue';
+import { cn } from '@/utils/shadcn/utils';
+
+const props = defineProps<DropdownMenuItemProps & { inset?: boolean; class?: string }>();
+</script>

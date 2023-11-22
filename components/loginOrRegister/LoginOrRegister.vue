@@ -8,7 +8,7 @@
     "
   >
     <AlertDialogTrigger as-child>
-      <Button variant="ghost">
+      <Button size="icon" variant="ghost">
         <LogIn />
       </Button>
     </AlertDialogTrigger>
@@ -41,7 +41,16 @@
           </div>
           <div class="grid grid-cols-4 gap-4 pt-12">
             <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
-            <Button class="col-span-3"> Zaloguj </Button>
+            <Button
+              class="col-span-3"
+              :onclick="
+                () => {
+                  useUserSessionStore().logIn();
+                }
+              "
+            >
+              Zaloguj
+            </Button>
           </div>
         </TabsContent>
         <TabsContent value="register">
@@ -83,7 +92,16 @@
 
           <div class="grid grid-cols-4 gap-4 pt-12">
             <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
-            <Button class="col-span-3"> Zarejestruj </Button>
+            <Button
+              class="col-span-3"
+              :onclick="
+                () => {
+                  useUserSessionStore().logIn();
+                }
+              "
+            >
+              Zarejestruj
+            </Button>
           </div>
         </TabsContent>
       </Tabs>
@@ -93,13 +111,7 @@
 
 <script setup lang="ts">
 import { LogIn } from 'lucide-vue-next';
-import {
-  AlertDialogCancel,
-  AlertDialogHeader,
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+import { AlertDialogCancel, AlertDialog, AlertDialogContent, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { CardDescription, CardTitle } from '@/components/ui/card';
