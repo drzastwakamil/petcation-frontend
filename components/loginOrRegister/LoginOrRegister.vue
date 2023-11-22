@@ -72,7 +72,11 @@
                 class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 for="terms"
               >
-                Akceptuję Regulamin serwisu oraz Politykę prywatności
+                <span>
+                  Akceptuję <NuxtLink class="underline" target="_blank" to="/statue.pdf">Regulamin</NuxtLink>
+                  serwisu oraz
+                  <NuxtLink class="underline" target="_blank" to="/privacy-policy.pdf"> Politykę prywatności </NuxtLink>
+                </span>
               </label>
             </div>
           </div>
