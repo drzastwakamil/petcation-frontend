@@ -1,24 +1,3 @@
-<script setup lang="ts">
-import {
-  DropdownMenuContent,
-  type DropdownMenuContentEmits,
-  type DropdownMenuContentProps,
-  DropdownMenuPortal,
-  useForwardPropsEmits,
-} from 'radix-vue'
-import { cn } from '@/utils/shadcn/utils'
-
-const props = withDefaults(
-  defineProps<DropdownMenuContentProps & { class?: string }>(),
-  {
-    sideOffset: 4,
-  },
-)
-const emits = defineEmits<DropdownMenuContentEmits>()
-
-const forwarded = useForwardPropsEmits(props, emits)
-</script>
-
 <template>
   <DropdownMenuPortal>
     <DropdownMenuContent
@@ -34,3 +13,21 @@ const forwarded = useForwardPropsEmits(props, emits)
     </DropdownMenuContent>
   </DropdownMenuPortal>
 </template>
+
+<script setup lang="ts">
+import {
+  DropdownMenuContent,
+  type DropdownMenuContentEmits,
+  type DropdownMenuContentProps,
+  DropdownMenuPortal,
+  useForwardPropsEmits,
+} from 'radix-vue';
+import { cn } from '@/utils/shadcn/utils';
+
+const props = withDefaults(defineProps<DropdownMenuContentProps & { class?: string }>(), {
+  sideOffset: 4,
+});
+const emits = defineEmits<DropdownMenuContentEmits>();
+
+const forwarded = useForwardPropsEmits(props, emits);
+</script>

@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import {
-  DropdownMenuSubTrigger,
-  type DropdownMenuSubTriggerProps,
-} from 'radix-vue'
-import { ChevronRight } from 'lucide-vue-next'
-import { cn } from '@/utils/shadcn/utils'
-
-const props = defineProps<DropdownMenuSubTriggerProps & { class?: string }>()
-</script>
-
 <template>
   <DropdownMenuSubTrigger
     v-bind="props"
@@ -23,3 +12,11 @@ const props = defineProps<DropdownMenuSubTriggerProps & { class?: string }>()
     <ChevronRight class="ml-auto h-4 w-4" />
   </DropdownMenuSubTrigger>
 </template>
+
+<script setup lang="ts">
+import { DropdownMenuSubTrigger, type DropdownMenuSubTriggerProps } from 'radix-vue';
+import { ChevronRight } from 'lucide-vue-next';
+import { cn } from '@/utils/shadcn/utils';
+
+const props = defineProps<DropdownMenuSubTriggerProps & { class?: string }>();
+</script>

@@ -17,6 +17,7 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'netlify',
   },
+  ssr: false,
   css: ['@/assets/css/tailwind.css'],
   components: [
     { path: '~/components/**' },
@@ -28,5 +29,10 @@ export default defineNuxtConfig({
   ],
   imports: {
     dirs: ['composables/**', 'utils/**'],
+  },
+  router: {
+    options: {
+      scrollBehaviorType: 'smooth',
+    },
   },
 });

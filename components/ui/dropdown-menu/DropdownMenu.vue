@@ -9,7 +9,6 @@ import {
   DropdownMenuRoot,
   type DropdownMenuRootEmits,
   type DropdownMenuRootProps,
-  useEmitAsProps,
   useForwardPropsEmits,
 } from 'radix-vue';
 

@@ -16,7 +16,7 @@
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <NuxtLink to="/profile">
+          <NuxtLink to="/settings/profile">
             <DropdownMenuItem>
               <User class="mr-2 h-4 w-4" />
               <span>Profile</span>

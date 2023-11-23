@@ -1,0 +1,3 @@
+<template>
+  <ProfileDisplayForm />
+</template>
