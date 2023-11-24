@@ -1,31 +1,28 @@
 <template>
-  <div>
-    <div class="md:hidden">
-      <VPImage
-        alt="Forms"
-        class="block"
-        height="1214"
-        :image="{
-          dark: '/examples/forms-dark.png',
-          light: '/examples/forms-light.png',
-        }"
-        width="1280"
-      />
-    </div>
-    <div class="hidden space-y-6 p-10 pb-16 md:block">
-      <div class="space-y-0.5">
-        <h2 class="text-2xl font-bold tracking-tight">Settings</h2>
-        <p class="text-muted-foreground">Manage your account settings and set e-mail preferences.</p>
+  <div class="p-10 pb-16">
+    <div class="flex justify-between">
+      <div class="flex items-center space-x-5">
+        <NuxtLink :to="browsingStore.lastVisitedNonAuthPage">
+          <Button size="icon" variant="ghost">
+            <ArrowLeftIcon />
+          </Button>
+        </NuxtLink>
+        <div class="space-y-0.5">
+          <h2 id="title" class="text-2xl font-bold tracking-tight" />
+          <p id="description" class="text-muted-foreground" />
+        </div>
       </div>
-      <Separator class="my-6" />
-      <div class="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
-        <aside class="-mx-4 lg:w-1/5">
-          <ProfileSidebarNav />
-        </aside>
-        <div class="flex-1 lg:max-w-2xl">
-          <div class="space-y-6">
-            <slot />
-          </div>
+
+      <SessionHandler />
+    </div>
+    <Separator class="my-6" />
+    <div class="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+      <aside class="-mx-4 lg:w-1/5">
+        <ProfileSidebarNav />
+      </aside>
+      <div class="flex-1 lg:max-w-2xl">
+        <div class="space-y-6">
+          <slot />
         </div>
       </div>
     </div>
@@ -33,5 +30,9 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowLeftIcon } from 'lucide-vue-next';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+
+const browsingStore = useBrowsingStore();
 </script>

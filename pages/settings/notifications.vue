@@ -1,3 +1,0 @@
-<template>
-  <ProfileNotificationsForm />
-</template>

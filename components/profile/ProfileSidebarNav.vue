@@ -25,20 +25,20 @@ const $route = useRoute();
 
 const sidebarNavItems: Item[] = [
   {
-    title: 'Profile',
+    title: 'Profil',
     href: '/settings/profile',
   },
   {
-    title: 'Account',
+    title: 'Konto',
     href: '/settings/account',
   },
   {
-    title: 'Appearance',
-    href: '/settings/appearance',
+    title: 'Zwierzaki',
+    href: '/settings/animals',
   },
   {
-    title: 'Notifications',
-    href: '/settings/notifications',
+    title: 'Rezerwacje',
+    href: '/settings/reservations',
   },
   {
     title: 'Display',

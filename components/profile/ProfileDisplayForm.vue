@@ -1,44 +1,50 @@
 <template>
   <div>
-    <h3 class="text-lg font-medium">Display</h3>
-    <p class="text-sm text-muted-foreground">Turn items on or off to control what's displayed in the app.</p>
-  </div>
-  <Separator />
-  <form @submit="onSubmit">
-    <FormField name="items">
-      <FormItem>
-        <div class="mb-4">
-          <FormLabel class="text-base"> Sidebar </FormLabel>
-          <FormDescription> Select the items you want to display in the sidebar. </FormDescription>
-        </div>
-
-        <FormField v-for="item in items" :key="item.id" v-slot="{ value, handleChange }" name="items">
-          <FormItem :key="item.id" class="flex flex-row items-start space-x-3 space-y-0">
-            <FormControl>
-              <Checkbox
-                :checked="value.includes(item.id)"
-                @update:checked="
-                  (checked) => {
-                    if (Array.isArray(value)) {
-                      handleChange(checked ? [...value, item.id] : value.filter((id) => id !== item.id));
-                    }
-                  }
-                "
-              />
-            </FormControl>
-            <FormLabel class="font-normal">
-              {{ item.label }}
-            </FormLabel>
-          </FormItem>
-        </FormField>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-
-    <div class="mt-4 flex justify-start">
-      <Button type="submit"> Update display </Button>
+    <ClientOnly>
+      <Teleport to="#title"> Profil </Teleport>
+      <Teleport to="#description"> Dostosuj swój profil </Teleport>
+    </ClientOnly>
+    <div>
+      <h3 class="text-lg font-medium">Display</h3>
+      <p class="text-sm text-muted-foreground">Turn items on or off to control what's displayed in the app.</p>
     </div>
-  </form>
+    <Separator />
+    <form @submit="onSubmit">
+      <FormField name="items">
+        <FormItem>
+          <div class="mb-4">
+            <FormLabel class="text-base"> Sidebar </FormLabel>
+            <FormDescription> Select the items you want to display in the sidebar. </FormDescription>
+          </div>
+
+          <FormField v-for="item in items" :key="item.id" v-slot="{ value, handleChange }" name="items">
+            <FormItem :key="item.id" class="flex flex-row items-start space-x-3 space-y-0">
+              <FormControl>
+                <Checkbox
+                  :checked="value.includes(item.id)"
+                  @update:checked="
+                    (checked) => {
+                      if (Array.isArray(value)) {
+                        handleChange(checked ? [...value, item.id] : value.filter((id) => id !== item.id));
+                      }
+                    }
+                  "
+                />
+              </FormControl>
+              <FormLabel class="font-normal">
+                {{ item.label }}
+              </FormLabel>
+            </FormItem>
+          </FormField>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+      <div class="mt-4 flex justify-start">
+        <Button type="submit"> Update display </Button>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script setup lang="ts">

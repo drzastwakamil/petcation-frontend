@@ -1,94 +1,100 @@
 <template>
   <div>
-    <h3 class="text-lg font-medium">Profile</h3>
-    <p class="text-sm text-muted-foreground">This is how others will see you on the site.</p>
-  </div>
-  <Separator />
-  <form class="space-y-8" @submit="onSubmit">
-    <FormField v-slot="{ componentField }" name="username">
-      <FormItem>
-        <FormLabel>Username</FormLabel>
-        <FormControl>
-          <Input placeholder="shadcn" type="text" v-bind="componentField" />
-        </FormControl>
-        <FormDescription>
-          This is your public display name. It can be your real name or a pseudonym. You can only change this once every
-          30 days.
-        </FormDescription>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-
-    <FormField v-slot="{ componentField }" name="email">
-      <FormItem>
-        <FormLabel>Email</FormLabel>
-
-        <Select v-bind="componentField">
-          <FormControl>
-            <SelectTrigger>
-              <SelectValue placeholder="Select an email" />
-            </SelectTrigger>
-          </FormControl>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem v-for="email in verifiedEmails" :key="email" :value="email">
-                {{ email }}
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <FormDescription> You can manage verified email addresses in your email settings. </FormDescription>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-
-    <FormField v-slot="{ componentField }" name="bio">
-      <FormItem>
-        <FormLabel>Bio</FormLabel>
-        <FormControl>
-          <Textarea placeholder="Tell us a little bit about yourself" v-bind="componentField" />
-        </FormControl>
-        <FormDescription>
-          You can <span>@mention</span> other users and organizations to link to them.
-        </FormDescription>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-
+    <ClientOnly>
+      <Teleport to="#title"> Profil </Teleport>
+      <Teleport to="#description"> Dostosuj swój profil </Teleport>
+    </ClientOnly>
     <div>
-      <FieldArray v-slot="{ fields, push, remove }" name="urls">
-        <div v-for="(field, index) in fields" :key="`urls-${field.key}`">
-          <FormField v-slot="{ componentField }" :name="`urls[${index}].value`">
-            <FormItem>
-              <FormLabel :class="cn(index !== 0 && 'sr-only')"> URLs </FormLabel>
-              <FormDescription :class="cn(index !== 0 && 'sr-only')">
-                Add links to your website, blog, or social media profiles.
-              </FormDescription>
-              <div class="relative flex items-center">
-                <FormControl>
-                  <Input type="url" v-bind="componentField" />
-                </FormControl>
-                <button class="absolute end-0 py-2 pe-3 text-muted-foreground" type="button" @click="remove(index)">
-                  <CrossIcon class="w-3" />
-                </button>
-              </div>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-        </div>
-
-        <Button class="mt-2 w-20 text-xs" size="sm" type="button" variant="outline" @click="push({ value: '' })">
-          Add URL
-        </Button>
-      </FieldArray>
+      <h3 class="text-lg font-medium">Profile</h3>
+      <p class="text-sm text-muted-foreground">This is how others will see you on the site.</p>
     </div>
+    <Separator />
+    <form class="space-y-8" @submit="onSubmit">
+      <FormField v-slot="{ componentField }" name="username">
+        <FormItem>
+          <FormLabel>Username</FormLabel>
+          <FormControl>
+            <Input placeholder="shadcn" type="text" v-bind="componentField" />
+          </FormControl>
+          <FormDescription>
+            This is your public display name. It can be your real name§ or a pseudonym. You can only change this once
+            every 30 days.
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      </FormField>
 
-    <div class="flex justify-start gap-2">
-      <Button type="submit"> Update profile </Button>
+      <FormField v-slot="{ componentField }" name="email">
+        <FormItem>
+          <FormLabel>Email</FormLabel>
 
-      <Button type="button" variant="outline" @click="resetForm"> Reset form </Button>
-    </div>
-  </form>
+          <Select v-bind="componentField">
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder="Select an email" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem v-for="email in verifiedEmails" :key="email" :value="email">
+                  {{ email }}
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <FormDescription> You can manage verified email addresses in your email settings. </FormDescription>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+      <FormField v-slot="{ componentField }" name="bio">
+        <FormItem>
+          <FormLabel>Bio</FormLabel>
+          <FormControl>
+            <Textarea placeholder="Tell us a little bit about yourself" v-bind="componentField" />
+          </FormControl>
+          <FormDescription>
+            You can <span>@mention</span> other users and organizations to link to them.
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+
+      <div>
+        <FieldArray v-slot="{ fields, push, remove }" name="urls">
+          <div v-for="(field, index) in fields" :key="`urls-${field.key}`">
+            <FormField v-slot="{ componentField }" :name="`urls[${index}].value`">
+              <FormItem>
+                <FormLabel :class="cn(index !== 0 && 'sr-only')"> URLs </FormLabel>
+                <FormDescription :class="cn(index !== 0 && 'sr-only')">
+                  Add links to your website, blog, or social media profiles.
+                </FormDescription>
+                <div class="relative flex items-center">
+                  <FormControl>
+                    <Input type="url" v-bind="componentField" />
+                  </FormControl>
+                  <button class="absolute end-0 py-2 pe-3 text-muted-foreground" type="button" @click="remove(index)">
+                    <CrossIcon class="w-3" />
+                  </button>
+                </div>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+          </div>
+
+          <Button class="mt-2 w-20 text-xs" size="sm" type="button" variant="outline" @click="push({ value: '' })">
+            Add URL
+          </Button>
+        </FieldArray>
+      </div>
+
+      <div class="flex justify-start gap-2">
+        <Button type="submit"> Update profile </Button>
+
+        <Button type="button" variant="outline" @click="resetForm"> Reset form </Button>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -1,15 +1,17 @@
 export const useUserSessionStore = defineStore('userSession', {
   state: () => ({
-    isLoggedIn: false,
+    token: useLocalStorage('token', ''),
   }),
 
   actions: {
-    logIn() {
-      this.isLoggedIn = true;
-    },
-
     logOut() {
-      this.isLoggedIn = false;
+      this.token = '';
     },
+    logIn(token: string) {
+      this.token = token;
+    },
+  },
+  getters: {
+    isLoggedIn: (state) => state.token.length,
   },
 });

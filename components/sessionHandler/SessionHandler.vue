@@ -18,74 +18,29 @@
         <DropdownMenuGroup>
           <NuxtLink to="/settings/profile">
             <DropdownMenuItem>
-              <User class="mr-2 h-4 w-4" />
-              <span>Profile</span>
+              <UserIcon class="mr-2 h-4 w-4" />
+              <span>Profil</span>
             </DropdownMenuItem>
           </NuxtLink>
-          <DropdownMenuItem>
-            <CreditCard class="mr-2 h-4 w-4" />
-            <span>Billing</span>
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings class="mr-2 h-4 w-4" />
-            <span>Settings</span>
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Keyboard class="mr-2 h-4 w-4" />
-            <span>Keyboard shortcuts</span>
-            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-          </DropdownMenuItem>
+          <NuxtLink to="/settings/account">
+            <DropdownMenuItem>
+              <WrenchIcon class="mr-2 h-4 w-4" />
+              <span>Konto</span>
+            </DropdownMenuItem>
+          </NuxtLink>
+          <NuxtLink to="/settings/animals">
+            <DropdownMenuItem>
+              <PawPrintIcon class="mr-2 h-4 w-4" />
+              <span>Zwierzaki</span>
+            </DropdownMenuItem>
+          </NuxtLink>
+          <NuxtLink to="/settings/reservations">
+            <DropdownMenuItem>
+              <HotelIcon class="mr-2 h-4 w-4" />
+              <span>Rezerwacje</span>
+            </DropdownMenuItem>
+          </NuxtLink>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <Users class="mr-2 h-4 w-4" />
-            <span>Team</span>
-          </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <UserPlus class="mr-2 h-4 w-4" />
-              <span>Invite users</span>
-            </DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>
-                  <Mail class="mr-2 h-4 w-4" />
-                  <span>Email</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <MessageSquare class="mr-2 h-4 w-4" />
-                  <span>Message</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <PlusCircle class="mr-2 h-4 w-4" />
-                  <span>More...</span>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-          <DropdownMenuItem>
-            <Plus class="mr-2 h-4 w-4" />
-            <span>New Team</span>
-            <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Github class="mr-2 h-4 w-4" />
-          <span>GitHub</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <LifeBuoy class="mr-2 h-4 w-4" />
-          <span>Support</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem disabled>
-          <Cloud class="mr-2 h-4 w-4" />
-          <span>API</span>
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           @select="
@@ -94,7 +49,7 @@
             }
           "
         >
-          <LogOut class="mr-2 h-4 w-4" />
+          <LogOutIcon class="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -103,22 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  Cloud,
-  CreditCard,
-  Github,
-  Keyboard,
-  LifeBuoy,
-  LogOut,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
-  Settings,
-  User,
-  UserPlus,
-  Users,
-} from 'lucide-vue-next';
+import { WrenchIcon, HotelIcon, LogOutIcon, PawPrintIcon, UserIcon } from 'lucide-vue-next';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -127,12 +67,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
