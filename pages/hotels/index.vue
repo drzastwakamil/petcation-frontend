@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto bg-transparent">
+  <div class="container mx-auto">
     <div class="h-header" />
     <div class="flex justify-center gap-2 pt-10"><Combobox /> <DatePicker /> <AnimalsPicker /></div>
     <div class="grid grid-cols-4 gap-5 py-10">
@@ -12,7 +12,7 @@
         :price-total="7 * 150"
         :range="8.5"
         :review-average="4.56"
-        :title="'Hotel Psitulas'"
+        :title="n % 2 ? 'Hotel Pieskie Życie' : 'Wspaniały hotel dla psów i kotów'"
       />
     </div>
   </div>

@@ -1,13 +1,13 @@
 <template>
   <Popover>
     <PopoverTrigger as-child>
-      <Button variant="outline"> Zwierzaki </Button>
+      <Button variant="outline"> Zwierzęta </Button>
     </PopoverTrigger>
     <PopoverContent class="w-80">
       <div class="grid gap-4">
         <div class="space-y-2">
-          <h4 class="font-medium leading-none">Dimensions</h4>
-          <p class="text-sm text-muted-foreground">Set the dimensions for the layer.</p>
+          <h4 class="font-medium leading-none">Zwierzęta</h4>
+          <p class="text-sm text-muted-foreground">Wybierz ilość zwierząt.</p>
         </div>
         <div class="grid gap-2">
           <div class="grid grid-cols-3 items-center gap-4">

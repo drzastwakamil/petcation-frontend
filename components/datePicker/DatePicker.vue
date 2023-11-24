@@ -1,10 +1,10 @@
 <template>
-  <div :class="cn('grid gap-2', $attrs.class ?? '')">
+  <div :class="cn('w-[300px] grid gap-2', $attrs.class ?? '')">
     <Popover>
       <PopoverTrigger as-child>
         <Button
           id="date"
-          :class="cn('w-[300px] justify-start text-left font-normal', !date && 'text-muted-foreground')"
+          :class="cn(' justify-start text-left font-normal', !date && 'text-muted-foreground')"
           :variant="'outline'"
         >
           <CalendarIcon class="mr-2 h-4 w-4" />

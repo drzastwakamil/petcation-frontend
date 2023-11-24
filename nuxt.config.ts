@@ -17,8 +17,7 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'netlify',
   },
-  ssr: false,
-  css: ['@/assets/css/tailwind.css'],
+  css: ['@/assets/css/tailwind.css', '@/node_modules/@splidejs/splide/dist/css/splide.min.css'],
   components: [
     { path: '~/components/**' },
     {
@@ -32,7 +31,7 @@ export default defineNuxtConfig({
   },
   router: {
     options: {
-      scrollBehaviorType: 'smooth',
+      scrollBehaviorType: 'auto',
     },
   },
 });
