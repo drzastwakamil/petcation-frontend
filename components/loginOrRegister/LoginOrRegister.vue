@@ -4,6 +4,7 @@
     @update:open="
       (open) => {
         isDialogOpen = open;
+        resetAskingForResetPasswordEmailProcess();
       }
     "
   >
@@ -26,7 +27,6 @@
         @update:model-value="
           (modelValue) => {
             currentTab = modelValue;
-            console.log('the model value', modelValue);
           }
         "
       >
@@ -35,6 +35,7 @@
             :onclick="
               () => {
                 currentTab = 'login';
+                resetAskingForResetPasswordEmailProcess();
               }
             "
             size="icon"
@@ -47,6 +48,43 @@
           <TabsTrigger value="login"> Logowanie </TabsTrigger>
           <TabsTrigger value="register"> Rejestracja </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="forgotPassword">
+          <div v-if="mailHasBeenTriedToBeSend">
+            <CardTitle class="pt-4">Sprawdź swój email</CardTitle>
+            <CardDescription class="pt-2">
+              Otrzymasz wiadomość, z kolejnymi krokami aby ustawić nowe hasło.
+            </CardDescription>
+            <div class="flex justify-end space-y-3 pt-5">
+              <Button :disabled="askingForResetPasswordEmailIsLoading" :onclick="executeAskForResetPasswordEmail">
+                Wyślij email ponownie!
+                <Loader2 v-if="askingForResetPasswordEmailIsLoading" class="ml-2 h-4 w-4 animate-spin" />
+              </Button>
+            </div>
+          </div>
+          <div v-else>
+            <CardTitle class="pt-4">Zapomniałeś hasła?</CardTitle>
+            <CardDescription class="pt-2"> Podaj swój email, aby ustawić nowe hasło. </CardDescription>
+            <div class="space-y-3 pt-5">
+              <div class="space-y-1">
+                <Label for="email"> Email </Label>
+                <Input id="email" placeholder="Podaj swój email" type="email" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-4 pt-12">
+              <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
+              <Button
+                class="col-span-3"
+                :disabled="askingForResetPasswordEmailIsLoading"
+                :onclick="executeAskForResetPasswordEmail"
+              >
+                Odzyskaj hasło
+                <Loader2 v-if="askingForResetPasswordEmailIsLoading" class="ml-2 h-4 w-4 animate-spin" />
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
         <TabsContent value="login">
           <CardTitle class="pt-4">Logowanie</CardTitle>
           <CardDescription class="pt-2"> Wprowadź dane logowania. </CardDescription>
@@ -146,25 +184,6 @@
             </Button>
           </div>
         </TabsContent>
-
-        <TabsContent value="forgotPassword">
-          <CardTitle class="pt-4">Zapomniałeś hasła?</CardTitle>
-          <CardDescription class="pt-2"> Podaj swój email, aby ustawić nowe hasło. </CardDescription>
-          <div class="space-y-3 pt-5">
-            <div class="space-y-1">
-              <Label for="email"> Email </Label>
-              <Input id="email" placeholder="Podaj swój email" type="email" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-4 gap-4 pt-12">
-            <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
-            <Button class="col-span-3">
-              Odzyskaj hasło
-              <Loader2 v-if="registerIsLoading" class="ml-2 h-4 w-4 animate-spin" />
-            </Button>
-          </div>
-        </TabsContent>
       </Tabs>
     </AlertDialogContent>
   </AlertDialog>
@@ -182,6 +201,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const isDialogOpen = ref(false);
+const currentTab = ref('login');
 const userSession = useUserSessionStore();
 
 const { mutate: executeRegisterMutate, isPending: registerIsLoading } = useMutation({
@@ -210,5 +230,27 @@ const { mutate: executeLogInMutate, isPending: loginIsLoading } = useMutation({
   },
 });
 
-const currentTab = ref('login');
+const mailHasBeenTriedToBeSend = ref(false);
+const {
+  mutate: executeAskForResetPasswordEmail,
+  isPending: askingForResetPasswordEmailIsLoading,
+  reset: resetAskForResetPasswordEmailMutation,
+} = useMutation({
+  mutationFn: () => {
+    return new Promise<string>((resolve) => {
+      setTimeout(() => {
+        resolve('');
+      }, 3000);
+    });
+  },
+  onSuccess: () => {
+    mailHasBeenTriedToBeSend.value = true;
+  },
+});
+
+const resetAskingForResetPasswordEmailProcess = () => {
+  resetAskForResetPasswordEmailMutation();
+  currentTab.value = 'login';
+  mailHasBeenTriedToBeSend.value = false;
+};
 </script>
