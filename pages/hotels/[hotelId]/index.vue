@@ -45,6 +45,11 @@
             style="border: 0"
           />
         </div>
+
+        <div class="space-y-3">
+          <h1 class="text-2xl">Opinie</h1>
+          <ReviewsMasonry />
+        </div>
       </div>
       <div class="col-span-2">
         <Card class="flex flex-col overflow-hidden border">
