@@ -367,11 +367,11 @@ const { mutate: executeLogInMutate, isPending: loginIsLoading } = useMutation({
     });
   },
   onSuccess: ({ data, error }) => {
-    console.log('thats the data', data);
+    console.log('thats the error', error);
     if (error._object[error?._key]?.message.length) {
       toast({
         title: 'Nie udało się zalogować.',
-        description: error._object[data.error._key]?.message,
+        description: error._object[error._key]?.message,
         variant: 'destructive',
       });
       return;

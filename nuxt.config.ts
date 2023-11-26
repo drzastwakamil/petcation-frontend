@@ -17,7 +17,6 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'netlify',
   },
-  ssr: false,
   css: ['@/assets/css/tailwind.css', '@/node_modules/@splidejs/splide/dist/css/splide.min.css'],
   components: [
     { path: '~/components/**' },

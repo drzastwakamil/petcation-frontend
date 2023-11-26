@@ -1,8 +1,8 @@
 const usePostOnBackend = (...args: Parameters<typeof useMakeRequestToBackend>) => {
-  return useMakeRequestToBackend(args[0], {
-    ...args[1],
-    method: 'POST',
-  });
+  if (args[1]) {
+    args[1].method = 'POST';
+  }
+  return useMakeRequestToBackend(...args);
 };
 
 export default usePostOnBackend;

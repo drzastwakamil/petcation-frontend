@@ -1,8 +1,8 @@
 const useDeleteFromBackend = (...args: Parameters<typeof useMakeRequestToBackend>) => {
-  return useMakeRequestToBackend(args[0], {
-    ...args[1],
-    method: 'DELETE',
-  });
+  if (args[1]) {
+    args[1].method = 'DELETE';
+  }
+  return useMakeRequestToBackend(...args);
 };
 
 export default useDeleteFromBackend;
