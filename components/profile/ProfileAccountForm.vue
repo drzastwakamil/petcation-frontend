@@ -150,7 +150,4 @@ const { data: resultOfUserQuery } = useQuery({
 const email = computed(() => {
   return resultOfUserQuery?.value?.data?.userDetails?.username;
 });
-// watch(data, () => {
-//   console.log(data);
-// });
 </script>
