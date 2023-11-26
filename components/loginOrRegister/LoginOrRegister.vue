@@ -184,7 +184,6 @@ import { useMutation } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import type LoginFormVue from './LoginForm.vue';
 import { useToast } from '@/components/ui/toast';
 import { AlertDialogCancel, AlertDialog, AlertDialogContent, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -199,7 +198,6 @@ const { toast } = useToast();
 
 const isDialogOpen = ref(false);
 const currentTab = ref('login');
-const userSession = useUserSessionStore();
 
 const registerFormSchema = toTypedSchema(
   z
@@ -265,11 +263,11 @@ const { mutate: executeRegisterMutate, isPending: registerIsLoading } = useMutat
       },
     });
   },
-  onSuccess: ({ data, error }) => {
+  onSuccess: ({ error }) => {
     if (error._object[error?._key]?.message.length) {
       toast({
         title: 'Nie udało się zarejestrować.',
-        description: error._object[data.error._key]?.message,
+        description: error._object[error._key]?.message,
         variant: 'destructive',
       });
       return;

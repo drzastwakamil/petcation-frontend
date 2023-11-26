@@ -5,7 +5,7 @@
       <DropdownMenuTrigger as-child :disabled="false">
         <Button size="icon" :variant="null">
           <Avatar>
-            <AvatarImage alt="avatar" src="" />
+            <AvatarImage alt="avatar" :src="`https://loremflickr.com/500/500/face?idk=${Date.now() + Math.random()}`" />
             <AvatarFallback>
               <User class="text-slate-300" />
             </AvatarFallback>

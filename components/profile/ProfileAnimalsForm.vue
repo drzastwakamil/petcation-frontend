@@ -4,146 +4,113 @@
       <Teleport to="#title"> Profil </Teleport>
       <Teleport to="#description"> Zarządzaj swoimi zwierzętami </Teleport>
     </ClientOnly>
-    <div>
-      <h3 class="text-lg font-medium">Appearence</h3>
-      <p class="text-sm text-muted-foreground">
-        Customize the appearance of the app. Automatically switch between day and night themes.
-      </p>
-    </div>
-    <Separator />
-    <form class="space-y-8" @submit="onSubmit">
-      <FormField v-slot="{ field }" name="font">
-        <FormItem>
-          <FormLabel>Font</FormLabel>
-          <div class="relative w-[200px]">
-            <FormControl>
-              <select
-                :class="
-                  cn(buttonVariants({ variant: 'outline' }), 'w-[200px] appearance-none bg-transparent font-normal')
-                "
-                v-bind="field"
-              >
-                <option value="inter">Inter</option>
-                <option value="manrope">Manrope</option>
-                <option value="system">System</option>
-              </select>
-            </FormControl>
-            <ChevronDownIcon class="absolute right-3 top-2.5 h-4 w-4 opacity-50" />
-          </div>
-          <FormDescription> Set the font you want to use in the dashboard. </FormDescription>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField v-slot="{ componentField }" name="theme" type="radio">
-        <FormItem class="space-y-1">
-          <FormLabel>Theme</FormLabel>
-          <FormDescription> Select the theme for the dashboard. </FormDescription>
-          <FormMessage />
-
-          <RadioGroup class="grid max-w-md grid-cols-2 gap-8 pt-2" v-bind="componentField">
-            <FormItem>
-              <FormLabel class="[&:has([data-state=checked])>div]:border-primary">
-                <FormControl>
-                  <RadioGroupItem class="sr-only" value="light" />
-                </FormControl>
-                <div class="items-center rounded-md border-2 border-muted p-1 hover:border-accent">
-                  <div class="space-y-2 rounded-sm bg-[#ecedef] p-2">
-                    <div class="space-y-2 rounded-md bg-white p-2 shadow-sm">
-                      <div class="h-2 w-[80px] rounded-lg bg-[#ecedef]" />
-                      <div class="h-2 w-[100px] rounded-lg bg-[#ecedef]" />
-                    </div>
-                    <div class="flex items-center space-x-2 rounded-md bg-white p-2 shadow-sm">
-                      <div class="h-4 w-4 rounded-full bg-[#ecedef]" />
-                      <div class="h-2 w-[100px] rounded-lg bg-[#ecedef]" />
-                    </div>
-                    <div class="flex items-center space-x-2 rounded-md bg-white p-2 shadow-sm">
-                      <div class="h-4 w-4 rounded-full bg-[#ecedef]" />
-                      <div class="h-2 w-[100px] rounded-lg bg-[#ecedef]" />
-                    </div>
-                  </div>
+    <div class="space-y-6">
+      <h3 class="pb-5 text-lg font-medium">Twoje zwierzęta</h3>
+      <Separator />
+      <div>
+        <h3 class="pb-5 text-lg font-medium">Dodaj nowe zwierzęta</h3>
+        <div class="flex space-x-3">
+          <Popover v-model:open="open">
+            <PopoverTrigger as-child>
+              <Button :aria-expanded="open" class="w-[200px] justify-between" role="combobox" variant="outline">
+                <div class="flex">
+                  <BoneIcon v-if="value?.value === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
+                  <CatIcon v-if="value?.value === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
+                  {{ value ? value.label : 'Zwierzę' }}
                 </div>
-                <span class="block w-full p-2 text-center font-normal"> Light </span>
-              </FormLabel>
-            </FormItem>
-            <FormItem>
-              <FormLabel class="[&:has([data-state=checked])>div]:border-primary">
-                <FormControl>
-                  <RadioGroupItem class="sr-only" value="dark" />
-                </FormControl>
-                <div
-                  class="items-center rounded-md border-2 border-muted bg-popover p-1 hover:bg-accent hover:text-accent-foreground"
-                >
-                  <div class="space-y-2 rounded-sm bg-slate-950 p-2">
-                    <div class="space-y-2 rounded-md bg-slate-800 p-2 shadow-sm">
-                      <div class="h-2 w-[80px] rounded-lg bg-slate-400" />
-                      <div class="h-2 w-[100px] rounded-lg bg-slate-400" />
-                    </div>
-                    <div class="flex items-center space-x-2 rounded-md bg-slate-800 p-2 shadow-sm">
-                      <div class="h-4 w-4 rounded-full bg-slate-400" />
-                      <div class="h-2 w-[100px] rounded-lg bg-slate-400" />
-                    </div>
-                    <div class="flex items-center space-x-2 rounded-md bg-slate-800 p-2 shadow-sm">
-                      <div class="h-4 w-4 rounded-full bg-slate-400" />
-                      <div class="h-2 w-[100px] rounded-lg bg-slate-400" />
-                    </div>
-                  </div>
-                </div>
-                <span class="block w-full p-2 text-center font-normal"> Dark </span>
-              </FormLabel>
-            </FormItem>
-          </RadioGroup>
-        </FormItem>
-      </FormField>
+                <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent class="w-[200px] p-0">
+              <Command>
+                <CommandGroup>
+                  <CommandItem
+                    v-for="animal in animalsPool"
+                    :key="animal.value"
+                    :value="animal"
+                    @select="
+                      (ev) => {
+                        value = ev.detail.value as typeof animal;
+                        open = false;
+                      }
+                    "
+                  >
+                    <BoneIcon v-if="animal.value === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
+                    <CatIcon v-if="animal.value === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
+                    {{ animal.label }}
+                  </CommandItem>
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          </Popover>
 
-      <div class="flex justify-start">
-        <Button type="submit"> Update preferences </Button>
+          <form>
+            <FormField v-slot="{ componentField }" name="petName">
+              <FormItem>
+                <FormControl>
+                  <Input placeholder="Imię" type="text" v-bind="componentField" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+          </form>
+        </div>
       </div>
-    </form>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { h } from 'vue';
+import { ChevronsUpDown, BoneIcon, CatIcon } from 'lucide-vue-next';
+import { ref } from 'vue';
+import { useMutation, useQuery } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-
-import { ChevronDownIcon } from 'lucide-vue-next';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { toast } from '@/components/ui/toast';
+import { useToast } from '@/components/ui/toast';
+import { Input } from '@/components/ui/input';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
-const appearanceFormSchema = toTypedSchema(
-  z.object({
-    theme: z.enum(['light', 'dark'], {
-      required_error: 'Please select a theme.',
+const animalsPool = [
+  { value: 'DOG', label: 'Pies' },
+  { value: 'CAT', label: 'Kot' },
+];
+
+const open = ref(false);
+const value = ref<(typeof animalsPool)[number]>(animalsPool[0]);
+
+const { toast } = useToast();
+
+const changePasswordFormSchema = toTypedSchema(
+  z
+    .object({
+      currentPassword: z.string({
+        required_error: 'Hasło jest wymagane',
+        invalid_type_error: 'Hasło musi być tekstem',
+      }),
+      password: z
+        .string({
+          required_error: 'Hasło jest wymagane',
+          invalid_type_error: 'Hasło musi być tekstem',
+        })
+        .min(5, 'Hasło musi posiadać minimum 5 znaków '),
+      repeatPassword: z.string({
+        required_error: 'Hasło jest wymagane',
+        invalid_type_error: 'Hasło musi być tekstem',
+      }),
+    })
+    .refine((data) => data.password === data.repeatPassword, {
+      message: 'Hasła nie są identyczne!',
+      path: ['repeatPassword'],
     }),
-    font: z.enum(['inter', 'manrope', 'system'], {
-      invalid_type_error: 'Select a font',
-      required_error: 'Please select a font.',
-    }),
-  }),
 );
-
-const { handleSubmit } = useForm({
-  validationSchema: appearanceFormSchema,
-  initialValues: {
-    theme: 'light',
-    font: 'inter',
-  },
+const form = useForm({
+  validationSchema: changePasswordFormSchema,
 });
 
-const onSubmit = handleSubmit((values) => {
-  toast({
-    title: 'You submitted the following values:',
-    description: h(
-      'pre',
-      { class: 'mt-2 w-[340px] rounded-md bg-slate-950 p-4' },
-      h('code', { class: 'text-white' }, JSON.stringify(values, null, 2)),
-    ),
-  });
-});
+const onChangePasswordFormSubmit = form.handleSubmit(() => {});
 </script>

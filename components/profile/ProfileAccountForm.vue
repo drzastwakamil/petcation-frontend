@@ -1,6 +1,5 @@
 <template>
   <div class="space-y-6">
-    {{ data }}
     <ClientOnly>
       <Teleport to="#title"> Konto </Teleport>
       <Teleport to="#description"> Zarządzaj swoim kontem </Teleport>
