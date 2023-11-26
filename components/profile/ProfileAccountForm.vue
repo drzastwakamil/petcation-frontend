@@ -1,9 +1,17 @@
 <template>
-  <div>
+  <div class="space-y-6">
+    {{ data }}
     <ClientOnly>
       <Teleport to="#title"> Konto </Teleport>
       <Teleport to="#description"> Zarządzaj swoim kontem </Teleport>
     </ClientOnly>
+
+    <div>
+      <h3 class="pb-5 text-lg font-medium">Email</h3>
+      <Input :disabled="true" :model-value="email ?? 'email'" type="email" />
+    </div>
+
+    <Separator />
     <form @submit="onChangePasswordFormSubmit">
       <h3 class="text-lg font-medium">Zmiana hasła</h3>
       <div class="space-y-3 pt-5">
@@ -48,10 +56,11 @@
 
 <script setup lang="ts">
 import { Loader2 } from 'lucide-vue-next';
-import { useMutation } from '@tanstack/vue-query';
+import { useMutation, useQuery } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
+import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -107,9 +116,7 @@ const { mutate: executeChangePasswordMutate, isPending: changingPasswordIsLoadin
       'WITH_AUTHORIZATION',
     );
   },
-  onSuccess: ({ data, error }) => {
-    console.log('thats our error', error);
-    console.log('the error stringified', JSON.stringify(error._object));
+  onSuccess: ({ error }) => {
     if (error._object[error?._key]?.message.length) {
       toast({
         title: 'Nie udało się zmienić hasła.',
@@ -132,4 +139,18 @@ const { mutate: executeChangePasswordMutate, isPending: changingPasswordIsLoadin
     });
   },
 });
+
+const { data: resultOfUserQuery } = useQuery({
+  queryKey: ['user'],
+  queryFn: (): Promise<unknown> => {
+    return useGetFromBackend('user', undefined, 'WITH_AUTHORIZATION');
+  },
+});
+
+const email = computed(() => {
+  return resultOfUserQuery?.value?.data?.userDetails?.username;
+});
+// watch(data, () => {
+//   console.log(data);
+// });
 </script>
