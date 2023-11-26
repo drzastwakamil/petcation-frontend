@@ -1,5 +1,6 @@
 <template>
   <div class="font-geist">
+    <Toaster />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -9,6 +10,7 @@
 <script setup lang="ts">
 import { useRouter } from 'nuxt/app';
 import { VueQueryPlugin } from '@tanstack/vue-query';
+import Toaster from '@/components/ui/toast/Toaster.vue';
 
 useNuxtApp().vueApp.use(VueQueryPlugin);
 

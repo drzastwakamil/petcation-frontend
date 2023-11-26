@@ -12,6 +12,6 @@ export const useUserSessionStore = defineStore('userSession', {
     },
   },
   getters: {
-    isLoggedIn: (state) => state.token.length,
+    isLoggedIn: (state) => state.token.length > 0,
   },
 });

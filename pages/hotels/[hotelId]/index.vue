@@ -40,8 +40,7 @@
             class="h-[500px] w-full overflow-hidden rounded-lg"
             frameborder="0"
             referrerpolicy="no-referrer-when-downgrade"
-            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBwWgN60dT3J_yh5-ZuxzHIfzEOX1e0b_Q&q=Domowy+Hotel+dla+zwierząt
-,Szczecin+Poland"
+            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBwWgN60dT3J_yh5-ZuxzHIfzEOX1e0b_Q&q=ul.+Paderewskiego+17,Luboń+Poland"
             style="border: 0"
           />
         </div>

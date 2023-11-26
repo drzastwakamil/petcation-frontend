@@ -50,7 +50,7 @@
         </TabsList>
 
         <TabsContent value="forgotPassword">
-          <div v-if="mailHasBeenTriedToBeSend">
+          <div v-if="resetPasswordMailHasBeenTriedToBeSend">
             <CardTitle class="pt-4">Sprawdź swój email</CardTitle>
             <CardDescription class="pt-2">
               Otrzymasz wiadomość, z kolejnymi krokami aby ustawić nowe hasło.
@@ -88,101 +88,138 @@
         <TabsContent value="login">
           <CardTitle class="pt-4">Logowanie</CardTitle>
           <CardDescription class="pt-2"> Wprowadź dane logowania. </CardDescription>
-          <div class="space-y-3 pt-5">
-            <div class="space-y-1">
-              <Label for="email"> Email </Label>
-              <Input id="email" placeholder="Wprowadź swój email" type="email" />
-            </div>
-            <div class="space-y-1">
-              <Label for="new">Hasło</Label>
-              <Input id="password" placeholder="Wprowadź hasło" type="password" />
-            </div>
-            <div class="flex justify-end">
-              <Button
-                :onclick="
-                  () => {
-                    currentTab = 'forgotPassword';
-                  }
-                "
-                :variant="null"
-              >
-                <label
-                  class="cursor-pointer text-right text-sm font-medium leading-none underline peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          <form @submit="onLoginFormSubmit">
+            <div class="space-y-3 pt-5">
+              <FormField v-slot="{ componentField }" name="email">
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Podaj swój email" type="email" v-bind="componentField" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+
+              <FormField v-slot="{ componentField }" name="password">
+                <FormItem>
+                  <FormLabel>Hasło</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Wprowadź hasło" type="password" v-bind="componentField" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+              <div class="flex justify-end">
+                <Button
+                  :onclick="
+                    () => {
+                      currentTab = 'forgotPassword';
+                    }
+                  "
+                  :variant="null"
                 >
-                  Zapomniałeś hasła?
-                </label>
+                  <label
+                    class="cursor-pointer text-right text-sm font-medium leading-none underline peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Zapomniałeś hasła?
+                  </label>
+                </Button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-4 pt-12">
+              <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
+              <Button class="col-span-3" :disabled="loginIsLoading" type="submit">
+                Zaloguj
+                <Loader2 v-if="loginIsLoading" class="ml-2 h-4 w-4 animate-spin" />
               </Button>
             </div>
-          </div>
-
-          <div class="grid grid-cols-4 gap-4 pt-12">
-            <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
-            <Button
-              class="col-span-3"
-              :disabled="loginIsLoading"
-              :onclick="
-                () => {
-                  executeLogInMutate();
-                }
-              "
-            >
-              Zaloguj
-              <Loader2 v-if="loginIsLoading" class="ml-2 h-4 w-4 animate-spin" />
-            </Button>
-          </div>
+          </form>
         </TabsContent>
         <TabsContent value="register">
           <CardTitle class="pt-4">Rejestracja</CardTitle>
           <CardDescription class="pt-2"> Podaj swoje dane, aby się zarejestrować. </CardDescription>
-          <div class="space-y-3 pt-5">
-            <div class="space-y-1">
-              <Label for="name"> Imię </Label>
-              <Input id="name" placeholder="Podaj swoje imię" />
-            </div>
-            <div class="space-y-1">
-              <Label for="surname"> Nazwisko </Label>
-              <Input id="surname" placeholder="Podaj swoje nazwisko" />
-            </div>
-            <div class="space-y-1">
-              <Label for="email"> Email </Label>
-              <Input id="email" placeholder="Podaj swój email" type="email" />
-            </div>
-            <div class="space-y-1">
-              <Label for="password">Hasło</Label>
-              <Input id="password" placeholder="Podaj hasło" type="password" />
-              <Input id="password-repeat" placeholder="Powtórz hasło" type="password" />
-            </div>
 
-            <div class="flex items-center space-x-2">
-              <Checkbox id="terms" />
-              <label
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                for="terms"
-              >
-                <span>
-                  Akceptuję <NuxtLink class="underline" target="_blank" to="/statue.pdf">Regulamin</NuxtLink>
-                  serwisu oraz
-                  <NuxtLink class="underline" target="_blank" to="/privacy-policy.pdf"> Politykę prywatności </NuxtLink>
-                </span>
-              </label>
-            </div>
-          </div>
+          <form @submit="onRegisterFormSubmit">
+            <div class="space-y-3 pt-5">
+              <FormField v-slot="{ componentField }" name="firstName">
+                <FormItem>
+                  <FormLabel>Imię</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Podaj swoje imię" type="text" v-bind="componentField" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
 
-          <div class="grid grid-cols-4 gap-4 pt-12">
-            <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
-            <Button
-              class="col-span-3"
-              :disabled="registerIsLoading"
-              :onclick="
-                () => {
-                  executeRegisterMutate();
-                }
-              "
-            >
-              Zarejestruj
-              <Loader2 v-if="registerIsLoading" class="ml-2 h-4 w-4 animate-spin" />
-            </Button>
-          </div>
+              <FormField v-slot="{ componentField }" name="lastName">
+                <FormItem>
+                  <FormLabel>Nazwisko</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Podaj swoje nazwisko" type="text" v-bind="componentField" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+
+              <FormField v-slot="{ componentField }" name="email">
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Podaj swój email" type="email" v-bind="componentField" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+
+              <FormField v-slot="{ componentField }" name="password">
+                <FormItem>
+                  <FormLabel>Hasło</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Podaj hasło" type="password" v-bind="componentField" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+
+              <FormField v-slot="{ componentField }" name="repeatPassword">
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Powtórz hasło" type="password" v-bind="componentField" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+
+              <FormField v-slot="{ value, handleChange }" name="termsAndConditions">
+                <FormItem class="flex flex-row items-start gap-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox :checked="value" @update:checked="handleChange" />
+                  </FormControl>
+                  <div class="space-y-1 leading-none">
+                    <FormLabel>
+                      <span>
+                        Akceptuję
+                        <NuxtLink class="underline" target="_blank" to="/statue.pdf">Regulamin</NuxtLink>
+                        serwisu oraz
+                        <NuxtLink class="underline" target="_blank" to="/privacy-policy.pdf">
+                          Politykę prywatności
+                        </NuxtLink>
+                      </span>
+                    </FormLabel>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              </FormField>
+            </div>
+            <div class="grid grid-cols-4 gap-4 pt-12">
+              <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
+              <Button class="col-span-3" :disabled="registerIsLoading" type="submit">
+                Zarejestruj
+                <Loader2 v-if="registerIsLoading" class="ml-2 h-4 w-4 animate-spin" />
+              </Button>
+            </div>
+          </form>
         </TabsContent>
       </Tabs>
     </AlertDialogContent>
@@ -192,6 +229,10 @@
 <script setup lang="ts">
 import { LogIn, Loader2, ArrowLeftIcon } from 'lucide-vue-next';
 import { useMutation } from '@tanstack/vue-query';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import * as z from 'zod';
+import { useToast } from '@/components/ui/toast';
 import { AlertDialogCancel, AlertDialog, AlertDialogContent, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
@@ -199,58 +240,178 @@ import { CardDescription, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+
+const { toast } = useToast();
 
 const isDialogOpen = ref(false);
 const currentTab = ref('login');
 const userSession = useUserSessionStore();
 
+const registerFormSchema = toTypedSchema(
+  z
+    .object({
+      firstName: z.string({
+        required_error: 'Imię jest wymagane',
+        invalid_type_error: 'Imię musi być tekstem',
+      }),
+      lastName: z.string({
+        required_error: 'Nazwisko jest wymagane',
+        invalid_type_error: 'Imię musi być tekstem',
+      }),
+      email: z.coerce.string().email('Wprowadź poprawny format email'),
+      password: z
+        .string({
+          required_error: 'Hasło jest wymagane',
+          invalid_type_error: 'Hasło musi być tekstem',
+        })
+        .min(5, 'Hasło musi posiadać minimum 5 znaków '),
+      repeatPassword: z.string({
+        required_error: 'Hasło jest wymagane',
+        invalid_type_error: 'Hasło musi być tekstem',
+      }),
+      termsAndConditions: z
+        .boolean()
+        .default(false)
+        .refine((value) => value === true, {
+          message: 'Musisz zaakceptować warunki.',
+          path: ['termsAndConditions'],
+        }),
+    })
+    .refine((data) => data.password === data.repeatPassword, {
+      message: 'Hasła nie są identyczne!',
+      path: ['repeatPassword'],
+    }),
+);
+const registerForm = useForm({
+  validationSchema: registerFormSchema,
+});
+
+const onRegisterFormSubmit = registerForm.handleSubmit(() => {
+  executeRegisterMutate();
+});
+
+const loginFormSchema = toTypedSchema(
+  z.object({
+    email: z.coerce.string().email('Wprowadź poprawny format email'),
+    password: z.string({
+      required_error: 'Hasło jest wymagane',
+      invalid_type_error: 'Hasło musi być tekstem',
+    }),
+  }),
+);
+
+const loginForm = useForm({
+  validationSchema: loginFormSchema,
+});
+
+const onLoginFormSubmit = loginForm.handleSubmit(() => {
+  executeLogInMutate();
+});
+
 const { mutate: executeRegisterMutate, isPending: registerIsLoading } = useMutation({
-  mutationFn: () => {
-    return new Promise<string>((resolve) => {
-      setTimeout(() => {
-        resolve('bearer token');
-      }, 3000);
+  mutationFn: (): Promise<unknown> => {
+    return usePostOnBackend('signup', {
+      body: {
+        email: registerForm.values.email,
+        firstName: registerForm.values.firstName,
+        lastName: registerForm.values.lastName,
+        password: registerForm.values.password,
+        matchingPassword: registerForm.values.repeatPassword,
+        addressDto: {
+          phoneNumber: 'none',
+          street: 'none',
+          city: 'none',
+          country: 'none',
+          latitude: 0,
+          longitude: 0,
+        },
+        pets: [],
+      },
     });
   },
-  onSuccess: (data) => {
-    userSession.logIn(data);
+  onSuccess: ({ data, error }) => {
+    console.log('thats the error', error);
+    if (error._object[error?._key]?.message.length) {
+      toast({
+        title: 'Nie udało się zarejestrować.',
+        description: error._object[data.error._key]?.message,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    toast({
+      title: 'Udało się zarejestrować.',
+      description: 'Wprowadź swoje dane aby się zalogować!',
+    });
+
+    currentTab.value = 'login';
+  },
+  onError: (error) => {
+    toast({
+      title: 'Nie udało się zarejestrować.',
+      description: error.message,
+      variant: 'destructive',
+    });
   },
 });
 
 const { mutate: executeLogInMutate, isPending: loginIsLoading } = useMutation({
-  mutationFn: () => {
-    return new Promise<string>((resolve) => {
-      setTimeout(() => {
-        resolve('bearer token');
-      }, 3000);
+  mutationFn: (): Promise<unknown> => {
+    return usePostOnBackend('login', {
+      body: {
+        email: loginForm.values.email,
+        password: loginForm.values.password,
+      },
     });
   },
-  onSuccess: (data) => {
-    userSession.logIn(data);
+  onSuccess: ({ data, error }) => {
+    console.log('thats the data', data);
+    if (error._object[error?._key]?.message.length) {
+      toast({
+        title: 'Nie udało się zalogować.',
+        description: error._object[data.error._key]?.message,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    toast({
+      title: 'Udało się zalogować!.',
+    });
+    userSession.logIn(data.value);
+  },
+  onError: (error) => {
+    toast({
+      title: 'Nie udało się zarejestrować.',
+      description: error.message,
+      variant: 'destructive',
+    });
   },
 });
 
-const mailHasBeenTriedToBeSend = ref(false);
+const resetPasswordMailHasBeenTriedToBeSend = ref(false);
 const {
   mutate: executeAskForResetPasswordEmail,
   isPending: askingForResetPasswordEmailIsLoading,
   reset: resetAskForResetPasswordEmailMutation,
 } = useMutation({
   mutationFn: () => {
-    return new Promise<string>((resolve) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => {
-        resolve('');
+        resolve();
       }, 3000);
     });
   },
   onSuccess: () => {
-    mailHasBeenTriedToBeSend.value = true;
+    resetPasswordMailHasBeenTriedToBeSend.value = true;
   },
 });
 
 const resetAskingForResetPasswordEmailProcess = () => {
   resetAskForResetPasswordEmailMutation();
   currentTab.value = 'login';
-  mailHasBeenTriedToBeSend.value = false;
+  resetPasswordMailHasBeenTriedToBeSend.value = false;
 };
 </script>
