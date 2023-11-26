@@ -2,7 +2,7 @@ export const useUserSessionStore = defineStore('userSession', {
   state: () => ({
     token: useLocalStorage('token', ''),
   }),
-  hydrate(state, initialState) {
+  hydrate(state) {
     state.token = useLocalStorage('token', '');
   },
   actions: {

@@ -40,9 +40,5 @@ const sidebarNavItems: Item[] = [
     title: 'Rezerwacje',
     href: '/settings/reservations',
   },
-  {
-    title: 'Display',
-    href: '/settings/display',
-  },
 ];
 </script>
