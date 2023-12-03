@@ -133,7 +133,6 @@ watch(resultOfUserQuery, () => {
     return;
   }
 
-  console.log('d');
   form.setValues({
     firstName: resultOfUserQuery?.value?.data?.firstName,
     lastName: resultOfUserQuery?.value?.data?.lastName,
