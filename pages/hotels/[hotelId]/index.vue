@@ -18,37 +18,31 @@
           ]"
         />
         <div class="space-y-3">
-          <h1 class="text-2xl">Zwierzakowo - Hotel dla Psów i Kotów</h1>
+          <h1 class="text-2xl">{{ hotel?.name || '' }}</h1>
           <p>
-            Witamy w "Zwierzakowo", wyjątkowym hotelu dla Twoich czworonożnych przyjaciół, gdzie psy i koty mogą cieszyć
-            się luksusem i opieką, gdy Ty jesteś poza domem. Nasz hotel jest zaprojektowany z myślą o zapewnieniu
-            maksymalnego komfortu i bezpieczeństwa dla Twoich pupili. Zakwaterowanie: Nasze pokoje są przestronne,
-            klimatyzowane i dobrze oświetlone, zapewniając idealne warunki zarówno dla energicznych psów, jak i dla
-            spokojnych kotów. Każdy pokój wyposażony jest w wygodne legowiska, świeże miski z wodą oraz zabawki
-            dostosowane do potrzeb naszych czworonożnych gości. Opieka i bezpieczeństwo: Zdrowie i bezpieczeństwo
-            Twojego zwierzaka są dla nas priorytetem. Hotel jest monitorowany 24 godziny na dobę, a doświadczony
-            personel zapewnia stałą opiekę. Regularne spacery dla psów i zabawy dla kotów gwarantują, że Twoje zwierzę
-            będzie aktywne i szczęśliwe. Wyżywienie: Oferujemy zbilansowane posiłki dostosowane do indywidualnych
-            potrzeb dietetycznych każdego zwierzaka. Nasze menu zostało skonsultowane z weterynarzami, aby zapewnić
-            najlepsze odżywianie dla Twojego psa czy kota.
+            {{ hotel.description }}
           </p>
         </div>
         <div class="space-y-3">
           <h1 class="text-2xl">Lokalizacja</h1>
+          <div className="mb-4">
+            <p className="text-gray-700 text-base">{{ hotel.addressDto?.street }}</p>
+            <p className="text-gray-700 text-base">{{ hotel.addressDto?.city }}, {{ hotel.addressDto?.country }}</p>
+          </div>
           <iframe
             allowfullscreen
             class="h-[500px] w-full overflow-hidden rounded-lg"
             frameborder="0"
             referrerpolicy="no-referrer-when-downgrade"
-            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBwWgN60dT3J_yh5-ZuxzHIfzEOX1e0b_Q&q=ul.+Paderewskiego+17,Luboń+Poland"
+            :src="`https://www.google.com/maps/embed/v1/place?key=AIzaSyBwWgN60dT3J_yh5-ZuxzHIfzEOX1e0b_Q&q=${hotel?.addressDto?.latitude},${hotel?.addressDto?.longitude}`"
             style="border: 0"
           />
         </div>
 
-        <div class="space-y-3">
+        <!-- <div class="space-y-3">
           <h1 class="text-2xl">Opinie</h1>
           <ReviewsMasonry />
-        </div>
+        </div> -->
       </div>
       <div class="col-span-2">
         <Card class="flex flex-col overflow-hidden border">
@@ -82,7 +76,27 @@
 
 <script setup lang="ts">
 import { DogIcon, CatIcon } from 'lucide-vue-next';
+import { useRouteParams } from '@vueuse/router';
+import { useQuery } from '@tanstack/vue-query';
 import { Card, CardContent, CardDescription, CardHeader, CardFooter, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+const hotelId = useRouteParams('hotelId');
+
+const {
+  data: resultOfHotelQuery,
+  isPending: hotelQueryIsLoading,
+  refetch,
+} = useQuery({
+  queryKey: [`hotel${hotelId.value}`],
+  queryFn: (): Promise<unknown> => {
+    return useGetFromBackend('hotel', {
+      query: {
+        id: hotelId.value,
+      },
+    });
+  },
+});
+
+const hotel = computed(() => resultOfHotelQuery?.value?.data ?? {});
 </script>

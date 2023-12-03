@@ -10,6 +10,7 @@
     <div class="grid grid-cols-4 gap-5 py-10">
       <HotelCard
         v-for="hotel in hotels"
+        :id="hotel.id.toString()"
         :key="hotel.id"
         :description="hotel.description || ''"
         :location="formatAddress(hotel.addressDto)"
@@ -25,14 +26,12 @@
 </template>
 
 <script setup lang="ts">
-import { addDays, format } from 'date-fns';
+import { addDays } from 'date-fns';
 
 import { useQuery } from '@tanstack/vue-query';
 
 const dogsCount = ref(0);
 const catsCount = ref(0);
-
-const hotels = computed(() => resultOfHotelsQuery?.value?.data ?? []);
 
 interface Address {
   street?: string;
@@ -99,6 +98,7 @@ const {
     });
   },
 });
+const hotels = computed(() => resultOfHotelsQuery?.value?.data ?? []);
 
 const invokeRefetch = useThrottleFn(() => {
   refetch();

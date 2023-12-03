@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink to="/hotels/123">
+  <NuxtLink :to="`/hotels/${id}`">
     <Card class="flex h-full flex-col justify-between overflow-hidden border-2 hover:border-black">
       <div>
         <div class="relative flex h-60 w-full items-center justify-center bg-zinc-100">
@@ -41,6 +41,7 @@ import { StarIcon, MapPinIcon, PawPrintIcon } from 'lucide-vue-next';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 defineProps<{
+  id: string;
   photoUrl: string;
   title: string;
   location: string;
