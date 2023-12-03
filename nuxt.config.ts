@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@pinia/nuxt',
   ],
+  ssr: false,
   devtools: {
     enabled: true,
     timeline: {
