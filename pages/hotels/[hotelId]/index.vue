@@ -49,14 +49,28 @@
           <CardHeader>
             <CardTitle> Cennik </CardTitle>
             <CardDescription class="flex flex-col gap-2 pt-3">
-              <div class="flex"><DogIcon class="mr-1 h-5 w-5" /> Pies - 110zł noc</div>
-              <div class="flex"><CatIcon class="mr-1 h-5 w-5" /> Kot - 50zł noc</div>
+              <div class="flex">
+                <template v-if="dogsPrice">
+                  <DogIconclass class="mr-1 h-5 w-5" /> Pies - {{ dogsPrice.price }} zł noc
+                </template>
+              </div>
+
+              <div class="flex">
+                <template v-if="catsPrice">
+                  <CatIcon class="mr-1 h-5 w-5" /> Kot - {{ catsPrice.price }} zł noc
+                </template>
+              </div>
             </CardDescription>
           </CardHeader>
           <CardContent class="space-y-3">
-            <DatePicker class="w-full" />
+            <DatePicker v-model="dateRange" class="w-full" />
             <div>
-              <AnimalsPicker />
+              <AnimalsPicker
+                v-model:catCount="catsCount"
+                v-model:dogCount="dogsCount"
+                :with-cats="withCats"
+                :with-dogs="withDogs"
+              />
             </div>
             <Separator />
           </CardContent>
@@ -64,7 +78,7 @@
           <CardFooter class="space-y-5">
             <div class="flex flex-row justify-between">
               <div class="font-semibold">Razem</div>
-              <div>600zł</div>
+              <div>{{ totalPrice }}zł</div>
             </div>
             <Button class="w-full" size="lg"> Kontynnuuj</Button>
           </CardFooter>
@@ -76,18 +90,17 @@
 
 <script setup lang="ts">
 import { DogIcon, CatIcon } from 'lucide-vue-next';
-import { useRouteParams } from '@vueuse/router';
+import { useRouteParams, useRouteQuery } from '@vueuse/router';
 import { useQuery } from '@tanstack/vue-query';
 import { Card, CardContent, CardDescription, CardHeader, CardFooter, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+
 const hotelId = useRouteParams('hotelId');
 
-const {
-  data: resultOfHotelQuery,
-  isPending: hotelQueryIsLoading,
-  refetch,
-} = useQuery({
+// useRouteQuery('dateStart').value ||
+// useRouteQuery('dateEnd').value
+const { data: resultOfHotelQuery, isPending: hotelQueryIsLoading } = useQuery({
   queryKey: [`hotel${hotelId.value}`],
   queryFn: (): Promise<unknown> => {
     return useGetFromBackend('hotel', {
@@ -97,6 +110,35 @@ const {
     });
   },
 });
-
 const hotel = computed(() => resultOfHotelQuery?.value?.data ?? {});
+
+const dogsPrice = computed(() => {
+  return (hotel?.value?.allAvailableRoomsByPetType || []).find((val) => {
+    return val?.petType === 'DOG';
+  });
+});
+
+const catsPrice = computed(() => {
+  return (hotel?.value?.allAvailableRoomsByPetType || []).find((val) => {
+    return val?.petType === 'CAT';
+  });
+});
+
+const withDogs = computed(() => {
+  return !!dogsPrice.value;
+});
+
+const withCats = computed(() => {
+  return !!catsPrice.value;
+});
+const dogsCount = ref(useRouteQuery('dogsCount').value);
+const catsCount = ref(useRouteQuery('catsCount').value);
+const dateRange = ref({
+  start: new Date(),
+  end: new Date(),
+});
+
+const totalPrice = computed(() => {
+  return dogsCount?.value * (dogsPrice?.value?.price ?? 0) + catsCount?.value * (catsPrice?.value?.price ?? 0);
+});
 </script>

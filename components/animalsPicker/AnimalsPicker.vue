@@ -9,14 +9,14 @@
           <h4 class="font-medium leading-none">Zwierzęta</h4>
         </div>
         <div class="grid gap-2">
-          <div class="grid grid-cols-3 items-center gap-4">
+          <div v-if="withDogs" class="grid grid-cols-3 items-center gap-4">
             <div class="flex">
               <Bone class="mr-2 h-4 w-4" />
               <Label for="dogs">Psy</Label>
             </div>
             <Input id="dogs" v-model="localDogCount" class="col-span-2 h-8" type="number" @input="validateDogCount" />
           </div>
-          <div class="grid grid-cols-3 items-center gap-4">
+          <div v-if="withCats" class="grid grid-cols-3 items-center gap-4">
             <div class="flex">
               <Cat class="mr-2 h-4 w-4" />
               <Label for="cats">Koty</Label>
@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { z } from 'zod';
+import { boolean, z } from 'zod';
 import { Cat, Bone } from 'lucide-vue-next';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
@@ -38,8 +38,16 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 
 const props = defineProps({
-  dogCount: Number,
-  catCount: Number,
+  dogCount: {
+    type: Number,
+    required: false, // This makes the property optional
+  },
+  catCount: {
+    type: Number,
+    required: false, // This makes the property optional
+  },
+  withDogs: { type: boolean, default: true },
+  withCats: { type: boolean, default: true },
 });
 
 const emit = defineEmits(['update:dogCount', 'update:catCount']);

@@ -10,9 +10,17 @@
     <div class="grid grid-cols-4 gap-5 py-10">
       <HotelCard
         v-for="hotel in hotels"
-        :id="hotel.id.toString()"
         :key="hotel.id"
         :description="hotel.description || ''"
+        :link="{
+          path: `/hotels/${hotel.id}`,
+          query: {
+            dateStart,
+            dateEnd,
+            dogsCount,
+            catsCount,
+          },
+        }"
         :location="formatAddress(hotel.addressDto)"
         :photo-url="hotel.images[0]?.url"
         :price-per-night="150"
@@ -27,7 +35,6 @@
 
 <script setup lang="ts">
 import { addDays } from 'date-fns';
-
 import { useQuery } from '@tanstack/vue-query';
 
 const dogsCount = ref(0);
@@ -58,16 +65,16 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 
+const dateStart = computed(() => formatDate(dateRange.value.start));
+const dateEnd = computed(() => formatDate(dateRange.value.end));
+
 const queryBody = computed(() => {
   const dogs = dogsCount.value;
   const cats = catsCount.value;
 
-  const dateStart = formatDate(dateRange.value.start);
-  const dateEnd = formatDate(dateRange.value.end);
-
   return {
-    from: dateStart,
-    to: dateEnd,
+    from: dateStart.value,
+    to: dateEnd.value,
     maxDistance: '50',
     lat: '0',
     lon: '0',
