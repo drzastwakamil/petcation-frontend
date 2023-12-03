@@ -51,7 +51,7 @@
             <CardDescription class="flex flex-col gap-2 pt-3">
               <div class="flex">
                 <template v-if="dogsPrice">
-                  <DogIconclass class="mr-1 h-5 w-5" /> Pies - {{ dogsPrice.price }} zł noc
+                  <DogIcon class="mr-1 h-5 w-5" /> Pies - {{ dogsPrice.price }} zł noc
                 </template>
               </div>
 
@@ -80,7 +80,49 @@
               <div class="font-semibold">Razem</div>
               <div>{{ totalPrice }}zł</div>
             </div>
-            <Button class="w-full" size="lg"> Kontynnuuj</Button>
+            <Button class="w-full" :disabled="!isButtonEnabled" size="lg"> Kontynnuuj</Button>
+
+            <AlertDialog
+              :open="isDialogOpen"
+              @update:open="
+                (open) => {
+                  isDialogOpen = open;
+                }
+              "
+            >
+              <div v-for="(pet, index) in pets" :key="index" class="flex justify-between rounded border p-5">
+                <div class="flex items-center gap-2">
+                  <BoneIcon v-if="pet.petType === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
+                  <CatIcon v-if="pet.petType === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
+
+                  {{ pet.name }}
+                </div>
+                <AlertDialogTrigger as-child>
+                  <Button size="icon" variant="ghost">
+                    <Trash2 />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent
+                  :on-outside-dialog-click="
+                    () => {
+                      if (isDialogOpen) {
+                        isDialogOpen = false;
+                      }
+                    }
+                  "
+                >
+                  <div>
+                    Czy jesteś pewien że chcesz usunąć
+                    <span class="font-bold">{{ pet.name }}</span>
+                    ze swojej listy zwierząt?
+                    <div class="grid grid-cols-4 gap-4 pt-12">
+                      <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
+                      <Button class="w-full" :disabled="!isButtonEnabled" size="lg"> Kontynnuuj</Button>
+                    </div>
+                  </div>
+                </AlertDialogContent>
+              </div>
+            </AlertDialog>
           </CardFooter>
         </Card>
       </div>
@@ -97,6 +139,7 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 
 const hotelId = useRouteParams('hotelId');
+const isDialogOpen = ref(false);
 
 // useRouteQuery('dateStart').value ||
 // useRouteQuery('dateEnd').value
@@ -139,6 +182,20 @@ const dateRange = ref({
 });
 
 const totalPrice = computed(() => {
-  return dogsCount?.value * (dogsPrice?.value?.price ?? 0) + catsCount?.value * (catsPrice?.value?.price ?? 0);
+  return (
+    (dogsCount?.value ?? 0) * (dogsPrice?.value?.price ?? 0) + (catsCount?.value ?? 0) * (catsPrice?.value?.price ?? 0)
+  );
+});
+
+const isButtonEnabled = computed(() => {
+  if (withDogs.value && withCats.value) {
+    return dogsCount.value > 0 || catsCount.value > 0;
+  }
+
+  if (withDogs.value) {
+    return dogsCount.value > 0;
+  }
+
+  return catsCount.value > 0;
 });
 </script>
