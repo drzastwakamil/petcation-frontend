@@ -2,7 +2,10 @@
   <div class="container mx-auto">
     <div class="h-header" />
     <div class="flex justify-center gap-2 pt-10">
-      <Combobox /> <DatePicker /> <AnimalsPicker :cat-count="catsCount" :dog-count="dogsCount" />
+      <!-- <Combobox /> -->
+
+      <DatePicker v-model="dateRange" />
+      <AnimalsPicker v-model:catCount="catsCount" v-model:dogCount="dogsCount" />
     </div>
     <div class="grid grid-cols-4 gap-5 py-10">
       <HotelCard
@@ -22,30 +25,9 @@
 </template>
 
 <script setup lang="ts">
-import { Loader2 } from 'lucide-vue-next';
-import { useMutation, useQuery } from '@tanstack/vue-query';
-import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/zod';
-import * as z from 'zod';
-import { useToast } from '@/components/ui/toast';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { addDays, format } from 'date-fns';
 
-const { data: resultOfHotelsQuery, isPending: hotelsQueryIsLoading } = useQuery({
-  queryKey: ['hotels'],
-  queryFn: (): Promise<unknown> => {
-    return usePostOnBackend('hotels', {
-      body: {
-        from: '2023-06-12',
-        to: '2023-06-12',
-        maxDistance: '123',
-        lat: '0',
-        lon: '0',
-      },
-    });
-  },
-});
+import { useQuery } from '@tanstack/vue-query';
 
 const dogsCount = ref(0);
 const catsCount = ref(0);
@@ -65,4 +47,68 @@ function formatAddress(address: Address): string {
 
   return addressParts.join(', ');
 }
+// Initial date rang/ Reactive state for the date range
+const dateRange = ref({
+  start: new Date(),
+  end: addDays(new Date(), 20),
+});
+function formatDate(date) {
+  const year = date.getUTCFullYear();
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+  const day = date.getUTCDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+const queryBody = computed(() => {
+  const dogs = dogsCount.value;
+  const cats = catsCount.value;
+
+  const dateStart = formatDate(dateRange.value.start);
+  const dateEnd = formatDate(dateRange.value.end);
+
+  return {
+    from: dateStart,
+    to: dateEnd,
+    maxDistance: '50',
+    lat: '0',
+    lon: '0',
+    petTypeQtyDtoList: [
+      {
+        petType: 'DOG',
+        qty: dogs,
+      },
+
+      {
+        petType: 'CAT',
+        qty: cats,
+      },
+    ],
+  };
+});
+
+const {
+  data: resultOfHotelsQuery,
+  isPending: hotelsQueryIsLoading,
+  refetch,
+} = useQuery({
+  queryKey: ['hotels'],
+  queryFn: (): Promise<unknown> => {
+    const body = queryBody.value;
+    return usePostOnBackend('hotels', {
+      body,
+    });
+  },
+});
+
+const invokeRefetch = useThrottleFn(() => {
+  refetch();
+}, 250);
+
+watch(
+  queryBody,
+  () => {
+    invokeRefetch();
+  },
+  { deep: true },
+);
 </script>

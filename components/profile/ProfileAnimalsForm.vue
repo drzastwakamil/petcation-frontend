@@ -16,7 +16,6 @@
       >
         <div v-for="(pet, index) in pets" :key="index" class="flex justify-between rounded border p-5">
           <div class="flex items-center gap-2">
-            {{ console.log('index and pet', pet) }}
             <BoneIcon v-if="pet.petType === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
             <CatIcon v-if="pet.petType === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
 

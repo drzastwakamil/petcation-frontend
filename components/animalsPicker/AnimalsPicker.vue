@@ -14,14 +14,14 @@
               <Bone class="mr-2 h-4 w-4" />
               <Label for="dogs">Psy</Label>
             </div>
-            <Input id="dogs" v-model="dogCountRef" class="col-span-2 h-8" type="number" @input="validateDogCount" />
+            <Input id="dogs" v-model="localDogCount" class="col-span-2 h-8" type="number" @input="validateDogCount" />
           </div>
           <div class="grid grid-cols-3 items-center gap-4">
             <div class="flex">
               <Cat class="mr-2 h-4 w-4" />
               <Label for="cats">Koty</Label>
             </div>
-            <Input id="cats" v-model="catCountRef" class="col-span-2 h-8" type="number" @input="validateCatCount" />
+            <Input id="cats" v-model="localCatCount" class="col-span-2 h-8" type="number" @input="validateCatCount" />
           </div>
         </div>
       </div>
@@ -38,18 +38,37 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 
 const props = defineProps({
-  dogCount: {
-    type: Number,
-    required: true,
-  },
-  catCount: {
-    type: Number,
-    required: true,
-  },
+  dogCount: Number,
+  catCount: Number,
 });
 
-const dogCountRef = ref(props.dogCount);
-const catCountRef = ref(props.catCount);
+const emit = defineEmits(['update:dogCount', 'update:catCount']);
+
+const localDogCount = ref(props.dogCount);
+const localCatCount = ref(props.catCount);
+
+watch(localDogCount, (newValue) => {
+  emit('update:dogCount', newValue);
+});
+
+watch(localCatCount, (newValue) => {
+  emit('update:catCount', newValue);
+});
+
+// Watch for prop changes to update local refs
+watch(
+  () => props.dogCount,
+  (newVal) => {
+    localDogCount.value = newVal;
+  },
+);
+
+watch(
+  () => props.catCount,
+  (newVal) => {
+    localCatCount.value = newVal;
+  },
+);
 
 const rangeSchema = z.number().min(0).max(5);
 
@@ -58,16 +77,16 @@ const clampValue = (value: number): number => {
 };
 
 const validateDogCount = () => {
-  const result = rangeSchema.safeParse(dogCountRef.value);
+  const result = rangeSchema.safeParse(localDogCount.value);
   if (!result.success) {
-    dogCountRef.value = clampValue(dogCountRef.value);
+    localDogCount.value = clampValue(localDogCount.value);
   }
 };
 
 const validateCatCount = () => {
-  const result = rangeSchema.safeParse(catCountRef.value);
+  const result = rangeSchema.safeParse(localCatCount.value);
   if (!result.success) {
-    catCountRef.value = clampValue(catCountRef.value);
+    localCatCount.value = clampValue(localCatCount.value);
   }
 };
 </script>

@@ -18,12 +18,12 @@
             <div class="flex items-center">
               <MapPinIcon class="mr-2 h-3.5 w-3.5" /> <span>{{ location }}</span>
             </div>
-            <span> ~ {{ range }} km</span></CardDescription
-          >
+            <!-- <span> ~ {{ range }} km</span> -->
+          </CardDescription>
         </CardHeader>
         <CardContent> {{ description }} </CardContent>
       </div>
-      <CardFooter class="text-sm">
+      <!-- <CardFooter class="text-sm">
         <span>
           <span>
             <span class="font-medium"> {{ pricePerNight }}zł</span> noc
@@ -31,7 +31,7 @@
           -
           <span class="font-thin"> {{ priceTotal }}zł całość </span>
         </span>
-      </CardFooter>
+      </CardFooter> -->
     </Card>
   </NuxtLink>
 </template>
