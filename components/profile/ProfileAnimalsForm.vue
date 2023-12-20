@@ -5,61 +5,6 @@
       <Teleport to="#description"> Zarządzaj swoimi zwierzętami </Teleport>
     </ClientOnly>
     <div class="space-y-6">
-      <h3 class="pb-5 text-lg font-medium">Twoje zwierzęta</h3>
-      <AlertDialog
-        :open="isDialogOpen"
-        @update:open="
-          (open) => {
-            isDialogOpen = open;
-          }
-        "
-      >
-        <div v-for="(pet, index) in pets" :key="index" class="flex justify-between rounded border p-5">
-          <div class="flex items-center gap-2">
-            <BoneIcon v-if="pet.petType === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
-            <CatIcon v-if="pet.petType === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
-
-            {{ pet.name }}
-          </div>
-          <AlertDialogTrigger as-child>
-            <Button size="icon" variant="ghost">
-              <Trash2 />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent
-            :on-outside-dialog-click="
-              () => {
-                if (isDialogOpen) {
-                  isDialogOpen = false;
-                }
-              }
-            "
-          >
-            <div>
-              Czy jesteś pewien że chcesz usunąć
-              <span class="font-bold">{{ pet.name }}</span>
-              ze swojej listy zwierząt?
-              <div class="grid grid-cols-4 gap-4 pt-12">
-                <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
-                <Button
-                  class="col-span-3"
-                  :disabled="deleteAnimalIsLoading"
-                  :onclick="
-                    () =>
-                      executeDeleteAnimal(() => ({}), {
-                        id: '123',
-                      })
-                  "
-                >
-                  Usuń
-                  <Loader2 v-if="deleteAnimalIsLoading" class="ml-2 h-4 w-4 animate-spin" />
-                </Button>
-              </div>
-            </div>
-          </AlertDialogContent>
-        </div>
-      </AlertDialog>
-      <Separator />
       <div>
         <h3 class="pb-5 text-lg font-medium">Dodaj nowe zwierzęta</h3>
         <div class="flex space-x-3">
@@ -68,9 +13,9 @@
               <PopoverTrigger as-child>
                 <Button :aria-expanded="open" class="w-[200px] justify-between" role="combobox" variant="outline">
                   <div class="flex">
-                    <BoneIcon v-if="value?.value === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
-                    <CatIcon v-if="value?.value === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
-                    {{ value ? value.label : 'Zwierzę' }}
+                    <BoneIcon v-if="petType?.value === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
+                    <CatIcon v-if="petType?.value === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
+                    {{ value ? petType.label : 'Zwierzę' }}
                   </div>
                   <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -84,7 +29,7 @@
                       :value="animal"
                       @select="
                         (ev) => {
-                          value = ev.detail.value as typeof animal;
+                          petType = ev.detail.value as typeof animal;
                           open = false;
                         }
                       "
@@ -107,17 +52,53 @@
             </FormField>
             <Button class="col-span-3" :disabled="adddingAnimalIsLoading" type="submit">
               Dodaj
-              <Loader2 v-if="adddingAnimalIsLoading" class="ml-2 h-4 w-4 animate-spin" />
+              <Loader2 v-if="true" class="ml-2 h-4 w-4 animate-spin" />
             </Button>
           </form>
         </div>
       </div>
+      <Separator />
+      <h3 class="pb-5 text-lg font-medium">Twoje zwierzęta</h3>
+
+      <AlertDialog v-for="(pet, index) in pets" :key="pet.id">
+        <div class="flex justify-between border p-5" rounded>
+          <div class="flex items-center gap-2">
+            <div class="text-sm text-gray-500">#{{ pet.id }}</div>
+            {{ pet.name }}
+            <BoneIcon v-if="pet.petType === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
+            <CatIcon v-if="pet.petType === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
+          </div>
+          <AlertDialogTrigger as-child>
+            <Button size="icon" variant="ghost">
+              <Trash2 />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <div>
+              Czy jesteś pewien że chcesz usunąć
+              <span class="font-bold">{{ pet.name }}</span>
+              ze swojej listy zwierząt?
+              <div class="grid grid-cols-4 gap-4 pt-12">
+                <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
+                <Button
+                  class="col-span-3"
+                  :disabled="deleteAnimalIsLoading"
+                  :onclick="() => executeDeleteAnimal({ id: pet.id })"
+                >
+                  Usuń
+                  <Loader2 v-if="deleteAnimalIsLoading" class="ml-2 h-4 w-4 animate-spin" />
+                </Button>
+              </div>
+            </div>
+          </AlertDialogContent>
+        </div>
+      </AlertDialog>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ChevronsUpDown, BoneIcon, CatIcon, Trash2 } from 'lucide-vue-next';
+import { ChevronsUpDown, BoneIcon, CatIcon, Trash2, Loader2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { useMutation, useQuery } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
@@ -130,7 +111,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/components/ui/toast';
 import { Input } from '@/components/ui/input';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 
 const animalsPool = [
   { value: 'DOG', label: 'Pies' },
@@ -138,13 +119,17 @@ const animalsPool = [
 ];
 
 const open = ref(false);
-const value = ref<(typeof animalsPool)[number]>(animalsPool[0]);
+const petType = ref<(typeof animalsPool)[number]>(animalsPool[0]);
 
 const { toast } = useToast();
 
 const pets = ref([]);
 
-const { data: resultOfUserPetsQuery, isPending: fetchUserPetsIsLoading } = useQuery({
+const {
+  data: resultOfUserPetsQuery,
+  isPending: fetchUserPetsIsLoading,
+  refetch,
+} = useQuery({
   queryKey: ['pets'],
   queryFn: (): Promise<unknown> => {
     return useGetFromBackend('pets', undefined, 'WITH_AUTHORIZATION');
@@ -163,8 +148,6 @@ const addAnimalForm = useForm({
   validationSchema: addAnmialFormSchema,
 });
 
-const isDialogOpen = ref(false);
-
 watch(resultOfUserPetsQuery, () => {
   if (fetchUserPetsIsLoading.value) {
     return;
@@ -179,9 +162,17 @@ const onAddAnimalFormSubmit = addAnimalForm.handleSubmit((values) => {
 
 const { mutate: executeAddAnimal, isPending: adddingAnimalIsLoading } = useMutation({
   mutationFn: (): Promise<unknown> => {
-    return usePostOnBackend('addModifyPet', {
-      body: {},
-    });
+    const { petName } = addAnimalForm.values;
+    return usePostOnBackend(
+      'addModifyPet',
+      {
+        body: {
+          name: petName,
+          petType: petType.value.value,
+        },
+      },
+      'WITH_AUTHORIZATION',
+    );
   },
   onSuccess: ({ error }) => {
     if (error._object[error?._key]?.message.length) {
@@ -197,6 +188,7 @@ const { mutate: executeAddAnimal, isPending: adddingAnimalIsLoading } = useMutat
       title: 'Udało się dodać zwierzę.',
       description: `Zwierzę ${addAnimalForm.values.petName} został dodany do twoich zwierząt!`,
     });
+    refetch();
   },
   onError: (error) => {
     toast({
@@ -208,8 +200,16 @@ const { mutate: executeAddAnimal, isPending: adddingAnimalIsLoading } = useMutat
 });
 
 const { mutate: executeDeleteAnimal, isPending: deleteAnimalIsLoading } = useMutation({
-  mutationFn: (): Promise<unknown> => {
-    return useDeleteFromBackend('deletePet', {}, 'WITH_AUTHORIZATION');
+  mutationFn: (variables): Promise<unknown> => {
+    return useDeleteFromBackend(
+      'deletePet',
+      {
+        params: {
+          id: variables.id,
+        },
+      },
+      'WITH_AUTHORIZATION',
+    );
   },
   onSuccess: ({ error }) => {
     if (error._object[error?._key]?.message.length) {
@@ -220,6 +220,8 @@ const { mutate: executeDeleteAnimal, isPending: deleteAnimalIsLoading } = useMut
       });
       return;
     }
+
+    refetch();
 
     toast({
       title: 'Udało się usunąć zwierzę.',
