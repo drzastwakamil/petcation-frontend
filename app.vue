@@ -15,7 +15,6 @@ import { VueQueryPlugin } from '@tanstack/vue-query';
 import Toaster from '@/components/ui/toast/Toaster.vue';
 
 useNuxtApp().vueApp.use(VueQueryPlugin);
-
 const router = useRouter();
 const userSession = useUserSessionStore();
 const browsingStore = useBrowsingStore();
@@ -24,7 +23,6 @@ router.afterEach((to, from, failure) => {
   if (failure) {
     return;
   }
-
   if (!browsingStore.firstVisitHappened) {
     browsingStore.visitedNewPage(from);
     return;

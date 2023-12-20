@@ -50,9 +50,9 @@
                 <FormMessage />
               </FormItem>
             </FormField>
-            <Button class="col-span-3" :disabled="adddingAnimalIsLoading" type="submit">
+            <Button class="col-span-3" :disabled="addingAnimalIsLoading" type="submit">
               Dodaj
-              <Loader2 v-if="true" class="ml-2 h-4 w-4 animate-spin" />
+              <Loader2 v-if="addingAnimalIsLoading" class="ml-2 h-4 w-4 animate-spin" />
             </Button>
           </form>
         </div>
@@ -160,7 +160,7 @@ const onAddAnimalFormSubmit = addAnimalForm.handleSubmit((values) => {
   executeAddAnimal();
 });
 
-const { mutate: executeAddAnimal, isPending: adddingAnimalIsLoading } = useMutation({
+const { mutate: executeAddAnimal, isPending: addingAnimalIsLoading } = useMutation({
   mutationFn: (): Promise<unknown> => {
     const { petName } = addAnimalForm.values;
     return usePostOnBackend(
