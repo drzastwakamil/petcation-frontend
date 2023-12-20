@@ -26,15 +26,7 @@
             </h5>
           </NuxtLink>
 
-          <NuxtLink :to="{ path: '/joinUs', hash: '#security' }">
-            <h5
-              :class="{
-                'text-[#C28686] underline': currentHash === '#security',
-              }"
-            >
-              Dołącz do nas
-            </h5>
-          </NuxtLink>
+          <NuxtLink active-class="text-[#C28686] underline" :to="{ path: '/joinUs' }"> Dołącz do nas </NuxtLink>
 
           <SessionHandler />
         </div>

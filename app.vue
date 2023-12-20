@@ -23,12 +23,7 @@ router.afterEach((to, from, failure) => {
   if (failure) {
     return;
   }
-  if (!browsingStore.firstVisitHappened) {
-    browsingStore.visitedNewPage(from);
-    return;
-  }
-
-  browsingStore.visitedNewPage(to);
+  browsingStore.visitedNewPage(from);
 });
 
 userSession.$subscribe(() => {

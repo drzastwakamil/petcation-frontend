@@ -84,7 +84,6 @@ const sendingJoinRequestFormSchema = toTypedSchema(
 const form = useForm({
   validationSchema: sendingJoinRequestFormSchema,
 });
-
 const onSendJoinRequestSubmit = form.handleSubmit(() => {
   executeChangePasswordMutate(form.values.message);
 });
