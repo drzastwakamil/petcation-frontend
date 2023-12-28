@@ -108,9 +108,9 @@ const { mutate: executeChangePasswordMutate, isPending: sendingJoinRequestIsLoad
 
     toast({
       title: 'Udało się wysłać formularz!.',
-      description: 'Skontaktujemy się z tobą jak !',
+      description: 'Skontaktujemy się z tobą jak najszybciej!',
     });
-
+    
     form.resetForm();
   },
   onError: (error) => {
