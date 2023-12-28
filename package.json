@@ -45,5 +45,8 @@
     "v-calendar": "^3.1.2",
     "vee-validate": "^4.11.8",
     "zod": "^3.22.4"
-  }
+  },
+  "resolutions": {
+    "string-width": "4.2.3"
+ }
 }
