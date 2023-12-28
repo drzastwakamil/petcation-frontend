@@ -7,15 +7,12 @@ import { ipxFSStorage, ipxHttpStorage, createIPX, createIPXH3Handler } from 'ipx
 
 const HASH_RE = /#/g;
 const AMPERSAND_RE = /&/g;
-const SLASH_RE = /\//g;
 const EQUAL_RE = /=/g;
-const IM_RE = /\?/g;
 const PLUS_RE = /\+/g;
 const ENC_CARET_RE = /%5e/gi;
 const ENC_BACKTICK_RE = /%60/gi;
 const ENC_PIPE_RE = /%7c/gi;
 const ENC_SPACE_RE = /%20/gi;
-const ENC_ENC_SLASH_RE = /%252f/gi;
 function encode(text) {
   return encodeURI("" + text).replace(ENC_PIPE_RE, "|");
 }
@@ -24,12 +21,6 @@ function encodeQueryValue(input) {
 }
 function encodeQueryKey(text) {
   return encodeQueryValue(text).replace(EQUAL_RE, "%3D");
-}
-function encodePath(text) {
-  return encode(text).replace(HASH_RE, "%23").replace(IM_RE, "%3F").replace(ENC_ENC_SLASH_RE, "%2F").replace(AMPERSAND_RE, "%26").replace(PLUS_RE, "%2B");
-}
-function encodeParam(text) {
-  return encodePath(text).replace(SLASH_RE, "%2F");
 }
 function decode(text = "") {
   try {
@@ -97,42 +88,49 @@ function hasProtocol(inputString, opts = {}) {
   }
   return PROTOCOL_REGEX.test(inputString) || (opts.acceptRelative ? PROTOCOL_RELATIVE_REGEX.test(inputString) : false);
 }
-const PROTOCOL_SCRIPT_RE = /^[\s\0]*(blob|data|javascript|vbscript):$/i;
-function isScriptProtocol(protocol) {
-  return !!protocol && PROTOCOL_SCRIPT_RE.test(protocol);
-}
-const TRAILING_SLASH_RE = /\/$|\/\?/;
-function hasTrailingSlash(input = "", queryParameters = false) {
-  if (!queryParameters) {
+const TRAILING_SLASH_RE = /\/$|\/\?|\/#/;
+function hasTrailingSlash(input = "", respectQueryAndFragment) {
+  if (!respectQueryAndFragment) {
     return input.endsWith("/");
   }
   return TRAILING_SLASH_RE.test(input);
 }
-function withoutTrailingSlash(input = "", queryParameters = false) {
-  if (!queryParameters) {
+function withoutTrailingSlash(input = "", respectQueryAndFragment) {
+  if (!respectQueryAndFragment) {
     return (hasTrailingSlash(input) ? input.slice(0, -1) : input) || "/";
   }
   if (!hasTrailingSlash(input, true)) {
     return input || "/";
   }
-  const [s0, ...s] = input.split("?");
-  return (s0.slice(0, -1) || "/") + (s.length > 0 ? `?${s.join("?")}` : "");
+  let path = input;
+  let fragment = "";
+  const fragmentIndex = input.indexOf("#");
+  if (fragmentIndex >= 0) {
+    path = input.slice(0, fragmentIndex);
+    fragment = input.slice(fragmentIndex);
+  }
+  const [s0, ...s] = path.split("?");
+  return (s0.slice(0, -1) || "/") + (s.length > 0 ? `?${s.join("?")}` : "") + fragment;
 }
-function withTrailingSlash(input = "", queryParameters = false) {
-  if (!queryParameters) {
+function withTrailingSlash(input = "", respectQueryAndFragment) {
+  if (!respectQueryAndFragment) {
     return input.endsWith("/") ? input : input + "/";
   }
   if (hasTrailingSlash(input, true)) {
     return input || "/";
   }
-  const [s0, ...s] = input.split("?");
-  return s0 + "/" + (s.length > 0 ? `?${s.join("?")}` : "");
-}
-function hasLeadingSlash(input = "") {
-  return input.startsWith("/");
-}
-function withLeadingSlash(input = "") {
-  return hasLeadingSlash(input) ? input : "/" + input;
+  let path = input;
+  let fragment = "";
+  const fragmentIndex = input.indexOf("#");
+  if (fragmentIndex >= 0) {
+    path = input.slice(0, fragmentIndex);
+    fragment = input.slice(fragmentIndex);
+    if (!path) {
+      return fragment;
+    }
+  }
+  const [s0, ...s] = path.split("?");
+  return s0 + "/" + (s.length > 0 ? `?${s.join("?")}` : "") + fragment;
 }
 function withBase(input, base) {
   if (isEmptyURL(base) || hasProtocol(input)) {
@@ -186,12 +184,12 @@ function joinURL(base, ...input) {
 
 function parseURL(input = "", defaultProto) {
   const _specialProtoMatch = input.match(
-    /^[\s\0]*(blob:|data:|javascript:|vbscript:)(.*)/
+    /^[\s\0]*(blob:|data:|javascript:|vbscript:)(.*)/i
   );
   if (_specialProtoMatch) {
     const [, _proto, _pathname = ""] = _specialProtoMatch;
     return {
-      protocol: _proto,
+      protocol: _proto.toLowerCase(),
       pathname: _pathname,
       href: _proto + _pathname,
       auth: "",
@@ -209,7 +207,7 @@ function parseURL(input = "", defaultProto) {
     path.replace(/\/(?=[A-Za-z]:)/, "")
   );
   return {
-    protocol,
+    protocol: protocol.toLowerCase(),
     auth: auth ? auth.slice(0, Math.max(0, auth.length - 1)) : "",
     host,
     pathname,
@@ -1006,6 +1004,7 @@ class Socket extends Duplex {
   remoteAddress = "";
   remoteFamily = "";
   remotePort = 0;
+  autoSelectFamilyAttemptedAddresses = [];
   readyState = "readOnly";
   constructor(_options) {
     super();
@@ -1045,6 +1044,9 @@ class Socket extends Duplex {
   }
   ref() {
     return this;
+  }
+  destroySoon() {
+    this.destroy();
   }
   resetAndDestroy() {
     const err = new Error("ERR_SOCKET_CLOSED");
@@ -1381,6 +1383,7 @@ function getRequestHeader(event, name) {
 }
 
 const RawBodySymbol = Symbol.for("h3RawBody");
+const ParsedBodySymbol = Symbol.for("h3ParsedBody");
 const PayloadMethods$1 = ["PATCH", "POST", "PUT", "DELETE"];
 function readRawBody(event, encoding = "utf8") {
   assertMethod(event, PayloadMethods$1);
@@ -1442,6 +1445,26 @@ function readRawBody(event, encoding = "utf8") {
   const result = encoding ? promise.then((buff) => buff.toString(encoding)) : promise;
   return result;
 }
+async function readBody(event, options = {}) {
+  const request = event.node.req;
+  if (hasProp(request, ParsedBodySymbol)) {
+    return request[ParsedBodySymbol];
+  }
+  const contentType = request.headers["content-type"] || "";
+  const body = await readRawBody(event);
+  let parsed;
+  if (contentType === "application/json") {
+    parsed = _parseJSON(body, options.strict ?? true);
+  } else if (contentType.startsWith("application/x-www-form-urlencoded")) {
+    parsed = _parseURLEncodedBody(body);
+  } else if (contentType.startsWith("text/")) {
+    parsed = body;
+  } else {
+    parsed = _parseJSON(body, options.strict ?? false);
+  }
+  request[ParsedBodySymbol] = parsed;
+  return parsed;
+}
 function getRequestWebStream(event) {
   if (!PayloadMethods$1.includes(event.method)) {
     return;
@@ -1459,6 +1482,35 @@ function getRequestWebStream(event) {
       });
     }
   });
+}
+function _parseJSON(body = "", strict) {
+  if (!body) {
+    return void 0;
+  }
+  try {
+    return destr(body, { strict });
+  } catch {
+    throw createError$1({
+      statusCode: 400,
+      statusMessage: "Bad Request",
+      message: "Invalid JSON body"
+    });
+  }
+}
+function _parseURLEncodedBody(body) {
+  const form = new URLSearchParams(body);
+  const parsedForm = /* @__PURE__ */ Object.create(null);
+  for (const [key, value] of form.entries()) {
+    if (hasProp(parsedForm, key)) {
+      if (!Array.isArray(parsedForm[key])) {
+        parsedForm[key] = [parsedForm[key]];
+      }
+      parsedForm[key].push(value);
+    } else {
+      parsedForm[key] = value;
+    }
+  }
+  return parsedForm;
 }
 
 function handleCacheHeaders(event, opts) {
@@ -1587,6 +1639,9 @@ function send(event, data, type) {
 function sendNoContent(event, code) {
   if (event.handled) {
     return;
+  }
+  if (!code && event.node.res.statusCode !== 200) {
+    code = event.node.res.statusCode;
   }
   const _code = sanitizeStatusCode(code, 204);
   if (_code === 204) {
@@ -2336,16 +2391,16 @@ function isUppercase(char = "") {
   }
   return char.toUpperCase() === char;
 }
-function splitByCase(string_, separators) {
+function splitByCase(str, separators) {
   const splitters = separators ?? STR_SPLITTERS;
   const parts = [];
-  if (!string_ || typeof string_ !== "string") {
+  if (!str || typeof str !== "string") {
     return parts;
   }
   let buff = "";
   let previousUpper;
   let previousSplitter;
-  for (const char of string_) {
+  for (const char of str) {
     const isSplitter = splitters.includes(char);
     if (isSplitter === true) {
       parts.push(buff);
@@ -2362,7 +2417,7 @@ function splitByCase(string_, separators) {
         continue;
       }
       if (previousUpper === true && isUpper === false && buff.length > 1) {
-        const lastChar = buff[buff.length - 1];
+        const lastChar = buff.at(-1);
         parts.push(buff.slice(0, Math.max(0, buff.length - 1)));
         buff = lastChar + char;
         previousUpper = isUpper;
@@ -2376,11 +2431,11 @@ function splitByCase(string_, separators) {
   parts.push(buff);
   return parts;
 }
-function kebabCase(string_, joiner) {
-  return !string_ ? "" : (Array.isArray(string_) ? string_ : splitByCase(string_)).map((p) => p.toLowerCase()).join(joiner ?? "-");
+function kebabCase(str, joiner) {
+  return str ? (Array.isArray(str) ? str : splitByCase(str)).map((p) => p.toLowerCase()).join(joiner ?? "-") : "";
 }
-function snakeCase(string_) {
-  return kebabCase(string_, "_");
+function snakeCase(str) {
+  return kebabCase(str || "", "_");
 }
 
 function klona(x) {
@@ -2914,8 +2969,7 @@ function createNodeFetch() {
 const fetch = globalThis.fetch || createNodeFetch();
 const Headers$1 = globalThis.Headers || s;
 const AbortController = globalThis.AbortController || i;
-const ofetch = createFetch$1({ fetch, Headers: Headers$1, AbortController });
-const $fetch = ofetch;
+createFetch$1({ fetch, Headers: Headers$1, AbortController });
 
 const nullBodyResponses = /* @__PURE__ */ new Set([101, 204, 205, 304]);
 function createCall(handle) {
@@ -3910,10 +3964,10 @@ const memory = defineDriver$1(() => {
       return data.has(key);
     },
     getItem(key) {
-      return data.get(key) || null;
+      return data.get(key) ?? null;
     },
     getItemRaw(key) {
-      return data.get(key) || null;
+      return data.get(key) ?? null;
     },
     setItem(key, value) {
       data.set(key, value);
@@ -4791,6 +4845,9 @@ function hasReqHeader(event, name, includes) {
   return value && typeof value === "string" && value.toLowerCase().includes(includes);
 }
 function isJsonRequest(event) {
+  if (hasReqHeader(event, "accept", "text/html")) {
+    return false;
+  }
   return hasReqHeader(event, "accept", "application/json") || hasReqHeader(event, "user-agent", "curl/") || hasReqHeader(event, "user-agent", "httpie/") || hasReqHeader(event, "sec-fetch-mode", "cors") || event.path.startsWith("/api/") || event.path.endsWith(".json");
 }
 function normalizeError(error) {
@@ -4840,6 +4897,37 @@ function normalizeCookieHeaders(headers) {
     }
   }
   return outgoingHeaders;
+}
+function toBuffer(data) {
+  if ("pipeTo" in data && typeof data.pipeTo === "function") {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      data.pipeTo(
+        new WritableStream({
+          write(chunk) {
+            chunks.push(chunk);
+          },
+          close() {
+            resolve(Buffer.concat(chunks));
+          },
+          abort(reason) {
+            reject(reason);
+          }
+        })
+      ).catch(reject);
+    });
+  }
+  if ("pipe" in data && typeof data.pipe === "function") {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      data.on("data", (chunk) => {
+        chunks.push(chunk);
+      }).on("end", () => {
+        resolve(Buffer.concat(chunks));
+      }).on("error", reject);
+    });
+  }
+  return Buffer.from(data);
 }
 
 const plugins = [
@@ -4921,9 +5009,11 @@ const _ppSqU4 = lazyEventHandler(() => {
   return useBase(opts.baseURL, ipxHandler);
 });
 
-const _lazy_8WIyTG = () => import('../handlers/renderer.mjs').then(function (n) { return n.r; });
+const _lazy_tZnX29 = () => import('../send.mjs');
+const _lazy_8WIyTG = () => import('../handlers/renderer.mjs');
 
 const handlers = [
+  { route: '/api/send', handler: _lazy_tZnX29, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_error', handler: _lazy_8WIyTG, lazy: true, middleware: false, method: undefined },
   { route: '/_ipx/**', handler: _ppSqU4, lazy: false, middleware: false, method: undefined },
   { route: '/**', handler: _lazy_8WIyTG, lazy: true, middleware: false, method: undefined }
@@ -5072,40 +5162,9 @@ async function normalizeLambdaOutgoingBody(body, headers) {
   if (!body) {
     return { type: "text", body: "" };
   }
-  const buffer = await _toBuffer(body);
+  const buffer = await toBuffer(body);
   const contentType = headers["content-type"] || "";
   return isTextType(contentType) ? { type: "text", body: buffer.toString("utf8") } : { type: "binary", body: buffer.toString("base64") };
-}
-function _toBuffer(data) {
-  if ("pipeTo" in data && typeof data.pipeTo === "function") {
-    return new Promise((resolve, reject) => {
-      const chunks = [];
-      data.pipeTo(
-        new WritableStream({
-          write(chunk) {
-            chunks.push(chunk);
-          },
-          close() {
-            resolve(Buffer.concat(chunks));
-          },
-          abort(reason) {
-            reject(reason);
-          }
-        })
-      ).catch(reject);
-    });
-  }
-  if ("pipe" in data && typeof data.pipe === "function") {
-    return new Promise((resolve, reject) => {
-      const chunks = [];
-      data.on("data", (chunk) => {
-        chunks.push(chunk);
-      }).on("end", () => {
-        resolve(Buffer.concat(chunks));
-      }).on("error", reject);
-    });
-  }
-  return Buffer.from(data);
 }
 const TEXT_TYPE_RE = /^text\/|\/(javascript|json|xml)|utf-?8/;
 function isTextType(contentType = "") {
@@ -5126,8 +5185,7 @@ async function lambda(event, context) {
     headers: normalizeLambdaIncomingHeaders(event.headers),
     method,
     query,
-    body: event.body
-    // TODO: handle event.isBase64Encoded
+    body: event.isBase64Encoded ? Buffer.from(event.body, "base64") : event.body
   });
   const cookies = normalizeCookieHeader(String(r.headers["set-cookie"]));
   const awsBody = await normalizeLambdaOutgoingBody(r.body, r.headers);
@@ -5160,5 +5218,5 @@ const handler = async function handler2(event, context) {
   return lambda(event, context);
 };
 
-export { $fetch as $, withoutTrailingSlash as A, handler as B, send as a, setResponseStatus as b, setResponseHeaders as c, useRuntimeConfig as d, eventHandler as e, getQuery as f, getResponseStatus as g, createError$1 as h, getRouteRules as i, joinURL as j, getResponseStatusText as k, hasProtocol as l, isScriptProtocol as m, sanitizeStatusCode as n, createHooks as o, parseURL as p, defu as q, klona as r, setResponseHeader as s, encodeParam as t, useNitroApp as u, withLeadingSlash as v, withQuery as w, encodePath as x, parseQuery as y, withTrailingSlash as z };
+export { send as a, setResponseStatus as b, setResponseHeaders as c, defineEventHandler as d, eventHandler as e, useRuntimeConfig as f, getResponseStatus as g, getQuery as h, createError$1 as i, joinURL as j, getRouteRules as k, getResponseStatusText as l, handler as m, readBody as r, setResponseHeader as s, useNitroApp as u };
 //# sourceMappingURL=netlify.mjs.map

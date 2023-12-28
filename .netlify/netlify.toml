@@ -1,58 +1,21 @@
-plugins = []
-functionsDirectory = "/Users/kamildrzastwa/Documents/Uni/Petcation/petcation-frontend/.netlify/functions-internal"
-functionsDirectoryOrigin = "config-v1"
-
-[functions]
-
-[functions."*"]
-
+# example netlify.toml
 [build]
-publish = "/Users/kamildrzastwa/Documents/Uni/Petcation/petcation-frontend/dist"
-publishOrigin = "config"
-command = "yarn run build"
-commandOrigin = "config"
-functions = "/Users/kamildrzastwa/Documents/Uni/Petcation/petcation-frontend/.netlify/functions-internal"
+  command = "yarn run build"
+  functions = ".netlify/functions-internal"
+  publish = "dist"
 
-[build.environment]
+  ## Uncomment to use this redirect for Single Page Applications like create-react-app.
+  ## Not needed for static site generators.
+  #[[redirects]]
+  #  from = "/*"
+  #  to = "/index.html"
+  #  status = 200
 
-[build.processing]
+  ## (optional) Settings for Netlify Dev
+  ## https://github.com/netlify/cli/blob/main/docs/netlify-dev.md#project-detection
+  #[dev]
+  #  command = "yarn start" # Command to start your dev server
+  #  port = 3000 # Port that the dev server will be listening on
+  #  publish = "dist" # Folder with the static content for _redirect file
 
-[build.processing.css]
-
-[build.processing.html]
-
-[build.processing.images]
-
-[build.processing.js]
-
-[build.services]
-
-[[headers]]
-for = "/_nuxt/*"
-
-[headers.values]
-cache-control = "public, max-age=31536000, immutable"
-
-[[redirects]]
-from = "/__nuxt_error"
-to = "/.netlify/functions/server"
-status = 200.0
-force = false
-
-[redirects.query]
-
-[redirects.conditions]
-
-[redirects.headers]
-
-[[redirects]]
-from = "/*"
-to = "/.netlify/functions/server"
-status = 200.0
-force = false
-
-[redirects.query]
-
-[redirects.conditions]
-
-[redirects.headers]
+  ## more info on configuring this file: https://docs.netlify.com/configure-builds/file-based-configuration/

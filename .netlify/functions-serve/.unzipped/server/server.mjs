@@ -1,4 +1,4 @@
-globalThis._importMeta_={url:import.meta.url,env:process.env};export { B as handler } from './chunks/nitro/netlify.mjs';
+globalThis._importMeta_={url:import.meta.url,env:process.env};export { m as handler } from './chunks/nitro/netlify.mjs';
 import 'node:http';
 import 'node:https';
 import 'fs';
