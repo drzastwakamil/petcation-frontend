@@ -1,0 +1,58 @@
+plugins = []
+functionsDirectory = "/Users/kamildrzastwa/Documents/Uni/Petcation/petcation-frontend/.netlify/functions-internal"
+functionsDirectoryOrigin = "config-v1"
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "/Users/kamildrzastwa/Documents/Uni/Petcation/petcation-frontend/dist"
+publishOrigin = "config"
+command = "yarn run build"
+commandOrigin = "config"
+functions = "/Users/kamildrzastwa/Documents/Uni/Petcation/petcation-frontend/.netlify/functions-internal"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[[headers]]
+for = "/_nuxt/*"
+
+[headers.values]
+cache-control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+from = "/__nuxt_error"
+to = "/.netlify/functions/server"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/*"
+to = "/.netlify/functions/server"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
