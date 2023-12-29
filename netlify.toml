@@ -1,8 +1,11 @@
-# example netlify.toml
 [build]
   command = "pnpm run build"
   functions = ".netlify/functions-internal"
   publish = "dist"
 
-[functions]
-  external_node_modules = ["vue-email"]
+# [[plugins]]
+# package = "@netlify/plugin-functions-install-core"
+# 
+#  # Add the vue-email module to the dependencies
+#  [plugins.inputs.dependencies]
+#    "vue-email" = "^x.x.x"
