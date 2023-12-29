@@ -1,9 +1,5 @@
 import { cva } from 'class-variance-authority';
 
-export { default as Avatar } from './Avatar.vue';
-export { default as AvatarImage } from './AvatarImage.vue';
-export { default as AvatarFallback } from './AvatarFallback.vue';
-
 export const avatarVariant = cva(
   'inline-flex shrink-0 select-none items-center justify-center overflow-hidden bg-secondary font-normal text-foreground',
   {

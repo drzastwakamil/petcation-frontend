@@ -27,12 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits } from 'vue';
 import { addDays, format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 const props = defineProps({
   modelValue: {
@@ -51,7 +47,6 @@ const localDateRange = ref({ ...props.modelValue });
 watch(
   () => props.modelValue,
   (newValue, oldValue) => {
-    // Only update if the value has actually changed
     if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
       localDateRange.value = { ...newValue };
     }
@@ -62,7 +57,6 @@ watch(
 watch(
   localDateRange,
   (newValue, oldValue) => {
-    // Only emit if the value has actually changed
     if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
       emit('update:modelValue', newValue);
     }

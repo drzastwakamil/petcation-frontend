@@ -32,19 +32,15 @@
 <script setup lang="ts">
 import { boolean, z } from 'zod';
 import { Cat, Bone } from 'lucide-vue-next';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 
 const props = defineProps({
   dogCount: {
     type: Number,
-    required: false, // This makes the property optional
+    required: false,
   },
   catCount: {
     type: Number,
-    required: false, // This makes the property optional
+    required: false,
   },
   withDogs: { type: boolean, default: true },
   withCats: { type: boolean, default: true },
@@ -63,7 +59,6 @@ watch(localCatCount, (newValue) => {
   emit('update:catCount', newValue);
 });
 
-// Watch for prop changes to update local refs
 watch(
   () => props.dogCount,
   (newVal) => {

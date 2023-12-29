@@ -59,18 +59,5 @@
 
 <script setup lang="ts">
 import { WrenchIcon, HotelIcon, LogOutIcon, PawPrintIcon, UserIcon } from 'lucide-vue-next';
-
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 const userSessionStore = useUserSessionStore();
 </script>

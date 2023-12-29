@@ -134,15 +134,9 @@
 import { DogIcon, CatIcon } from 'lucide-vue-next';
 import { useRouteParams, useRouteQuery } from '@vueuse/router';
 import { useQuery } from '@tanstack/vue-query';
-import { Card, CardContent, CardDescription, CardHeader, CardFooter, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
 
 const hotelId = useRouteParams('hotelId');
 const isDialogOpen = ref(false);
-
-// useRouteQuery('dateStart').value ||
-// useRouteQuery('dateEnd').value
 const { data: resultOfHotelQuery, isPending: hotelQueryIsLoading } = useQuery({
   queryKey: [`hotel${hotelId.value}`],
   queryFn: (): Promise<unknown> => {

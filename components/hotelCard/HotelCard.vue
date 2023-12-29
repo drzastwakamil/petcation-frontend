@@ -38,8 +38,6 @@
 
 <script setup lang="ts">
 import { StarIcon, MapPinIcon, PawPrintIcon } from 'lucide-vue-next';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 defineProps<{
   link: unknown;

@@ -31,8 +31,6 @@
 
 <script setup lang="ts">
 import { ArrowLeftIcon } from 'lucide-vue-next';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
 
 const browsingStore = useBrowsingStore();
 </script>

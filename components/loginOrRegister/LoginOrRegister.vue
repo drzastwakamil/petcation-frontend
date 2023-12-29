@@ -184,17 +184,8 @@ import { useMutation } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import { useToast } from '@/components/ui/toast';
-import { AlertDialogCancel, AlertDialog, AlertDialogContent, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { CardDescription, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-
-const { toast } = useToast();
+import { toast } from '@/components/ui/toast';
+import { FormField } from '@/components/ui/form';
 
 const isDialogOpen = ref(false);
 const currentTab = ref('login');

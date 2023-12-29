@@ -15,7 +15,6 @@
 
 <script setup lang="ts">
 import { useRoute } from 'nuxt/app';
-import { Button } from '@/components/ui/button';
 interface Item {
   title: string;
   href: string;

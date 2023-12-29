@@ -104,14 +104,6 @@ import { useMutation, useQuery } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import { AlertDialogCancel, AlertDialog, AlertDialogContent, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/components/ui/toast';
-import { Input } from '@/components/ui/input';
-import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 
 const animalsPool = [
   { value: 'DOG', label: 'Pies' },

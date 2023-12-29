@@ -56,19 +56,13 @@ import { useForm } from 'vee-validate';
 import * as z from 'zod';
 import { useMutation } from '@tanstack/vue-query';
 import { toTypedSchema } from '@vee-validate/zod';
-import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-
-import { useToast } from '@/components/ui/toast';
+import { toast } from '@/components/ui/toast';
 
 definePageMeta({
   layout: false,
 });
 const browsingStore = useBrowsingStore();
 
-const { toast } = useToast();
 
 const sendingJoinRequestFormSchema = toTypedSchema(
   z.object({
@@ -110,7 +104,7 @@ const { mutate: executeChangePasswordMutate, isPending: sendingJoinRequestIsLoad
       title: 'Udało się wysłać formularz!.',
       description: 'Skontaktujemy się z tobą jak najszybciej!',
     });
-    
+
     form.resetForm();
   },
   onError: (error) => {

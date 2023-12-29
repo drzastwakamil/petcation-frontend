@@ -59,13 +59,7 @@ import { useMutation, useQuery } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/components/ui/toast';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-
-const { toast } = useToast();
+import { toast } from '@/components/ui/toast';
 
 const changePasswordFormSchema = toTypedSchema(
   z

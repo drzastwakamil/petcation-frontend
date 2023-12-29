@@ -20,12 +20,14 @@ export default defineNuxtConfig({
   },
   css: ['@/assets/css/tailwind.css', '@/node_modules/@splidejs/splide/dist/css/splide.min.css'],
   components: [
-    { path: '~/components/**' },
     {
       path: '~/components/Icons',
       global: true,
     },
-    '~/components',
+    {
+      path: '~/components',
+      pathPrefix: false,
+    },
   ],
   imports: {
     dirs: ['composables/**', 'utils/**'],

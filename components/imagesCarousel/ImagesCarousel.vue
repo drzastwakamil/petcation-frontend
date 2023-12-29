@@ -42,7 +42,6 @@
 
 <script setup lang="ts">
 import Splide from '@splidejs/splide';
-import { Separator } from '@/components/ui/separator';
 
 defineProps<{
   imagesUrls: Array<string>;

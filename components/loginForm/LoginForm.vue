@@ -58,14 +58,8 @@ import { useMutation } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import { useToast } from '@/components/ui/toast';
-import { AlertDialogCancel } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { CardDescription, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-
-const { toast } = useToast();
+import { FormField } from '@/components/ui/form';
+import { toast } from '@/components/ui/toast';
 
 const currentTab = ref('login');
 const userSession = useUserSessionStore();
@@ -78,7 +72,7 @@ const loginFormSchema = toTypedSchema(
         required_error: 'Hasło jest wymagane',
         invalid_type_error: 'Hasło musi być tekstem',
       })
-      .min(5),
+      .min(1, 'Hasło jest wymagane'),
   }),
 );
 

@@ -119,13 +119,6 @@ import { h } from 'vue';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
 
 const notificationsFormSchema = toTypedSchema(
