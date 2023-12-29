@@ -1,18 +1,12 @@
 import { Resend } from 'resend';
-import { config } from '@vue-email/compiler';
+import { useCompiler } from '#vue-email';
 
-const vueEmail = config('./emails', {
-  verbose: false,
-  options: {
-    baseUrl: 'https://vue-email-demo.vercel.app/',
-  },
-});
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
-    const template = await vueEmail.render('hotelAsksToJoin.vue', {
+    const template = await useCompiler('hotelAsksToJoin.vue', {
       props: {
         date: body.date,
         contactEmail: body.contactEmail,
