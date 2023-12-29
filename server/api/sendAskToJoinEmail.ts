@@ -1,19 +1,9 @@
 import { Resend } from 'resend';
-import { useCompiler } from '#vue-email';
-
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
-    const template = await useCompiler('hotelAsksToJoin.vue', {
-      props: {
-        date: body.date,
-        contactEmail: body.contactEmail,
-        phoneNumber: body.phoneNumber,
-        message: body.message || '<p style="color: red"> Nie znaleziono wiadomości <p>',
-      },
-    });
 
     const templateHTML = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html id="__vue-email" lang="en" dir="ltr">
@@ -69,8 +59,6 @@ export default defineEventHandler(async (event) => {
           </table>
        </body>
     </html>`;
-
-    console.log('template', template.html);
     const data = await resend.emails.send({
       from: 'petcation@resend.dev',
       to: ['drzastwakamil@gmail.com'],
