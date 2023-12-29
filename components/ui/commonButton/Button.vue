@@ -17,3 +17,4 @@ withDefaults(defineProps<Props>(), {
   as: 'button',
 });
 </script>
+.

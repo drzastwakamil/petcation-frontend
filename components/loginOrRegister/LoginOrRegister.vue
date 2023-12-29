@@ -184,7 +184,7 @@ import { useMutation } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import { toast } from '@/components/ui/toast';
+import { toast } from '@/components/ui/commonToast';
 import { FormField } from '@/components/ui/form';
 
 const isDialogOpen = ref(false);
@@ -229,7 +229,7 @@ const registerForm = useForm({
   validationSchema: registerFormSchema,
 });
 
-const onRegisterFormSubmit = registerForm.handleSubmit((values) => {
+const onRegisterFormSubmit = registerForm.handleSubmit((_) => {
   executeRegisterMutate();
 });
 

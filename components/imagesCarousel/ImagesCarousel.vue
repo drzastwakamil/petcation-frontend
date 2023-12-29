@@ -41,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+// eslint-disable-next-line import/no-named-as-default
 import Splide from '@splidejs/splide';
 
 defineProps<{

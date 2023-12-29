@@ -94,7 +94,7 @@ const queryBody = computed(() => {
 
 const {
   data: resultOfHotelsQuery,
-  isPending: hotelsQueryIsLoading,
+  // isPending: hotelsQueryIsLoading,
   refetch,
 } = useQuery({
   queryKey: ['hotels'],

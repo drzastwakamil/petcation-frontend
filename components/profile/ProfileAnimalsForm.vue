@@ -60,7 +60,7 @@
       <Separator />
       <h3 class="pb-5 text-lg font-medium">Twoje zwierzęta</h3>
 
-      <AlertDialog v-for="(pet, index) in pets" :key="pet.id">
+      <AlertDialog v-for="pet in pets" :key="pet.id">
         <div class="flex justify-between border p-5" rounded>
           <div class="flex items-center gap-2">
             <div class="text-sm text-gray-500">#{{ pet.id }}</div>
@@ -104,6 +104,8 @@ import { useMutation, useQuery } from '@tanstack/vue-query';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
+import { FormField } from '@/components/ui/form';
+import { toast } from '@/components/ui/commonToast';
 
 const animalsPool = [
   { value: 'DOG', label: 'Pies' },
@@ -112,8 +114,6 @@ const animalsPool = [
 
 const open = ref(false);
 const petType = ref<(typeof animalsPool)[number]>(animalsPool[0]);
-
-const { toast } = useToast();
 
 const pets = ref([]);
 
@@ -148,7 +148,7 @@ watch(resultOfUserPetsQuery, () => {
   pets.value = resultOfUserPetsQuery?.value.data;
 });
 
-const onAddAnimalFormSubmit = addAnimalForm.handleSubmit((values) => {
+const onAddAnimalFormSubmit = addAnimalForm.handleSubmit((_) => {
   executeAddAnimal();
 });
 

@@ -59,7 +59,7 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
 import { FormField } from '@/components/ui/form';
-import { toast } from '@/components/ui/toast';
+import { toast } from '@/components/ui/commonToast';
 
 const currentTab = ref('login');
 const userSession = useUserSessionStore();

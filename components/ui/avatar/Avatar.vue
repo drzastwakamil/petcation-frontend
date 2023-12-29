@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { AvatarRoot } from 'radix-vue';
-import { avatarVariant } from '.';
+import { avatarVariant } from './utils';
 import { cn } from '@/utils/shadcn/utils';
 
 interface Props {

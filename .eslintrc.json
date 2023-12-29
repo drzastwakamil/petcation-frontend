@@ -8,35 +8,45 @@
   "rules": {
     "no-console": "error",
     "@typescript-eslint/no-explicit-any": "error",
-    "vue/order-in-components": "error", 
-    "vue/attributes-order": ["error", {
-      "order": [
-        "DEFINITION",
-        "LIST_RENDERING",
-        "CONDITIONALS",
-        "RENDER_MODIFIERS",
-        "GLOBAL",
-        ["UNIQUE", "SLOT"],
-        "TWO_WAY_BINDING",
-        "OTHER_DIRECTIVES",
-        "OTHER_ATTR",
-        "EVENTS",
-        "CONTENT"
-      ],
-      "alphabetical": true
-    }],
-    "vue/block-order": ["error", {
-      "order": [ "template" , "script", "style" ]
-    }],
-    "vue/component-name-in-template-casing": ["error", "PascalCase", {
-      "registeredComponentsOnly": false,
-      "ignores": []
-    }],
+    "vue/order-in-components": "error",
+    "vue/attributes-order": [
+      "error",
+      {
+        "order": [
+          "DEFINITION",
+          "LIST_RENDERING",
+          "CONDITIONALS",
+          "RENDER_MODIFIERS",
+          "GLOBAL",
+          ["UNIQUE", "SLOT"],
+          "TWO_WAY_BINDING",
+          "OTHER_DIRECTIVES",
+          "OTHER_ATTR",
+          "EVENTS",
+          "CONTENT"
+        ],
+        "alphabetical": true
+      }
+    ],
+    "vue/block-order": [
+      "error",
+      {
+        "order": ["template", "script", "style"]
+      }
+    ],
+    "vue/component-name-in-template-casing": [
+      "error",
+      "PascalCase",
+      {
+        "registeredComponentsOnly": false,
+        "ignores": []
+      }
+    ],
     "vue/require-default-prop": "off",
     "vue/padding-line-between-blocks": "error",
     "vue/multi-word-component-names": "off",
     "vue/html-self-closing": [
-    "error",
+      "error",
       {
         "html": {
           "normal": "always",
@@ -44,6 +54,7 @@
         }
       }
     ],
+    "tailwindcss/no-custom-classname": "off",
     "prettier/prettier": [
       "error",
       {

@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { StarIcon, MapPinIcon, PawPrintIcon } from 'lucide-vue-next';
+import { MapPinIcon, PawPrintIcon } from 'lucide-vue-next';
 
 defineProps<{
   link: unknown;

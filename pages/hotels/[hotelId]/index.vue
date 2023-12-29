@@ -137,7 +137,10 @@ import { useQuery } from '@tanstack/vue-query';
 
 const hotelId = useRouteParams('hotelId');
 const isDialogOpen = ref(false);
-const { data: resultOfHotelQuery, isPending: hotelQueryIsLoading } = useQuery({
+const {
+  data: resultOfHotelQuery,
+  // isPending: hotelQueryIsLoading
+} = useQuery({
   queryKey: [`hotel${hotelId.value}`],
   queryFn: (): Promise<unknown> => {
     return useGetFromBackend('hotel', {

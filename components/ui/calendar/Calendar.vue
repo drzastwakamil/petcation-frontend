@@ -4,7 +4,7 @@ import type { Calendar } from 'v-calendar'
 import { DatePicker } from 'v-calendar'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, ref } from 'vue'
-import { buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/commonButton'
 import { cn } from '@/utils/shadcn/utils'
 
 /* Extracted from v-calendar */
@@ -225,3 +225,4 @@ onMounted(async () => {
 	transform: translateY(calc(-1 * var(--vc-slide-translate)));
 }
 </style>
+~/components/ui/button~/components/ui/commonButton

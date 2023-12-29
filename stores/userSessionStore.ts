@@ -11,7 +11,7 @@ export const useUserSessionStore = defineStore('userSession', {
       this.token = '';
       this.role = '';
     },
-    logIn(result) {
+    logIn(result: string) {
       const { token, role } = extractRoleAndToken(result);
       this.token = token;
       this.role = role;

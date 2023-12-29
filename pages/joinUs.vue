@@ -56,13 +56,13 @@ import { useForm } from 'vee-validate';
 import * as z from 'zod';
 import { useMutation } from '@tanstack/vue-query';
 import { toTypedSchema } from '@vee-validate/zod';
-import { toast } from '@/components/ui/toast';
+import { toast } from '@/components/ui/commonToast';
+import { FormField } from '@/components/ui/form';
 
 definePageMeta({
   layout: false,
 });
 const browsingStore = useBrowsingStore();
-
 
 const sendingJoinRequestFormSchema = toTypedSchema(
   z.object({

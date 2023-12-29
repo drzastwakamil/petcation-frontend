@@ -119,7 +119,8 @@ import { h } from 'vue';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
-import { toast } from '@/components/ui/toast';
+import { toast } from '@/components/ui/commonToast';
+import { FormField } from '@/components/ui/form';
 
 const notificationsFormSchema = toTypedSchema(
   z.object({
@@ -144,7 +145,7 @@ const { handleSubmit } = useForm({
   },
 });
 
-const onSubmit = handleSubmit((values, { resetForm }) => {
+const onSubmit = handleSubmit((values) => {
   toast({
     title: 'You submitted the following values:',
     description: h(
