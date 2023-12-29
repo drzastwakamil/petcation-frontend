@@ -12,7 +12,7 @@ export default defineNuxtConfig({
   vueEmail: {
     autoImport: true,
   },
-  ssr: false,
+  ssr: true,
   devtools: {
     enabled: true,
     timeline: {
