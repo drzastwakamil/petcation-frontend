@@ -3,9 +3,9 @@
   functions = ".netlify/functions-internal"
   publish = "dist"
 
-# [[plugins]]
-# package = "@netlify/plugin-functions-install-core"
-# 
-#  # Add the vue-email module to the dependencies
-#  [plugins.inputs.dependencies]
-#    "vue-email" = "^x.x.x"
+[[plugins]]
+package = "@netlify/plugin-functions-install-core"
+
+ # Add the vue-email module to the dependencies
+ [plugins.inputs.dependencies]
+   "vue-email" = "^0.8.5"
