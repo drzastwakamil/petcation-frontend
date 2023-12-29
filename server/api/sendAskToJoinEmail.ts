@@ -6,7 +6,6 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
-    console.log('thats the body', body);
     const template = await useCompiler('hotelAsksToJoin.vue', {
       props: {
         date: body.date,

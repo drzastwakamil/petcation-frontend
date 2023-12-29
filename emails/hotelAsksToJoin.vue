@@ -1,7 +1,13 @@
 <template>
   <EHtml>
-    <EHead />
-    <EPreview>Yelp recent login</EPreview>
+    <EHead>
+      <title>Petcation - formularz zgłoszeniowy</title>
+      <meta content="Description" name="description" />
+      <meta content="light" name="color-scheme" />
+      <meta content="light" name="supported-color-schemes" />
+      <EStyle> body { background-color: #fff !important; } </EStyle>
+    </EHead>
+    <EPreview> Petcation formularz zgłoszeniowy </EPreview>
     <EBody :style="main">
       <EContainer>
         <ESection :style="content">
@@ -17,6 +23,7 @@
               }"
             />
           </EContainer>
+
           <ERow
             :style="{
               ...boxInfos,
@@ -62,7 +69,20 @@
 </template>
 
 <script setup>
-import { EBody, EColumn, EContainer, EHead, EHeading, EHtml, EImg, EPreview, ERow, ESection, EText } from 'vue-email';
+import {
+  EBody,
+  EColumn,
+  EContainer,
+  EStyle,
+  EHead,
+  EHeading,
+  EHtml,
+  EImg,
+  EPreview,
+  ERow,
+  ESection,
+  EText,
+} from 'vue-email';
 
 const props = defineProps({
   date: {
@@ -85,19 +105,20 @@ const formattedDate = new Intl.DateTimeFormat('en', {
 }).format(new Date(props.date));
 
 const main = {
-  backgroundColor: '#fff',
   fontFamily:
     '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
 };
 
 const paragraph = {
   fontSize: '16px',
+  wordWrap: 'break-word',
 };
 
 const content = {
   border: '1px solid rgb(0,0,0, 0.1)',
   borderRadius: '3px',
   overflow: 'hidden',
+  width: 620,
 };
 
 const boxInfos = {
