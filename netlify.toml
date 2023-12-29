@@ -2,9 +2,3 @@
   command = "pnpm run build"
   functions = ".netlify/functions-internal"
   publish = "dist"
-
-[[plugins]]
-
- # Add the vue-email module to the dependencies
- [plugins.inputs.dependencies]
-   "vue-email" = "^0.8.5"
