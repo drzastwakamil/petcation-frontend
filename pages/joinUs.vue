@@ -29,6 +29,24 @@
 
       <form @submit="onSendJoinRequestSubmit">
         <div class="space-y-3 pt-5">
+          <FormField v-slot="{ componentField }" name="email">
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="Podaj swój email" type="email" v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <FormField v-slot="{ componentField }" name="phoneNumber">
+            <FormItem>
+              <FormLabel>Numer telefonu</FormLabel>
+              <FormControl>
+                <Input placeholder="Podaj swój numer telefonu" type="tel" v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
           <FormField v-slot="{ componentField }" name="message">
             <FormItem>
               <FormControl>
@@ -37,9 +55,8 @@
               <FormMessage />
             </FormItem>
           </FormField>
-
           <div class="flex justify-end">
-            <Button class="col-span-3" :disabled="sendingJoinRequestIsLoading" size="lg" type="submit">
+            <Button class="col-span-3" :disabled="sendButtonDisabled" size="lg" type="submit">
               Wyślij formularz
               <Loader2 v-if="sendingJoinRequestIsLoading" class="ml-2 h-4 w-4 animate-spin" />
             </Button>
@@ -66,6 +83,13 @@ const browsingStore = useBrowsingStore();
 
 const sendingJoinRequestFormSchema = toTypedSchema(
   z.object({
+    email: z.coerce.string().email('Wprowadź poprawny format email'),
+    phoneNumber: z
+      .string({
+        required_error: 'Numer telefonu jest wymagany',
+        invalid_type_error: 'Numer telefonu musi być tekstem',
+      })
+      .min(1, 'Numer telefonu jest wymagany'),
     message: z
       .string({
         required_error: 'Wiadomość jest wymagana',
@@ -79,14 +103,19 @@ const form = useForm({
   validationSchema: sendingJoinRequestFormSchema,
 });
 const onSendJoinRequestSubmit = form.handleSubmit(() => {
-  executeChangePasswordMutate({ message: form.values.message });
+  executeChangePasswordMutate({
+    message: form.values.message,
+    email: form.values.email,
+    phoneNumber: form.values.phoneNumber,
+  });
 });
 const { mutate: executeChangePasswordMutate, isPending: sendingJoinRequestIsLoading } = useMutation({
-  mutationFn: ({ message }): Promise<unknown> => {
-    return useFetch('/api/send', {
+  mutationFn: ({ message, email, phoneNumber }): Promise<unknown> => {
+    return useFetch('/api/sendAskToJoinEmail', {
       body: {
         message,
-        contactEmail: 'kamilokamilo@kamilo.com',
+        contactEmail: email,
+        phoneNumber,
         date: new Date(),
       },
       method: 'POST',
@@ -101,12 +130,10 @@ const { mutate: executeChangePasswordMutate, isPending: sendingJoinRequestIsLoad
       });
       return;
     }
-
     toast({
       title: 'Udało się wysłać formularz!.',
       description: 'Skontaktujemy się z tobą jak najszybciej!',
     });
-
     form.resetForm();
   },
   onError: (error) => {
@@ -116,5 +143,13 @@ const { mutate: executeChangePasswordMutate, isPending: sendingJoinRequestIsLoad
       variant: 'destructive',
     });
   },
+});
+const sendButtonDisabled = computed(() => {
+  return (
+    sendingJoinRequestIsLoading.value ||
+    form.errors.value.email?.length ||
+    form.errors.value.message?.length ||
+    form.errors.value.phoneNumber?.length
+  );
 });
 </script>

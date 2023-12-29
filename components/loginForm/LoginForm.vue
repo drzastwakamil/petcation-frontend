@@ -43,7 +43,7 @@
 
       <div class="grid grid-cols-4 gap-4 pt-12">
         <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
-        <Button class="col-span-3" :disabled="loginIsLoading" type="submit">
+        <Button class="col-span-3" :disabled="buttonDisabled" type="submit">
           Zaloguj
           <Loader2 v-if="loginIsLoading" class="ml-2 h-4 w-4 animate-spin" />
         </Button>
@@ -104,7 +104,7 @@ const { mutate: executeLogInMutate, isPending: loginIsLoading } = useMutation({
     }
 
     toast({
-      title: 'Udało się zalogować!.',
+      title: 'Udało się zalogować!',
     });
     userSession.logIn(data.value);
   },
@@ -115,5 +115,9 @@ const { mutate: executeLogInMutate, isPending: loginIsLoading } = useMutation({
       variant: 'destructive',
     });
   },
+});
+
+const buttonDisabled = computed(() => {
+  return loginIsLoading.value || loginForm.errors.value.email?.length || loginForm.errors.value.password?.length;
 });
 </script>

@@ -44,9 +44,12 @@
                 {{ contactEmail }}
               </EText>
               <EText :style="{ ...paragraph, marginTop: '-5px' }">
+                <b>Telefon kontaktowy: </b>
+                {{ phoneNumber }}
+              </EText>
+              <EText :style="{ ...paragraph, marginTop: '-5px' }">
                 <b>Treść zgłoszenia: </b>
               </EText>
-
               <EText :style="paragraph">
                 {{ message }}
               </EText>
@@ -66,6 +69,9 @@ const props = defineProps({
     type: String,
   },
   contactEmail: {
+    type: String,
+  },
+  phoneNumber: {
     type: String,
   },
   message: {

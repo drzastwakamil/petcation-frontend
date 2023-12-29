@@ -166,7 +166,7 @@
             </div>
             <div class="grid grid-cols-4 gap-4 pt-12">
               <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
-              <Button class="col-span-3" :disabled="registerIsLoading" type="submit">
+              <Button class="col-span-3" :disabled="registerButtonDisabled" type="submit">
                 Zarejestruj
                 <Loader2 v-if="registerIsLoading" class="ml-2 h-4 w-4 animate-spin" />
               </Button>
@@ -278,6 +278,18 @@ const { mutate: executeRegisterMutate, isPending: registerIsLoading } = useMutat
       variant: 'destructive',
     });
   },
+});
+
+const registerButtonDisabled = computed(() => {
+  return (
+    registerIsLoading.value ||
+    registerForm.errors.value.firstName?.length ||
+    registerForm.errors.value.lastName?.length ||
+    registerForm.errors.value.email?.length ||
+    registerForm.errors.value.password?.length ||
+    registerForm.errors.value.repeatPassword?.length ||
+    registerForm.errors.value.termsAndConditions?.length
+  );
 });
 
 const resetPasswordMailHasBeenTriedToBeSend = ref(false);
