@@ -114,7 +114,6 @@ const animalsPool = [
 
 const open = ref(false);
 const petType = ref<(typeof animalsPool)[number]>(animalsPool[0]);
-
 const pets = ref([]);
 
 const {

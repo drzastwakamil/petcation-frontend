@@ -79,13 +79,15 @@ const form = useForm({
   validationSchema: sendingJoinRequestFormSchema,
 });
 const onSendJoinRequestSubmit = form.handleSubmit(() => {
-  executeChangePasswordMutate(form.values.message);
+  executeChangePasswordMutate({ message: form.values.message });
 });
 const { mutate: executeChangePasswordMutate, isPending: sendingJoinRequestIsLoading } = useMutation({
-  mutationFn: (message): Promise<unknown> => {
+  mutationFn: ({ message }): Promise<unknown> => {
     return useFetch('/api/send', {
       body: {
         message,
+        contactEmail: 'kamilokamilo@kamilo.com',
+        date: new Date(),
       },
       method: 'POST',
     });

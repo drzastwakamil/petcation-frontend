@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     '@nuxtjs/eslint-module',
     '@vueuse/nuxt',
     '@pinia/nuxt',
+    '@vue-email/nuxt',
   ],
   ssr: false,
   devtools: {
