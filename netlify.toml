@@ -3,6 +3,6 @@
   command = "pnpm run build"
   functions = ".netlify/functions-internal"
   publish = "dist"
-  
+
 [functions]
-  external_node_modules = ["@vue-email/nuxt"]
+  external_node_modules = ["vue-email"]
