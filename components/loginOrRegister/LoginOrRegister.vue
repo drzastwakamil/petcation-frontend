@@ -187,6 +187,8 @@ import * as z from 'zod';
 import { toast } from '@/components/ui/commonToast';
 import { FormField } from '@/components/ui/form';
 
+import { useUserSessionStore } from '#imports';
+
 const isDialogOpen = ref(false);
 const currentTab = ref('login');
 
@@ -315,4 +317,12 @@ const resetAskingForResetPasswordEmailProcess = () => {
   currentTab.value = 'login';
   resetPasswordMailHasBeenTriedToBeSend.value = false;
 };
+const userSessionStore = useUserSessionStore();
+userSessionStore.$onAction(({ name }) => {
+  // debugger;
+  console.log('bagno ');
+  if (name === 'openLoginModal') {
+    isDialogOpen.value = true;
+  }
+});
 </script>

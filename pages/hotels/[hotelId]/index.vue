@@ -80,49 +80,22 @@
               <div class="font-semibold">Razem</div>
               <div>{{ totalPrice }}zł</div>
             </div>
-            <Button class="w-full" :disabled="!isButtonEnabled" size="lg"> Kontynnuuj</Button>
-
-            <AlertDialog
-              :open="isDialogOpen"
-              @update:open="
-                (open) => {
-                  isDialogOpen = open;
+            <Button v-if="userSession.isLoggedIn" class="w-full" :disabled="!isButtonEnabled" size="lg">
+              Kontynnuuj</Button
+            >
+            <Button
+              v-else
+              class="w-full"
+              :onclick="
+                () => {
+                  console.log('what the hell men');
+                  userSession.openLoginModal();
                 }
               "
+              size="lg"
             >
-              <div v-for="(pet, index) in pets" :key="index" class="flex justify-between rounded border p-5">
-                <div class="flex items-center gap-2">
-                  <BoneIcon v-if="pet.petType === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
-                  <CatIcon v-if="pet.petType === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
-
-                  {{ pet.name }}
-                </div>
-                <AlertDialogTrigger as-child>
-                  <Button size="icon" variant="ghost">
-                    <Trash2 />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent
-                  :on-outside-dialog-click="
-                    () => {
-                      if (isDialogOpen) {
-                        isDialogOpen = false;
-                      }
-                    }
-                  "
-                >
-                  <div>
-                    Czy jesteś pewien że chcesz usunąć
-                    <span class="font-bold">{{ pet.name }}</span>
-                    ze swojej listy zwierząt?
-                    <div class="grid grid-cols-4 gap-4 pt-12">
-                      <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
-                      <Button class="w-full" :disabled="!isButtonEnabled" size="lg"> Kontynnuuj</Button>
-                    </div>
-                  </div>
-                </AlertDialogContent>
-              </div>
-            </AlertDialog>
+              Zaloguj się, aby kontynuować
+            </Button>
           </CardFooter>
         </Card>
       </div>
@@ -134,9 +107,8 @@
 import { DogIcon, CatIcon } from 'lucide-vue-next';
 import { useRouteParams, useRouteQuery } from '@vueuse/router';
 import { useQuery } from '@tanstack/vue-query';
-
+const userSession = useUserSessionStore();
 const hotelId = useRouteParams('hotelId');
-const isDialogOpen = ref(false);
 const {
   data: resultOfHotelQuery,
   // isPending: hotelQueryIsLoading

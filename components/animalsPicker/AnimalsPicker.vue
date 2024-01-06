@@ -1,7 +1,19 @@
 <template>
   <Popover>
     <PopoverTrigger as-child>
-      <Button variant="outline">Zwierzęta</Button>
+      <Button class="flex gap-4" variant="outline">
+        Zwierzęta
+        <div v-if="dogCount || catCount" class="flex gap-2 border-l-2 pl-4">
+          <div v-if="withDogs && dogCount" class="flex">
+            <Bone class="mr-1 h-4 w-4" />
+            <Label> {{ dogCount }}</Label>
+          </div>
+          <div v-if="withCats && catCount" class="flex">
+            <Cat class="mr-1 h-4 w-4" />
+            <Label>{{ catCount }}</Label>
+          </div>
+        </div>
+      </Button>
     </PopoverTrigger>
     <PopoverContent class="w-80">
       <div class="grid gap-4">

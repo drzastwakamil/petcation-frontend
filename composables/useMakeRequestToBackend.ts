@@ -1,6 +1,6 @@
 type UseFetchSecondParam = Parameters<typeof useFetch>[1];
 
-const backendURL = 'http://petcation-405617.lm.r.appspot.com';
+const backendURL = 'https://petcation-405617.lm.r.appspot.com';
 
 function useMakeRequestToBackend(
   endpointName: string,

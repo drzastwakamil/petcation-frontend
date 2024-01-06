@@ -3,7 +3,6 @@
     <div class="h-header" />
     <div class="flex justify-center gap-2 pt-10">
       <Combobox />
-
       <DatePicker v-model="dateRange" />
       <AnimalsPicker v-model:catCount="catsCount" v-model:dogCount="dogsCount" />
     </div>
