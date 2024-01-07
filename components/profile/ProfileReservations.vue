@@ -36,7 +36,15 @@
             <TableCell> {{ reservation?.from }} - {{ reservation?.to }}</TableCell>
             <TableCell> {{ getReservationStatusTitle(reservation?.status as ReservationStatus) }}</TableCell>
             <TableCell>
-              <AlertDialog :key="reservation?.id || index">
+              <AlertDialog
+                :key="reservation?.id || index"
+                :open="isDialogOpen"
+                @update:open="
+                  (open) => {
+                    isDialogOpen = open;
+                  }
+                "
+              >
                 <div class="flex justify-between p-5" rounded>
                   <AlertDialogTrigger as-child>
                     <div>
@@ -52,7 +60,6 @@
                       </AlertDialogDescription>
                       <div class="grid grid-cols-4 gap-4 pt-12">
                         <AlertDialogCancel class="col-span-1"> Cofnij </AlertDialogCancel>
-
                         <Button
                           class="col-span-3"
                           :disabled="false"
@@ -66,7 +73,7 @@
                           variant="destructive"
                         >
                           Anuluj rezerwację
-                          <Loader2 v-if="false" class="ml-2 h-4 w-4 animate-spin" />
+                          <Loader2 v-if="deletingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
                         </Button>
                       </div>
                     </div>
@@ -87,7 +94,11 @@ import { useQuery, useMutation } from '@tanstack/vue-query';
 import { toast } from '../ui/commonToast';
 import { getReservationStatusTitle, ReservationStatus } from '@/types/common';
 
-const { data: resultOfReservationsQuery, isPending: reservationsQueryIsLoading } = useQuery({
+const {
+  data: resultOfReservationsQuery,
+  isPending: reservationsQueryIsLoading,
+  refetch,
+} = useQuery({
   queryKey: ['user'],
   queryFn: (): Promise<unknown> => {
     return useGetFromBackend('/allReservations', undefined, 'WITH_AUTHORIZATION');
@@ -97,6 +108,7 @@ const { data: resultOfReservationsQuery, isPending: reservationsQueryIsLoading }
 const reservations = computed(() => {
   return resultOfReservationsQuery.value?.data || [];
 });
+const isDialogOpen = ref(false);
 
 const { mutate: executeDeleteReservation, isPending: deletingReservationIsLoading } = useMutation({
   mutationFn: (variables): Promise<unknown> => {
@@ -119,9 +131,8 @@ const { mutate: executeDeleteReservation, isPending: deletingReservationIsLoadin
       });
       return;
     }
-
     refetch();
-
+    isDialogOpen.value = false;
     toast({
       title: 'Udało się anulować rezerwację!',
     });
