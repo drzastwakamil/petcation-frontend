@@ -80,8 +80,23 @@
             >
               Kontynnuuj</Button
             >
-            <div v-else-if="userSession.role != 'user'" class="w-full underline">
-              Nie możesz dokonać rezerwacji na koncie hotelu
+
+            <div v-else-if="userSession.role == 'hotel'" class="w-full">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <div class="flex gap-2">
+                      <AlertCircleIcon class="text-red-300" />
+                      <p class="text-left">Nie możesz dokonać rezerwacji na koncie hotelu</p>
+                    </div></TooltipTrigger
+                  >
+                  <TooltipContent>
+                    <p class="underline">
+                      Aby dokonać rezerwacji wyloguj się z konta hotelu i zaloguj na konto użytkownika
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <Button
               v-else
@@ -103,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { DogIcon, CatIcon } from 'lucide-vue-next';
+import { DogIcon, CatIcon, AlertCircleIcon } from 'lucide-vue-next';
 import { useRouteParams, useRouteQuery } from '@vueuse/router';
 import { useQuery } from '@tanstack/vue-query';
 const userSession = useUserSessionStore();
