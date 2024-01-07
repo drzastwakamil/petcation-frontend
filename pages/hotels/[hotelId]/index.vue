@@ -5,17 +5,11 @@
     <div class="grid grid-cols-7 gap-4 py-10">
       <div class="col-span-5 space-y-8">
         <ImagesCarousel
-          :images-urls="[
-            `${Date.now() + Math.random()}`,
-            `${Date.now() + Math.random()}`,
-            `${Date.now() + Math.random()}`,
-            `${Date.now() + Math.random()}`,
-            `${Date.now() + Math.random()}`,
-            `${Date.now() + Math.random()}`,
-            `${Date.now() + Math.random()}`,
-            `${Date.now() + Math.random()}`,
-            `${Date.now() + Math.random()}`,
-          ]"
+          :images-urls="
+            (hotel?.images || []).map((image) => {
+              return image.url;
+            })
+          "
         />
         <div class="space-y-3">
           <h1 class="text-2xl">{{ hotel?.name || '' }}</h1>

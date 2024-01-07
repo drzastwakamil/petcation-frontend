@@ -8,12 +8,8 @@
       >
         <div class="splide__track">
           <ul class="splide__list">
-            <li v-for="(index, imageUrl) in imagesUrls" :key="imageUrl" class="splide__slide">
-              <img
-                :alt="`${index}hotelPhoto`"
-                class="m-auto max-h-full object-contain"
-                :src="`https://loremflickr.com/700/800/dog?idk=${imageUrl}`"
-              />
+            <li v-for="(imageUrl, index) in imagesUrls" :key="imageUrl" class="splide__slide">
+              <img :alt="`${index}hotelPhoto`" class="m-auto max-h-full object-contain" :src="imageUrl" />
             </li>
           </ul>
         </div>
@@ -26,12 +22,8 @@
       >
         <div class="splide__track">
           <ul class="splide__list">
-            <li v-for="(index, imageUrl) in imagesUrls" :key="imageUrl" class="splide__slide">
-              <img
-                :alt="`${index}hotelPhoto`"
-                class="h-full w-full rounded bg-zinc-100 object-cover"
-                :src="`https://loremflickr.com/700/800/dog?idk=${imageUrl}`"
-              />
+            <li v-for="(imageUrl, index) in imagesUrls" :key="imageUrl" class="splide__slide">
+              <img :alt="`${index}hotelPhoto`" class="h-full w-full rounded bg-zinc-100 object-cover" :src="imageUrl" />
             </li>
           </ul>
         </div>
