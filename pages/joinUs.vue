@@ -3,7 +3,7 @@
     <div class="p-10">
       <div class="flex justify-between">
         <div class="flex items-center space-x-5">
-          <NuxtLink :to="browsingStore.lastVisitedNonAuthPage">
+          <NuxtLink to="/">
             <Button size="icon" variant="ghost">
               <ArrowLeftIcon />
             </Button>
@@ -79,7 +79,6 @@ import { FormField } from '@/components/ui/form';
 definePageMeta({
   layout: false,
 });
-const browsingStore = useBrowsingStore();
 
 const sendingJoinRequestFormSchema = toTypedSchema(
   z.object({

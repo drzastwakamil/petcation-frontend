@@ -84,6 +84,7 @@
                   class="col-span-3"
                   :disabled="deleteAnimalIsLoading"
                   :onclick="() => executeDeleteAnimal({ id: pet.id })"
+                  variant="destructive"
                 >
                   Usuń
                   <Loader2 v-if="deleteAnimalIsLoading" class="ml-2 h-4 w-4 animate-spin" />

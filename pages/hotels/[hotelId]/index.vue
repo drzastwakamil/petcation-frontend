@@ -50,14 +50,14 @@
             <CardTitle> Cennik </CardTitle>
             <CardDescription class="flex flex-col gap-2 pt-3">
               <div class="flex">
-                <template v-if="dogsPrice">
-                  <DogIcon class="mr-1 h-5 w-5" /> Pies - {{ dogsPrice.price }} zł noc
+                <template v-if="dogsRooms">
+                  <DogIcon class="mr-1 h-5 w-5" /> Pies - {{ dogsRooms.price }} zł noc
                 </template>
               </div>
 
               <div class="flex">
-                <template v-if="catsPrice">
-                  <CatIcon class="mr-1 h-5 w-5" /> Kot - {{ catsPrice.price }} zł noc
+                <template v-if="catsRooms">
+                  <CatIcon class="mr-1 h-5 w-5" /> Kot - {{ catsRooms.price }} zł noc
                 </template>
               </div>
             </CardDescription>
@@ -68,8 +68,8 @@
               <AnimalsPicker
                 v-model:catCount="catsCount"
                 v-model:dogCount="dogsCount"
-                :with-cats="withCats"
-                :with-dogs="withDogs"
+                :max-cats-count="catsRooms?.qty || 0"
+                :max-dogs-count="dogsRooms?.qty || 0"
               />
             </div>
             <Separator />
@@ -124,24 +124,24 @@ const {
 });
 const hotel = computed(() => resultOfHotelQuery?.value?.data ?? {});
 
-const dogsPrice = computed(() => {
+const dogsRooms = computed(() => {
   return (hotel?.value?.allAvailableRoomsByPetType || []).find((val) => {
     return val?.petType === 'DOG';
   });
 });
 
-const catsPrice = computed(() => {
+const catsRooms = computed(() => {
   return (hotel?.value?.allAvailableRoomsByPetType || []).find((val) => {
     return val?.petType === 'CAT';
   });
 });
 
 const withDogs = computed(() => {
-  return !!dogsPrice.value;
+  return !!dogsRooms.value;
 });
 
 const withCats = computed(() => {
-  return !!catsPrice.value;
+  return !!catsRooms.value;
 });
 const dogsCount = ref(useRouteQuery('dogsCount').value);
 const catsCount = ref(useRouteQuery('catsCount').value);
@@ -152,7 +152,7 @@ const dateRange = ref({
 
 const totalPrice = computed(() => {
   return (
-    (dogsCount?.value ?? 0) * (dogsPrice?.value?.price ?? 0) + (catsCount?.value ?? 0) * (catsPrice?.value?.price ?? 0)
+    (dogsCount?.value ?? 0) * (dogsRooms?.value?.price ?? 0) + (catsCount?.value ?? 0) * (catsRooms?.value?.price ?? 0)
   );
 });
 

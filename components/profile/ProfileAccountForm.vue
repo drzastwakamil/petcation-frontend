@@ -122,7 +122,6 @@ const { mutate: executeChangePasswordMutate, isPending: changingPasswordIsLoadin
 
     toast({
       title: 'Udało się zmienić hasło!.',
-      description: 'Wprowadź swoje dane aby się zalogować!',
     });
   },
   onError: (error) => {

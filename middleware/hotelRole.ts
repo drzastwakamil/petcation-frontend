@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware(() => {
-  if (useUserSessionStore().isLoggedIn) {
+  if (useUserSessionStore().role === 'hotel') {
     return;
   }
   return abortNavigation();

@@ -7,7 +7,8 @@
           <Avatar>
             <AvatarImage alt="avatar" :src="''" />
             <AvatarFallback>
-              <User class="text-slate-300" />
+              <UserIcon v-if="userSessionStore.role === 'user'" class="text-slate-300" />
+              <HotelIcon v-else-if="userSessionStore.role === 'hotel'" class="text-slate-300" />
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -15,32 +16,8 @@
       <DropdownMenuContent class="w-56">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <NuxtLink to="/settings/profile">
-            <DropdownMenuItem>
-              <UserIcon class="mr-2 h-4 w-4" />
-              <span>Profil</span>
-            </DropdownMenuItem>
-          </NuxtLink>
-          <NuxtLink to="/settings/account">
-            <DropdownMenuItem>
-              <WrenchIcon class="mr-2 h-4 w-4" />
-              <span>Konto</span>
-            </DropdownMenuItem>
-          </NuxtLink>
-          <NuxtLink to="/settings/animals">
-            <DropdownMenuItem>
-              <PawPrintIcon class="mr-2 h-4 w-4" />
-              <span>Zwierzaki</span>
-            </DropdownMenuItem>
-          </NuxtLink>
-          <NuxtLink to="/settings/reservations">
-            <DropdownMenuItem>
-              <HotelIcon class="mr-2 h-4 w-4" />
-              <span>Rezerwacje</span>
-            </DropdownMenuItem>
-          </NuxtLink>
-        </DropdownMenuGroup>
+        <UserRoleDropdownContent v-if="userSessionStore.role === 'user'" />
+        <HotelRoleDropdownContent v-else-if="userSessionStore.role === 'hotel'" />
         <DropdownMenuSeparator />
         <DropdownMenuItem
           @select="
@@ -58,6 +35,6 @@
 </template>
 
 <script setup lang="ts">
-import { WrenchIcon, HotelIcon, LogOutIcon, PawPrintIcon, UserIcon } from 'lucide-vue-next';
+import { LogOutIcon, HotelIcon, UserIcon } from 'lucide-vue-next';
 const userSessionStore = useUserSessionStore();
 </script>

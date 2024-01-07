@@ -7,8 +7,8 @@ function useMakeRequestToBackend(
   options?: UseFetchSecondParam,
   mode?: 'PUBLIC' | 'WITH_AUTHORIZATION',
 ) {
-  const userSession = useUserSessionStore();
   if (mode === 'WITH_AUTHORIZATION') {
+    const userSession = useUserSessionStore();
     return useFetch(`${backendURL}/${endpointName}`, {
       ...options,
       headers: {

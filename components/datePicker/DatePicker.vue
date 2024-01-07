@@ -20,7 +20,7 @@
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" :avoid-collisions="true" class="w-auto p-0">
-        <Calendar v-model.range="localDateRange" :columns="2" />
+        <Calendar v-model.range="localDateRange" :columns="2" :min-date="new Date()" />
       </PopoverContent>
     </Popover>
   </div>

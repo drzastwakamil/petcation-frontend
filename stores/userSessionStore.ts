@@ -1,10 +1,11 @@
 export const useUserSessionStore = defineStore('userSession', {
   state: () => ({
     token: useLocalStorage('token', ''),
-    role: '',
+    role: useLocalStorage('role', ''),
   }),
   hydrate(state) {
     state.token = useLocalStorage('token', '');
+    state.role = useLocalStorage('role', '');
   },
   actions: {
     logOut() {

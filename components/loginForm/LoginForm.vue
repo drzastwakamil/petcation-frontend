@@ -110,7 +110,7 @@ const { mutate: executeLogInMutate, isPending: loginIsLoading } = useMutation({
   },
   onError: (error) => {
     toast({
-      title: 'Nie udało się zarejestrować.',
+      title: 'Nie udało się zalogować.',
       description: error.message,
       variant: 'destructive',
     });

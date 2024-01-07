@@ -319,8 +319,6 @@ const resetAskingForResetPasswordEmailProcess = () => {
 };
 const userSessionStore = useUserSessionStore();
 userSessionStore.$onAction(({ name }) => {
-  // debugger;
-  console.log('bagno ');
   if (name === 'openLoginModal') {
     isDialogOpen.value = true;
   }
