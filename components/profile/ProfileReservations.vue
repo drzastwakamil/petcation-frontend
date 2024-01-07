@@ -24,7 +24,7 @@
               >
             </TableCell>
             <TableCell>
-              {{ reservation?.hotelDto?.addressDto?.street }},{{ reservation?.hotelDto?.addressDto?.city }}
+              {{ reservation?.hotelDto?.addressDto?.street }}, {{ reservation?.hotelDto?.addressDto?.city }}
             </TableCell>
             <TableCell class="flex gap-4">
               <div v-for="pet in reservation?.petDtos || []" :key="pet.id">
