@@ -122,9 +122,9 @@ const {
   isPending: fetchUserPetsIsLoading,
   refetch,
 } = useQuery({
-  queryKey: ['pets'],
+  queryKey: ['usersPets'],
   queryFn: (): Promise<unknown> => {
-    return useGetFromBackend('pets', undefined, 'WITH_AUTHORIZATION');
+    return useGetFromBackend('usersPets', undefined, 'WITH_AUTHORIZATION');
   },
 });
 

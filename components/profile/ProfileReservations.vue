@@ -48,9 +48,7 @@
                 <div class="flex justify-between p-5" rounded>
                   <AlertDialogTrigger as-child>
                     <div>
-                      <Button size="icon" variant="ghost">
-                        <DeleteIcon />
-                      </Button>
+                      <Button variant="destructive"> Anuluj </Button>
                     </div>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
@@ -115,7 +113,7 @@ const { mutate: executeDeleteReservation, isPending: deletingReservationIsLoadin
     return useDeleteFromBackend(
       'deleteReservation',
       {
-        body: {
+        params: {
           id: variables.id,
         },
       },

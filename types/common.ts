@@ -1,7 +1,8 @@
 export enum ReservationStatus {
   PENDING = 'PENDING',
   ACCEPTED = 'ACCEPTED',
-  DECLINECD = 'DECLINED',
+  DELETED = 'DELETED',
+  REJECTED = 'REJECTED',
 }
 
 export const getReservationStatusTitle = (status: ReservationStatus) => {
@@ -10,7 +11,9 @@ export const getReservationStatusTitle = (status: ReservationStatus) => {
       return 'Czeka na potwierdzenie';
     case ReservationStatus.ACCEPTED:
       return 'Potwierdzona';
-    case ReservationStatus.DECLINECD:
+    case ReservationStatus.DELETED:
+      return 'Anulowana';
+    case ReservationStatus.REJECTED:
       return 'Odrzucona';
   }
 };

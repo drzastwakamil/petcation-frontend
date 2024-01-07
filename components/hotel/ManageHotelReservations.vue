@@ -37,11 +37,15 @@
             <TableCell> {{ getReservationStatusTitle(reservation?.status as ReservationStatus) }}</TableCell>
             <TableCell class="flex">
               <AlertDialog
+                v-if="
+                  reservation?.status === ReservationStatus.PENDING ||
+                  reservation?.status === ReservationStatus.ACCEPTED
+                "
                 :key="reservation?.id || index"
-                :open="isDialogOpen"
+                :open="rejectDialogOpen"
                 @update:open="
                   (open) => {
-                    isDialogOpen = open;
+                    rejectDialogOpen = open;
                   }
                 "
               >
@@ -70,7 +74,7 @@
                           "
                           variant="destructive"
                         >
-                          Anuluj rezerwację
+                          Odrzuć rezerwację
                           <Loader2 v-if="deletingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
                         </Button>
                       </div>
@@ -79,11 +83,12 @@
                 </div>
               </AlertDialog>
               <AlertDialog
+                v-if="reservation?.status === ReservationStatus.PENDING"
                 :key="reservation?.id || index"
-                :open="isDialogOpen"
+                :open="acceptDialogOpen"
                 @update:open="
                   (open) => {
-                    isDialogOpen = open;
+                    acceptDialogOpen = open;
                   }
                 "
               >
@@ -147,14 +152,15 @@ const {
 const reservations = computed(() => {
   return resultOfReservationsQuery.value?.data || [];
 });
-const isDialogOpen = ref(false);
+const rejectDialogOpen = ref(false);
+const acceptDialogOpen = ref(false);
 
 const { mutate: executeDeleteReservation, isPending: deletingReservationIsLoading } = useMutation({
   mutationFn: (variables): Promise<unknown> => {
     return useDeleteFromBackend(
       'rejectReservation',
       {
-        body: {
+        params: {
           id: variables.id,
         },
       },
@@ -190,7 +196,7 @@ const { mutate: executeAcceptReservation, isPending: acceptingReservationIsLoadi
     return useDeleteFromBackend(
       'acceptReservation',
       {
-        body: {
+        params: {
           id: variables.id,
         },
       },
