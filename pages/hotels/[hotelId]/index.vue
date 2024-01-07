@@ -295,9 +295,13 @@
 import { DogIcon, CatIcon, AlertCircleIcon, Loader2, XIcon, BoneIcon } from 'lucide-vue-next';
 import { useRouteParams, useRouteQuery } from '@vueuse/router';
 import { useQuery, useMutation } from '@tanstack/vue-query';
+import { addDays } from 'date-fns';
 import { toast } from '@/components/ui/commonToast';
 const userSession = useUserSessionStore();
 const hotelId = useRouteParams('hotelId');
+const startDate = useRouteParams('dateStart');
+const endDate = useRouteParams('dateEnd');
+
 const { data: resultOfHotelQuery, isPending: hotelQueryIsLoading } = useQuery({
   queryKey: [`hotel${hotelId.value}`],
   queryFn: (): Promise<unknown> => {
@@ -337,8 +341,8 @@ const withCats = computed(() => {
 const dogsCount = ref(useRouteQuery('dogsCount').value);
 const catsCount = ref(useRouteQuery('catsCount').value);
 const dateRange = ref({
-  start: new Date(),
-  end: new Date(),
+  start: startDate.value ? new Date(startDate.value) : new Date(),
+  end: endDate.value ? new Date(endDate.value) : addDays(new Date(), 1),
 });
 function countDatesInclusive(startDate, endDate) {
   const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds

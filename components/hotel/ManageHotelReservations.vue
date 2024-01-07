@@ -193,7 +193,7 @@ const { mutate: executeDeleteReservation, isPending: deletingReservationIsLoadin
 
 const { mutate: executeAcceptReservation, isPending: acceptingReservationIsLoading } = useMutation({
   mutationFn: (variables): Promise<unknown> => {
-    return useDeleteFromBackend(
+    return usePostOnBackend(
       'acceptReservation',
       {
         params: {

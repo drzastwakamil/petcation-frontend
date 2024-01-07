@@ -13,7 +13,7 @@
             <TableHead> Zwierzęta </TableHead>
             <TableHead> Termin </TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Anuluj rezerwację</TableHead>
+            <TableHead>Akcje</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -35,8 +35,9 @@
             </TableCell>
             <TableCell> {{ reservation?.from }} - {{ reservation?.to }}</TableCell>
             <TableCell> {{ getReservationStatusTitle(reservation?.status as ReservationStatus) }}</TableCell>
-            <TableCell>
+            <TableCell class="flex">
               <AlertDialog
+                v-if="reservation?.status === ReservationStatus.PENDING"
                 :key="reservation?.id || index"
                 :open="isDialogOpen"
                 @update:open="
@@ -78,6 +79,72 @@
                   </AlertDialogContent>
                 </div>
               </AlertDialog>
+              <AlertDialog
+                v-if="true"
+                :key="reservation?.id || index"
+                :open="isDialogOpen"
+                @update:open="
+                  (open) => {
+                    isDialogOpen = open;
+                  }
+                "
+              >
+                <div class="flex justify-between p-5" rounded>
+                  <AlertDialogTrigger as-child>
+                    <div>
+                      <Button> Oceń pobyt </Button>
+                    </div>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <div>
+                      <AlertDialogDescription>
+                        <Select
+                          :model-value="value"
+                          @update:model-value="
+                            (value) => {
+                              selectedRate = value;
+                            }
+                          "
+                        >
+                          <SelectTrigger :id="`catsPicker${index}`">
+                            <SelectValue placeholder="Wybierz ocenę" />
+                          </SelectTrigger>
+                          <SelectContent position="popper">
+                            <SelectItem
+                              v-for="starsAmount in [1, 2, 3, 4, 5]"
+                              :key="starsAmount"
+                              class="flex"
+                              :value="starsAmount"
+                            >
+                              <StarIcon v-for="index in starsAmount" :key="index" class="inline-flex" />
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </AlertDialogDescription>
+                      <div class="grid grid-cols-4 gap-4 pt-12">
+                        <AlertDialogCancel class="col-span-1"> Cofnij </AlertDialogCancel>
+                        <Button
+                          class="col-span-3"
+                          :disabled="false"
+                          :onclick="
+                            () => {
+                              executeAddHotelRate({
+                                hotelId: reservation?.hotelDto?.id,
+                                reservationId: reservation?.id,
+                                rate: selectedRate,
+                                comment: '',
+                              });
+                            }
+                          "
+                        >
+                          Wystaw ocenę
+                          <Loader2 v-if="deletingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
+                        </Button>
+                      </div>
+                    </div>
+                  </AlertDialogContent>
+                </div>
+              </AlertDialog>
             </TableCell>
           </TableRow>
         </TableBody>
@@ -87,7 +154,7 @@
 </template>
 
 <script setup lang="ts">
-import { BoneIcon, CatIcon, DeleteIcon } from 'lucide-vue-next';
+import { BoneIcon, CatIcon, StarIcon } from 'lucide-vue-next';
 import { useQuery, useMutation } from '@tanstack/vue-query';
 import { toast } from '../ui/commonToast';
 import { getReservationStatusTitle, ReservationStatus } from '@/types/common';
@@ -107,6 +174,7 @@ const reservations = computed(() => {
   return resultOfReservationsQuery.value?.data || [];
 });
 const isDialogOpen = ref(false);
+const selectedRate = ref<number | null>(null);
 
 const { mutate: executeDeleteReservation, isPending: deletingReservationIsLoading } = useMutation({
   mutationFn: (variables): Promise<unknown> => {
@@ -138,6 +206,45 @@ const { mutate: executeDeleteReservation, isPending: deletingReservationIsLoadin
   onError: (error) => {
     toast({
       title: 'Nie udało się anulować rezerwacji!',
+      description: error.message,
+      variant: 'destructive',
+    });
+  },
+});
+
+const { mutate: executeAddHotelRate, isPending: addingHotelRateIsLoading } = useMutation({
+  mutationFn: (variables): Promise<unknown> => {
+    return usePostOnBackend(
+      'addHotelRate',
+      {
+        body: {
+          hotelId: variables?.hotelId || 0,
+          reservationId: variables?.reservationId || 0,
+          rate: variables?.rate || 0,
+          comment: variables?.comment || '',
+        },
+      },
+      'WITH_AUTHORIZATION',
+    );
+  },
+  onSuccess: ({ error }) => {
+    if (error._object[error?._key]?.message.length) {
+      toast({
+        title: 'Nie udało się dodać oceny!',
+        description: error._object[error._key]?.message,
+        variant: 'destructive',
+      });
+      return;
+    }
+    refetch();
+    isDialogOpen.value = false;
+    toast({
+      title: 'Udało się dodać ocenę!',
+    });
+  },
+  onError: (error) => {
+    toast({
+      title: 'Nie udało się dodać oceny!',
       description: error.message,
       variant: 'destructive',
     });
