@@ -62,21 +62,27 @@
             </div>
             <Separator />
           </CardContent>
-
           <CardFooter class="space-y-5">
             <div class="flex flex-row justify-between">
               <div class="font-semibold">Razem</div>
               <div>{{ totalPrice }}zł</div>
             </div>
-            <Button v-if="userSession.isLoggedIn" class="w-full" :disabled="!isButtonEnabled" size="lg">
+            <Button
+              v-if="userSession.isLoggedIn && userSession.role === 'user'"
+              class="w-full"
+              :disabled="!isButtonEnabled"
+              size="lg"
+            >
               Kontynnuuj</Button
             >
+            <div v-else-if="userSession.role != 'user'" class="w-full underline">
+              Nie możesz dokonać rezerwacji na koncie hotelu
+            </div>
             <Button
               v-else
               class="w-full"
               :onclick="
                 () => {
-                  console.log('what the hell men');
                   userSession.openLoginModal();
                 }
               "

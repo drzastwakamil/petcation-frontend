@@ -6,7 +6,10 @@
       <DatePicker v-model="dateRange" />
       <AnimalsPicker v-model:catCount="catsCount" v-model:dogCount="dogsCount" />
     </div>
-    <div class="grid grid-cols-4 gap-5 py-10">
+    <div v-if="hotelsQueryIsLoading" class="flex justify-center py-10">
+      <Loader2 class="h-20 w-20 animate-spin text-[#C28686]" />
+    </div>
+    <div v-else class="grid grid-cols-4 gap-5 py-10">
       <HotelCard
         v-for="hotel in hotels"
         :key="hotel.id"
@@ -33,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import { Loader2 } from 'lucide-vue-next';
 import { addDays } from 'date-fns';
 import { useQuery } from '@tanstack/vue-query';
 
@@ -93,7 +97,7 @@ const queryBody = computed(() => {
 
 const {
   data: resultOfHotelsQuery,
-  // isPending: hotelsQueryIsLoading,
+  isPending: hotelsQueryIsLoading,
   refetch,
 } = useQuery({
   queryKey: ['hotels'],

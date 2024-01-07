@@ -2,7 +2,7 @@
   <div class="wrapper">
     <Splide ref="main" aria-labelledby="thumbnail-example-heading" :options="mainOptions">
       <SplideSlide v-for="(url, index) in imagesUrls" :key="index">
-        <img :alt="`hotelImage${index}`" class="m-auto max-h-full object-contain" :src="url" />
+        <img :alt="`hotelImage${index}`" class="m-auto h-full max-h-full object-contain" :src="url" />
       </SplideSlide>
     </Splide>
     <Separator class="my-3" />
