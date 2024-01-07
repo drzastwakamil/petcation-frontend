@@ -4,13 +4,7 @@
 
     <div class="grid grid-cols-7 gap-4 py-10">
       <div class="col-span-5 space-y-8">
-        <ImagesCarousel
-          :images-urls="
-            (hotel?.images || []).map((image) => {
-              return image.url;
-            })
-          "
-        />
+        <ImagesCarousel v-if="imagesUrls.length" :images-urls="imagesUrls" />
         <div class="space-y-3">
           <h1 class="text-2xl">{{ hotel?.name || '' }}</h1>
           <p>
@@ -117,6 +111,11 @@ const {
   },
 });
 const hotel = computed(() => resultOfHotelQuery?.value?.data ?? {});
+const imagesUrls = computed(() => {
+  return (hotel.value?.images || []).map((image) => {
+    return image.url;
+  });
+});
 
 const dogsRooms = computed(() => {
   return (hotel?.value?.allAvailableRoomsByPetType || []).find((val) => {

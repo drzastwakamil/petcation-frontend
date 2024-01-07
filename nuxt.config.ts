@@ -22,7 +22,7 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'netlify',
   },
-  css: ['@/assets/css/tailwind.css', '@/node_modules/@splidejs/splide/dist/css/splide.min.css'],
+  css: ['@/assets/css/tailwind.css', '@splidejs/vue-splide/css'],
   components: [
     {
       path: '~/components/Icons',
@@ -42,3 +42,4 @@ export default defineNuxtConfig({
     },
   },
 });
+// import '@splidejs/vue-splide/css',
