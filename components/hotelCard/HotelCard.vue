@@ -3,10 +3,10 @@
     <Card class="flex h-full flex-col justify-between overflow-hidden border-2 hover:border-black">
       <div>
         <div class="relative flex h-60 w-full items-center justify-center bg-zinc-100">
-          <!-- <Badge class="absolute left-3 top-3 z-10 px-3 py-2">
+          <Badge v-if="reviewAverage" class="absolute left-3 top-3 z-10 px-3 py-2">
             <StarIcon class="mr-2 h-4 w-4" fill="white" />
             {{ reviewAverage }}
-          </Badge> -->
+          </Badge>
           <img v-if="photoUrl?.length" class="h-full w-full object-cover" :src="photoUrl" />
           <div v-else>
             <PawPrintIcon class="h-[80px] w-[80px] text-zinc-300" />
@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { MapPinIcon, PawPrintIcon } from 'lucide-vue-next';
+import { MapPinIcon, PawPrintIcon, StarIcon } from 'lucide-vue-next';
 
 defineProps<{
   link: unknown;

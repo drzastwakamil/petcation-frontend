@@ -28,7 +28,7 @@
         :price-per-night="150"
         :price-total="7 * 150"
         :range="8.5"
-        :review-average="4.56"
+        :review-average="hotel?.averageRate || 0"
         :title="hotel.name"
       />
     </div>
