@@ -74,6 +74,12 @@
                   return isDateInRange(disabledDate, dateRange);
                 })
               "
+              :open="isDialogOpen"
+              @update:open="
+                (open) => {
+                  isDialogOpen = open;
+                }
+              "
             >
               <AlertDialogTrigger as-child>
                 <Button
@@ -82,6 +88,7 @@
                   :onclick="
                     () => {
                       selectedCats = Array.from(Array(catsCount).keys()).map(() => null);
+                      selectedDogs = Array.from(Array(dogsCount).keys()).map(() => null);
                       refetchUserAnimals();
                     }
                   "
@@ -166,7 +173,7 @@
                   </Label>
 
                   <Select
-                    v-for="(_, index) in catsCount"
+                    v-for="(_, index) in dogsCount"
                     v-if="dogsPool.length"
                     :key="index"
                     :model-value="selectedDogs[index] || ''"
@@ -179,7 +186,7 @@
                     "
                   >
                     <div class="flex gap-4">
-                      <SelectTrigger :id="`catsPicker${index}`">
+                      <SelectTrigger :id="`dogsPicker${index}`">
                         <SelectValue placeholder="Wybierz psa" />
                       </SelectTrigger>
 
@@ -230,9 +237,19 @@
                 <AlertDialogFooter>
                   <div class="grid w-full grid-cols-4 gap-4 pt-12">
                     <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
-                    <Button class="col-span-3" :disabled="false" :onclick="() => {}">
+                    <Button
+                      class="col-span-3"
+                      :disabled="
+                        selectedDogs.every((dogId) => dogId === null) && selectedCats.every((catId) => catId === null)
+                      "
+                      :onclick="
+                        () => {
+                          executeAddReservationMutate();
+                        }
+                      "
+                    >
                       Rezerwuj
-                      <Loader2 v-if="false" class="ml-2 h-4 w-4 animate-spin" />
+                      <Loader2 v-if="addingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
                     </Button>
                   </div>
                 </AlertDialogFooter>
@@ -277,7 +294,8 @@
 <script setup lang="ts">
 import { DogIcon, CatIcon, AlertCircleIcon, Loader2, XIcon, BoneIcon } from 'lucide-vue-next';
 import { useRouteParams, useRouteQuery } from '@vueuse/router';
-import { useQuery } from '@tanstack/vue-query';
+import { useQuery, useMutation } from '@tanstack/vue-query';
+import { toast } from '@/components/ui/commonToast';
 const userSession = useUserSessionStore();
 const hotelId = useRouteParams('hotelId');
 const { data: resultOfHotelQuery, isPending: hotelQueryIsLoading } = useQuery({
@@ -385,16 +403,17 @@ function compareDates(date1: Date, date2: Date) {
 function isDateInRange(date: Date, dateRange: { start: Date; end: Date }) {
   return compareDates(date, dateRange.start) >= 0 && compareDates(date, dateRange.end) <= 0;
 }
-
-function formatDateRange(dateRange) {
+const formatDate = (date: Date) => {
   const formatter = new Intl.DateTimeFormat('en', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
   });
-
-  const startDateString = formatter.format(dateRange.startDate);
-  const endDateString = formatter.format(dateRange.endDate);
+  return formatter.format(date);
+};
+function formatDateRange(dateRange) {
+  const startDateString = formatDate(dateRange.startDate);
+  const endDateString = formatDate(dateRange.endDate);
 
   return startDateString + ' - ' + endDateString;
 }
@@ -417,5 +436,56 @@ const catsPool = computed(() => {
 const selectedDogs = ref<Array<number | null>>([]);
 const dogsPool = computed(() => {
   return (resultOfUserPetsQuery?.value?.data || []).filter((animal) => animal.petType === 'DOG');
+});
+const isDialogOpen = ref(false);
+
+const { mutate: executeAddReservationMutate, isPending: addingReservationIsLoading } = useMutation({
+  mutationFn: (): Promise<unknown> => {
+    console.log('fromattt');
+    return usePostOnBackend(
+      'addReservation',
+      {
+        body: {
+          petIds: [
+            ...selectedCats.value.filter((catId) => {
+              return catId !== null;
+            }),
+            ...selectedDogs.value.filter((dogId) => {
+              return dogId !== null;
+            }),
+          ],
+          hotelId: parseInt(hotelId.value),
+          // from: formatDate(dateRange.value.start),
+          // to: formatDate(dateRange.value.end),
+          from: dateRange.value.start.toISOString().split('T')[0],
+          to: dateRange.value.end.toISOString().split('T')[0],
+        },
+      },
+      'WITH_AUTHORIZATION',
+    );
+  },
+  onSuccess: ({ error }) => {
+    if (error._object[error?._key]?.message.length) {
+      toast({
+        title: 'Nie udało się dodać rezerwacji.',
+        description: error._object[error._key]?.message,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    isDialogOpen.value = false;
+    toast({
+      title: 'Rezerwacja dodana!',
+      description: 'Przejdź do profilu aby zobaczyć jej status',
+    });
+  },
+  onError: (error) => {
+    toast({
+      title: 'Nie udało się dodać rezerwacji.',
+      description: error.message,
+      variant: 'destructive',
+    });
+  },
 });
 </script>
