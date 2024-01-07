@@ -51,14 +51,13 @@
           </CardHeader>
           <CardContent class="space-y-3">
             <DatePicker v-model="dateRange" class="w-full" :disabled-dates="disabledDates" />
-            <div>
-              <AnimalsPicker
-                v-model:catCount="catsCount"
-                v-model:dogCount="dogsCount"
-                :max-cats-count="catsRooms?.qty || 0"
-                :max-dogs-count="dogsRooms?.qty || 0"
-              />
-            </div>
+            <AnimalsPicker
+              v-model:catCount="catsCount"
+              v-model:dogCount="dogsCount"
+              class="w-full"
+              :max-cats-count="catsRooms?.qty || 0"
+              :max-dogs-count="dogsRooms?.qty || 0"
+            />
             <Separator />
           </CardContent>
           <CardFooter class="space-y-5">
@@ -66,7 +65,8 @@
               <div class="font-semibold">Razem</div>
               <div>{{ totalPrice }}zł</div>
             </div>
-            <Button
+
+            <AlertDialog
               v-if="
                 userSession.isLoggedIn &&
                 userSession.role === 'user' &&
@@ -74,20 +74,177 @@
                   return isDateInRange(disabledDate, dateRange);
                 })
               "
-              class="w-full"
-              :disabled="!isButtonEnabled"
-              size="lg"
             >
-              Kontynnuuj</Button
-            >
+              <AlertDialogTrigger as-child>
+                <Button
+                  class="w-full"
+                  :disabled="!isButtonEnabled"
+                  :onclick="
+                    () => {
+                      selectedCats = Array.from(Array(catsCount).keys()).map(() => null);
+                      refetchUserAnimals();
+                    }
+                  "
+                  size="lg"
+                >
+                  Kontynnuuj
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader class="text-lg"> Zarezerwuj pobyt </AlertDialogHeader>
+                <Label class="pb-6">Termin: {{ formatDateRange(dateRange) }}</Label>
+                <div v-if="catsCount > 0" class="flex flex-col space-y-1.5 pb-6">
+                  <Label>
+                    <span> <CatIcon class="inline-flex h-4" /> Koty </span>
+                  </Label>
 
+                  <Select
+                    v-for="(_, index) in catsCount"
+                    v-if="catsPool.length"
+                    :key="index"
+                    :model-value="selectedCats[index] || ''"
+                    @update:model-value="
+                      (value) => {
+                        var tempCats = selectedCats;
+                        tempCats[index] = value;
+                        selectedCats = tempCats;
+                      }
+                    "
+                  >
+                    <div class="flex gap-4">
+                      <SelectTrigger :id="`catsPicker${index}`">
+                        <SelectValue placeholder="Wybierz kota" />
+                      </SelectTrigger>
+
+                      <Button
+                        :disabled="selectedCats[index] === null"
+                        :onclick="
+                          () => {
+                            var tempCats = selectedCats;
+                            tempCats[index] = null;
+                            selectedCats = tempCats;
+                          }
+                        "
+                        size="icon"
+                        variant="ghost"
+                      >
+                        <XIcon />
+                      </Button>
+                    </div>
+                    <SelectContent position="popper">
+                      <SelectItem
+                        v-for="cat in catsPool"
+                        :key="cat.id"
+                        :disabled="selectedCats.includes(cat.id)"
+                        :value="cat.id"
+                      >
+                        {{ cat.name }}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <TooltipProvider v-else>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div class="flex gap-2">
+                          <AlertCircleIcon class="text-red-300" />
+                          <p class="text-left">Nie znaleziono psów na twoim profilu</p>
+                        </div></TooltipTrigger
+                      >
+                      <TooltipContent>
+                        <NuxtLink class="underline" to="/settings/animals">
+                          Aby zarezerwować pobyt dla psa musisz dodać go do listy swoich zwierząt
+                        </NuxtLink>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+
+                <div v-if="dogsCount > 0" class="flex flex-col space-y-1.5">
+                  <Label for="framework">
+                    <span> <BoneIcon class="inline-flex h-4" /> Psy </span>
+                  </Label>
+
+                  <Select
+                    v-for="(_, index) in catsCount"
+                    v-if="dogsPool.length"
+                    :key="index"
+                    :model-value="selectedDogs[index] || ''"
+                    @update:model-value="
+                      (value) => {
+                        var tempDogs = selectedDogs;
+                        tempDogs[index] = value;
+                        selectedDogs = tempDogs;
+                      }
+                    "
+                  >
+                    <div class="flex gap-4">
+                      <SelectTrigger :id="`catsPicker${index}`">
+                        <SelectValue placeholder="Wybierz psa" />
+                      </SelectTrigger>
+
+                      <Button
+                        :disabled="selectedDogs[index] === null"
+                        :onclick="
+                          () => {
+                            var tempDogs = selectedDogs;
+                            selectedDogs[index] = null;
+                            selectedDogs = tempDogs;
+                          }
+                        "
+                        size="icon"
+                        variant="ghost"
+                      >
+                        <XIcon />
+                      </Button>
+                    </div>
+                    <SelectContent position="popper">
+                      <SelectItem
+                        v-for="dog in dogsPool"
+                        :key="dog.id"
+                        :disabled="selectedDogs.includes(dog.id)"
+                        :value="dog.id"
+                      >
+                        {{ dog.name }}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <TooltipProvider v-else>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div class="flex gap-2">
+                          <AlertCircleIcon class="text-red-300" />
+                          <p class="text-left">Nie znaleziono psów na twoim profilu</p>
+                        </div></TooltipTrigger
+                      >
+                      <TooltipContent>
+                        <NuxtLink class="underline" to="/settings/animals">
+                          Aby zarezerwować pobyt dla psa musisz dodać go do listy swoich zwierząt
+                        </NuxtLink>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+
+                <AlertDialogFooter>
+                  <div class="grid w-full grid-cols-4 gap-4 pt-12">
+                    <AlertDialogCancel class="col-span-1"> Anuluj </AlertDialogCancel>
+                    <Button class="col-span-3" :disabled="false" :onclick="() => {}">
+                      Rezerwuj
+                      <Loader2 v-if="false" class="ml-2 h-4 w-4 animate-spin" />
+                    </Button>
+                  </div>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
             <div v-else-if="userSession.role == 'hotel'" class="w-full">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
                     <div class="flex gap-2">
                       <AlertCircleIcon class="text-red-300" />
-                      <p class="text-left">Nie możesz dokonać rezerwacji na koncie hotelu</p>
+                      <p class="text-left">Nie możesz dokonać rezerwacji poprzez konto hotelu</p>
                     </div></TooltipTrigger
                   >
                   <TooltipContent>
@@ -118,15 +275,12 @@
 </template>
 
 <script setup lang="ts">
-import { DogIcon, CatIcon, AlertCircleIcon } from 'lucide-vue-next';
+import { DogIcon, CatIcon, AlertCircleIcon, Loader2, XIcon, BoneIcon } from 'lucide-vue-next';
 import { useRouteParams, useRouteQuery } from '@vueuse/router';
 import { useQuery } from '@tanstack/vue-query';
 const userSession = useUserSessionStore();
 const hotelId = useRouteParams('hotelId');
-const {
-  data: resultOfHotelQuery,
-  // isPending: hotelQueryIsLoading
-} = useQuery({
+const { data: resultOfHotelQuery, isPending: hotelQueryIsLoading } = useQuery({
   queryKey: [`hotel${hotelId.value}`],
   queryFn: (): Promise<unknown> => {
     return useGetFromBackend('hotel', {
@@ -231,4 +385,37 @@ function compareDates(date1: Date, date2: Date) {
 function isDateInRange(date: Date, dateRange: { start: Date; end: Date }) {
   return compareDates(date, dateRange.start) >= 0 && compareDates(date, dateRange.end) <= 0;
 }
+
+function formatDateRange(dateRange) {
+  const formatter = new Intl.DateTimeFormat('en', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+
+  const startDateString = formatter.format(dateRange.startDate);
+  const endDateString = formatter.format(dateRange.endDate);
+
+  return startDateString + ' - ' + endDateString;
+}
+const {
+  data: resultOfUserPetsQuery,
+  isPending: fetchUserPetsIsLoading,
+  refetch: refetchUserAnimals,
+} = useQuery({
+  queryKey: ['pets'],
+  queryFn: (): Promise<unknown> => {
+    return useGetFromBackend('pets', undefined, 'WITH_AUTHORIZATION');
+  },
+});
+
+const selectedCats = ref<Array<number | null>>([]);
+const catsPool = computed(() => {
+  return (resultOfUserPetsQuery?.value?.data || []).filter((animal) => animal.petType === 'CAT');
+});
+
+const selectedDogs = ref<Array<number | null>>([]);
+const dogsPool = computed(() => {
+  return (resultOfUserPetsQuery?.value?.data || []).filter((animal) => animal.petType === 'DOG');
+});
 </script>
