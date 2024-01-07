@@ -340,10 +340,24 @@ const dateRange = ref({
   start: new Date(),
   end: new Date(),
 });
+function countDatesInclusive(startDate, endDate) {
+  const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
 
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  const diffInDays = Math.round(Math.abs((start - end) / oneDay));
+
+  return diffInDays;
+}
 const totalPrice = computed(() => {
   return (
-    (dogsCount?.value ?? 0) * (dogsRooms?.value?.price ?? 0) + (catsCount?.value ?? 0) * (catsRooms?.value?.price ?? 0)
+    (dogsCount?.value ?? 0) *
+      (dogsRooms?.value?.price ?? 0) *
+      countDatesInclusive(dateRange.value.start, dateRange.value.end) +
+    (catsCount?.value ?? 0) *
+      (catsRooms?.value?.price ?? 0) *
+      countDatesInclusive(dateRange.value.start, dateRange.value.end)
   );
 });
 

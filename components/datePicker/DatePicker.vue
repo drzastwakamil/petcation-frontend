@@ -51,6 +51,20 @@ watch(
   () => props.modelValue,
   (newValue, oldValue) => {
     if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
+      const val = { ...newValue };
+      const date1 = val.start;
+      const date2 = val.end;
+
+      const day1 = date1.getDate();
+      const month1 = date1.getMonth();
+      const year1 = date1.getFullYear();
+
+      const day2 = date2.getDate();
+      const month2 = date2.getMonth();
+      const year2 = date2.getFullYear();
+      if (day1 === day2 && month1 === month2 && year1 === year2) {
+        val.end.setDate(val.end.getDate() + 1);
+      }
       localDateRange.value = { ...newValue };
     }
   },
