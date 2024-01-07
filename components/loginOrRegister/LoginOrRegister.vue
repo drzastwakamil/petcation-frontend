@@ -86,7 +86,13 @@
           </div>
         </TabsContent>
         <TabsContent value="login">
-          <LoginForm />
+          <LoginForm
+            :set-current-tab="
+              (tab: string) => {
+                currentTab = tab;
+              }
+            "
+          />
         </TabsContent>
         <TabsContent value="register">
           <CardTitle class="pt-4">Rejestracja</CardTitle>

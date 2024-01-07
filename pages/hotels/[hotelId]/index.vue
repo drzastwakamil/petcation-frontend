@@ -455,8 +455,6 @@ const { mutate: executeAddReservationMutate, isPending: addingReservationIsLoadi
             }),
           ],
           hotelId: parseInt(hotelId.value),
-          // from: formatDate(dateRange.value.start),
-          // to: formatDate(dateRange.value.end),
           from: dateRange.value.start.toISOString().split('T')[0],
           to: dateRange.value.end.toISOString().split('T')[0],
         },

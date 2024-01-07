@@ -27,7 +27,7 @@
           <Button
             :onclick="
               () => {
-                currentTab = 'forgotPassword';
+                setCurrentTab('forgotPassword');
               }
             "
             :variant="null"
@@ -61,7 +61,9 @@ import * as z from 'zod';
 import { FormField } from '@/components/ui/form';
 import { toast } from '@/components/ui/commonToast';
 
-const currentTab = ref('login');
+defineProps<{
+  setCurrentTab: (tab: string) => void;
+}>();
 const userSession = useUserSessionStore();
 
 const loginFormSchema = toTypedSchema(
