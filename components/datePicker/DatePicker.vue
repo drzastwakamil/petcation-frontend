@@ -20,7 +20,7 @@
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" :avoid-collisions="true" class="w-auto p-0">
-        <Calendar v-model.range="localDateRange" :columns="2" :min-date="new Date()" />
+        <Calendar v-model.range="localDateRange" :columns="2" :disabled-dates="disabledDates" :min-date="new Date()" />
       </PopoverContent>
     </Popover>
   </div>
@@ -38,10 +38,13 @@ const props = defineProps({
       end: addDays(new Date(), 20),
     }),
   },
+  disabledDates: {
+    type: Array<Date>,
+    default: [],
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
-
 const localDateRange = ref({ ...props.modelValue });
 
 watch(

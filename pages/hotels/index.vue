@@ -7,7 +7,7 @@
       <AnimalsPicker v-model:catCount="catsCount" v-model:dogCount="dogsCount" />
     </div>
     <div v-if="hotelsQueryIsLoading" class="flex justify-center py-10">
-      <Loader2 class="h-20 w-20 animate-spin text-[#C28686]" />
+      <Loader2 class="h-[50px] w-[50px] animate-spin text-[#C28686]" />
     </div>
     <div v-else class="grid grid-cols-4 gap-5 py-10">
       <HotelCard
@@ -86,7 +86,6 @@ const queryBody = computed(() => {
         petType: 'DOG',
         qty: dogs,
       },
-
       {
         petType: 'CAT',
         qty: cats,

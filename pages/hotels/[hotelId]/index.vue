@@ -1,7 +1,6 @@
 <template>
   <div class="container mx-auto">
     <div class="h-header" />
-
     <div class="grid grid-cols-7 gap-4 py-10">
       <div class="col-span-5 space-y-8">
         <ImagesCarousel v-if="imagesUrls.length" :images-urls="imagesUrls" />
@@ -51,7 +50,7 @@
             </CardDescription>
           </CardHeader>
           <CardContent class="space-y-3">
-            <DatePicker v-model="dateRange" class="w-full" />
+            <DatePicker v-model="dateRange" class="w-full" :disabled-dates="disabledDates" />
             <div>
               <AnimalsPicker
                 v-model:catCount="catsCount"
@@ -68,7 +67,13 @@
               <div>{{ totalPrice }}zł</div>
             </div>
             <Button
-              v-if="userSession.isLoggedIn && userSession.role === 'user'"
+              v-if="
+                userSession.isLoggedIn &&
+                userSession.role === 'user' &&
+                !disabledDates.some((disabledDate) => {
+                  return isDateInRange(disabledDate, dateRange);
+                })
+              "
               class="w-full"
               :disabled="!isButtonEnabled"
               size="lg"
@@ -166,4 +171,49 @@ const isButtonEnabled = computed(() => {
 
   return catsCount.value > 0;
 });
+
+const disabledDates = computed(() => {
+  const freeDatesList = hotel?.value?.freeDatesList ?? {};
+  return Object.entries(freeDatesList)
+    .map(([key, value]) => {
+      const catsRoom = (value || []).find((val) => {
+        return val?.petType === 'CAT';
+      });
+      const dogsRoom = (value || []).find((val) => {
+        return val?.petType === 'DOG';
+      });
+      return {
+        date: key,
+        catsRoom,
+        dogsRoom,
+      };
+    })
+    .filter((value) => {
+      return (
+        (value?.catsRoom?.qty || 0) < (catsCount.value || 0) || (value?.dogsRoom?.qty || 0) < (dogsCount.value || 0)
+      );
+    })
+    .map((value) => {
+      return new Date(value.date);
+    });
+});
+
+function compareDates(date1: Date, date2: Date) {
+  // Convert date1 to a common format: YYYY-MM-DD
+  const convertedDate1 = new Date(date1).toISOString().split('T')[0];
+
+  // Convert date2 to a common format: YYYY-MM-DD
+  const convertedDate2 = new Date(date2).toISOString().split('T')[0];
+
+  if (convertedDate1 < convertedDate2) {
+    return -1;
+  } else if (convertedDate1 > convertedDate2) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+function isDateInRange(date: Date, dateRange: { start: Date; end: Date }) {
+  return compareDates(date, dateRange.start) >= 0 && compareDates(date, dateRange.end) <= 0;
+}
 </script>
