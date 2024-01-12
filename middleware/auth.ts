@@ -1,6 +1,6 @@
-// export default defineNuxtRouteMiddleware(() => {
-//   if (useUserSessionStore().isLoggedIn) {
-//     return;
-//   }
-//   return abortNavigation();
-// });
+export default defineNuxtRouteMiddleware(() => {
+  if (useUserSessionStore().isLoggedIn) {
+    return;
+  }
+  return abortNavigation();
+});

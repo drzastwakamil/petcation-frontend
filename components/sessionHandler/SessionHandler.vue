@@ -22,12 +22,18 @@
         <DropdownMenuItem
           @select="
             () => {
+              console.log(useRoute().meta.middleware)
+              const middleware = useRoute().meta.middleware;
+              debugger;
               userSessionStore.logOut();
+              if (middleware === 'auth' || Array.isArray(middleware) && middleware.includes('auth')) {
+                navigateTo('/')
+              }
             }
           "
         >
           <LogOutIcon class="mr-2 h-4 w-4" />
-          <span>Log out</span>
+          <span> Wyloguj się </span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

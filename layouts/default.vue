@@ -8,27 +8,27 @@
         <div class="flex items-center gap-5">
           <NuxtLink active-class="text-[#C28686] underline" to="/hotels"> Oferta </NuxtLink>
           <NuxtLink :to="{ path: '/', hash: '#features' }">
-            <!-- <h5
+            <h5
               :class="{
                 'text-[#C28686] underline': currentHash === '#features',
               }"
-            > -->
+            >
               Funkcjonalności
-            <!-- </h5> -->
+            </h5>
           </NuxtLink>
           <NuxtLink :to="{ path: '/', hash: '#security' }">
-            <!-- <h5
+            <h5
               :class="{
                 'text-[#C28686] underline': currentHash === '#security',
               }"
-            > -->
+            >
               Bezpieczeństwo
-            <!-- </h5> -->
+            </h5>
           </NuxtLink>
 
           <NuxtLink active-class="text-[#C28686] underline" :to="{ path: '/joinUs' }"> Dołącz do nas </NuxtLink>
 
-          <!-- <SessionHandler /> -->
+          <SessionHandler />
         </div>
       </div>
     </div>
