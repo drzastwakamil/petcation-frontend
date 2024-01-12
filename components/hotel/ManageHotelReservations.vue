@@ -124,6 +124,19 @@
                   </AlertDialogContent>
                 </div>
               </AlertDialog>
+              <Button
+                v-if="reservation.status === ReservationStatus.PENDING"
+                :onclick="
+                  () => {
+                    executeInviteForTrialStay({
+                      email: reservation.petDtos[0].petOwnerDto.email,
+                      hotelDto: reservation.hotelDto,
+                    });
+                  }
+                "
+              >
+                Zaproś na próbny pobyt
+              </Button>
             </TableCell>
           </TableRow>
         </TableBody>
@@ -221,6 +234,39 @@ const { mutate: executeAcceptReservation, isPending: acceptingReservationIsLoadi
   onError: (error) => {
     toast({
       title: 'Nie udało się zaakceptować rezerwacji!',
+      description: error.message,
+      variant: 'destructive',
+    });
+  },
+});
+
+const { mutate: executeInviteForTrialStay, isPending } = useMutation({
+  mutationFn: ({ hotelDto, email }): Promise<unknown> => {
+    return useFetch('/api/sendInviteForTrialStay', {
+      body: {
+        hotelDto,
+        to: email,
+      },
+      method: 'POST',
+    });
+  },
+  onSuccess: ({ error }) => {
+    if (error._object[error?._key]?.message.length) {
+      toast({
+        title: 'Nie udało się wysłać formularza.',
+        description: error._object[error._key]?.message,
+        variant: 'destructive',
+      });
+      return;
+    }
+    toast({
+      title: 'Udało się wysłać formularz!.',
+      description: 'Skontaktujemy się z tobą jak najszybciej!',
+    });
+  },
+  onError: (error) => {
+    toast({
+      title: 'Nie udało się wysłać formularza.',
       description: error.message,
       variant: 'destructive',
     });

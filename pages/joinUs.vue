@@ -102,13 +102,13 @@ const form = useForm({
   validationSchema: sendingJoinRequestFormSchema,
 });
 const onSendJoinRequestSubmit = form.handleSubmit(() => {
-  executeChangePasswordMutate({
+  executeSendRequestToJoin({
     message: form.values.message,
     email: form.values.email,
     phoneNumber: form.values.phoneNumber,
   });
 });
-const { mutate: executeChangePasswordMutate, isPending: sendingJoinRequestIsLoading } = useMutation({
+const { mutate: executeSendRequestToJoin, isPending: sendingJoinRequestIsLoading } = useMutation({
   mutationFn: ({ message, email, phoneNumber }): Promise<unknown> => {
     return useFetch('/api/sendAskToJoinEmail', {
       body: {

@@ -1,8 +1,8 @@
 <template>
   <div class="font-geist">
-    <div class="absolute">
+    <!-- <div class="absolute">
       <Toaster />
-    </div>
+    </div> -->
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -11,7 +11,6 @@
 
 <script setup lang="ts">
 import { VueQueryPlugin } from '@tanstack/vue-query';
-
 import VueSplide from '@splidejs/vue-splide';
 const { vueApp } = useNuxtApp();
 vueApp.use(VueQueryPlugin);
