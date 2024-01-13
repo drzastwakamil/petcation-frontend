@@ -34,9 +34,32 @@
               </div>
             </TableCell>
             <TableCell> {{ reservation?.from }} - {{ reservation?.to }}</TableCell>
-            <TableCell> {{ getReservationStatusTitle(reservation?.status as ReservationStatus) }}</TableCell>
+            <TableCell
+              :class="{
+                'text-red-500': reservation?.status === ReservationStatus.REJECTED,
+                'text-green-500': reservation?.status === ReservationStatus.ACCEPTED,
+              }"
+            >
+              {{ getReservationStatusTitle(reservation?.status as ReservationStatus) }}</TableCell
+            >
             <TableCell class="flex">
-              <AlertDialog
+              <HotelReservationActionsDropdown
+                v-if="reservation.status !== ReservationStatus.REJECTED"
+                :accepting-is-loading="acceptingReservationIsLoading"
+                :execute-accept-reservation="
+                  () => {
+                    executeAcceptReservation({
+                      id: reservation?.id,
+                    });
+                  }
+                "
+                :execute-invite-for-trial-stay="() => {}"
+                :execute-reject-reservation="() => {}"
+                :inviting-is-loading="false"
+                :rejecting-is-loading="false"
+                :status="reservation?.status"
+              />
+              <!-- <AlertDialog
                 v-if="
                   reservation?.status === ReservationStatus.PENDING ||
                   reservation?.status === ReservationStatus.ACCEPTED
@@ -136,7 +159,7 @@
                 "
               >
                 Zaproś na próbny pobyt
-              </Button>
+              </Button> -->
             </TableCell>
           </TableRow>
         </TableBody>
@@ -163,12 +186,10 @@ const {
 });
 
 const reservations = computed(() => {
-  var array = resultOfReservationsQuery.value?.data?.length ? [...resultOfReservationsQuery.value?.data] : []
-  array.reverse()
+  const array = resultOfReservationsQuery.value?.data?.length ? [...resultOfReservationsQuery.value?.data] : [];
+  array.reverse();
   return array;
 });
-const rejectDialogOpen = ref(false);
-const acceptDialogOpen = ref(false);
 
 const { mutate: executeDeleteReservation, isPending: deletingReservationIsLoading } = useMutation({
   mutationFn: (variables): Promise<unknown> => {
