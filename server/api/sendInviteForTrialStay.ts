@@ -5,6 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
+    const { owner, reservation } = body;
 
     const templateHTML = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html id="__vue-email" lang="en" dir="ltr">
@@ -17,7 +18,7 @@ export default defineEventHandler(async (event) => {
           <style data-id="__vue-email-style"> body { background-color: #fff !important; } </style>
        </head>
        <div id="__vue-email-preview" style="display: none; overflow: hidden; line-height: 1px; opacity: 0; max-height: 0; max-width: 0">
-          Petcation formularz zgłoszeniowy 
+          Petcation informacja w sprawie rezerwacji! 
           <div> ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿</div>
        </div>
        <body data-id="__vue-email-body" style="font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Oxygen-Sans,Ubuntu,Cantarell,&quot;Helvetica Neue&quot;,sans-serif;">
@@ -40,12 +41,21 @@ export default defineEventHandler(async (event) => {
                                      <tbody style="width: 100%">
                                         <tr style="width: 100%">
                                            <td data-id="__vue-email-column" role="presentation">
-                                              <h2 data-id="__vue-email-heading" style="padding-top:18px;font-size:26px;font-weight:bold;"> Otrzymaliśmy nowy formularz zgłoszeniowy! </h2>
-                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;"><b>Data wysłania: </b> December 30, 2023 at 12:40 AM</p>
-                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;margin-top:-5px;"><b>Email kontaktowy: </b> </p>
-                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;margin-top:-5px;"><b>Telefon kontaktowy: </b> </p>
-                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;margin-top:-5px;"><b>Treść zgłoszenia: </b></p>
-                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;"></p>
+                                              <h2 data-id="__vue-email-heading" style="padding-top:18px;font-size:26px;font-weight:bold;"> Hotel zaprasza ciebie na próbny pobyt! </h2>
+                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;"><b>Hotel: </b> ${reservation.hotelDto.name}</p>
+                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;margin-top:-5px;"><b>Telefon kontaktowy hotelu: </b>${reservation.hotelDto.addressDto.phoneNumber} </p>
+                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;margin-top:-5px;"><b>Adres hotelu: </b> ${reservation.hotelDto.addressDto.street}, ${reservation.hotelDto.addressDto.city}, ${reservation.hotelDto.addressDto.country}  </p>
+                                              <br> <br>
+                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;">
+                                                Witaj ${owner.firstName} ${owner.lastName}, <br>
+                                                Właściciel hotelu zaprasza Cię na próbny pobyt. Ta procedura ma na celu weryfikację zgłoszonych przez Ciebie do pobytu zwierząt, w celu zapewnienia jak największego bezpieczeństwa na platformie Petcation. Jest to standardowa procedura, z której ma prawo skorzystać każdy właściciel hotelu na naszej platformie. Uprzejmie prosimy o kontakt z właścicielem w celu ustalenia szczegółów dotyczących próbnego pobyt
+                                              </p>
+                                              <br>
+                                              <br>
+                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;">
+                                                Pozdrawiamy, <br>
+                                                Zespół Petcation
+                                              </p>
                                            </td>
                                         </tr>
                                      </tbody>
@@ -60,9 +70,10 @@ export default defineEventHandler(async (event) => {
           </table>
        </body>
     </html>`;
+
     const data = await resend.emails.send({
-      from: 'petcation@resend.dev',
-      to: [body.to],
+      from: 'Petcation <noreply@petcation.pl>',
+      to: [owner.email],
       subject: 'Zaproszenie na próbny pobyt',
       html: templateHTML,
     });

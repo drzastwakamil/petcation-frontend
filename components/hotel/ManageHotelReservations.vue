@@ -40,42 +40,7 @@
                 'opacity-50': reservationIsInThePast(reservation),
               }"
             >
-              <Button
-                class="flex gap-4"
-                :onclick="
-                  () => {
-                    animalsDialogOpen = true;
-                  }
-                "
-                variant="outline"
-              >
-                <div v-if="reservationPetsCounts(reservation).dogsCount" class="flex items-center gap-1">
-                  <BoneIcon />
-                  {{ reservationPetsCounts(reservation).dogsCount }}}
-                </div>
-
-                <div v-if="reservationPetsCounts(reservation).catsCount" class="flex items-center gap-1">
-                  <CatIcon />
-                  {{ reservationPetsCounts(reservation).catsCount }}
-                </div>
-                <ArrowRightIcon class="h-4 w-4" />
-              </Button>
-              <Teleport to="body">
-                <AlertDialog
-                  v-if="reservation?.status === ReservationStatus.PENDING"
-                  :key="reservation?.id || index"
-                  :open="animalsDialogOpen"
-                  @update:open="
-                    (open) => {
-                      animalsDialogOpen = open;
-                    }
-                  "
-                >
-                  <div class="flex justify-between p-5" rounded>
-                    <AlertDialogContent />
-                  </div>
-                </AlertDialog>
-              </Teleport>
+              <AnimalsDialog :reservation="reservation" />
             </TableCell>
             <TableCell
               :class="{
@@ -92,7 +57,11 @@
                 'text-green-500': reservation?.status === ReservationStatus.ACCEPTED,
               }"
             >
-              {{ getReservationStatusTitle(reservation?.status as ReservationStatus) }}</TableCell
+              {{
+                reservationIsInThePast(reservation) && reservation?.status === ReservationStatus.ACCEPTED
+                  ? 'Zakończona'
+                  : getReservationStatusTitle(reservation?.status as ReservationStatus)
+              }}</TableCell
             >
             <TableCell class="flex">
               <HotelReservationActionsDropdown
@@ -105,7 +74,12 @@
                     });
                   }
                 "
-                :execute-invite-for-trial-stay="() => {}"
+                :execute-invite-for-trial-stay="
+                  () => {
+                    console.log('inviting executing ');
+                    executeInviteForTrialStay(reservation);
+                  }
+                "
                 :execute-reject-reservation="
                   () => {
                     executeDeleteReservation({
@@ -116,109 +90,9 @@
                 :inviting-is-loading="false"
                 :is-in-the-past="reservationIsInThePast(reservation)"
                 :rejecting-is-loading="deletingReservationIsLoading"
+                :reservation="reservation"
                 :status="reservation?.status"
               />
-              <!-- <AlertDialog
-                v-if="
-                  reservation?.status === ReservationStatus.PENDING ||
-                  reservation?.status === ReservationStatus.ACCEPTED
-                "
-                :key="reservation?.id || index"
-                :open="rejectDialogOpen"
-                @update:open="
-                  (open) => {
-                    rejectDialogOpen = open;
-                  }
-                "
-              >
-                <div class="flex justify-between p-5" rounded>
-                  <AlertDialogTrigger as-child>
-                    <div>
-                      <Button variant="destructive"> Odrzuć </Button>
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <div>
-                      <AlertDialogDescription>
-                        Czy jesteś pewien że chcesz anulować rezerwację? Nie będziesz mógł cofnąć tej operacji!
-                      </AlertDialogDescription>
-                      <div class="grid grid-cols-4 gap-4 pt-12">
-                        <AlertDialogCancel class="col-span-1"> Cofnij </AlertDialogCancel>
-                        <Button
-                          class="col-span-3"
-                          :disabled="false"
-                          :onclick="
-                            () => {
-                              executeDeleteReservation({
-                                id: reservation?.id,
-                              });
-                            }
-                          "
-                          variant="destructive"
-                        >
-                          Odrzuć rezerwację
-                          <Loader2 v-if="deletingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
-                        </Button>
-                      </div>
-                    </div>
-                  </AlertDialogContent>
-                </div>
-              </AlertDialog>
-              <AlertDialog
-                v-if="reservation?.status === ReservationStatus.PENDING"
-                :key="reservation?.id || index"
-                :open="acceptDialogOpen"
-                @update:open="
-                  (open) => {
-                    acceptDialogOpen = open;
-                  }
-                "
-              >
-                <div class="flex justify-between p-5" rounded>
-                  <AlertDialogTrigger as-child>
-                    <div>
-                      <Button class="bg-green-500"> Akceptuj </Button>
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <div>
-                      <AlertDialogDescription>
-                        Czy jesteś pewien że zaakceptować rezerwację? Nie będziesz mógł cofnąć tej operacji!
-                      </AlertDialogDescription>
-                      <div class="grid grid-cols-4 gap-4 pt-12">
-                        <AlertDialogCancel class="col-span-1"> Cofnij </AlertDialogCancel>
-                        <Button
-                          class="col-span-3"
-                          :disabled="false"
-                          :onclick="
-                            () => {
-                              executeAcceptReservation({
-                                id: reservation?.id,
-                              });
-                            }
-                          "
-                        >
-                          Akceptuj rezerwację
-                          <Loader2 v-if="acceptingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
-                        </Button>
-                      </div>
-                    </div>
-                  </AlertDialogContent>
-                </div>
-              </AlertDialog>
-              <Button
-                v-if="reservation?.status === ReservationStatus.PENDING"
-                :onclick="
-                  () => {
-                    executeInviteForTrialStay({
-                      email: reservation.petDtos[0].petOwnerDto.email,
-                      hotelDto: reservation.hotelDto,
-                    });
-                  }
-                "
-              >
-                Zaproś na próbny pobyt
-              </Button> -->
             </TableCell>
           </TableRow>
         </TableBody>
@@ -228,7 +102,6 @@
 </template>
 
 <script setup lang="ts">
-import { BoneIcon, CatIcon, DeleteIcon, HourglassIcon, ArrowRightIcon } from 'lucide-vue-next';
 import { useQuery, useMutation } from '@tanstack/vue-query';
 import { toast } from '../ui/commonToast';
 import { getReservationStatusTitle, ReservationStatus } from '@/types/common';
@@ -312,7 +185,6 @@ const { mutate: executeAcceptReservation, isPending: acceptingReservationIsLoadi
       return;
     }
     refetch();
-    isDialogOpen.value = false;
     toast({
       title: 'Udało się zaakceptować rezerwację!',
     });
@@ -327,11 +199,12 @@ const { mutate: executeAcceptReservation, isPending: acceptingReservationIsLoadi
 });
 
 const { mutate: executeInviteForTrialStay, isPending } = useMutation({
-  mutationFn: ({ hotelDto, email }): Promise<unknown> => {
+  mutationFn: (reservation): Promise<unknown> => {
+    const owner = reservation.petDtos.at(0)?.petDto?.petOwnerDto ?? null;
     return useFetch('/api/sendInviteForTrialStay', {
       body: {
-        hotelDto,
-        to: email,
+        reservation,
+        owner,
       },
       method: 'POST',
     });
@@ -339,20 +212,20 @@ const { mutate: executeInviteForTrialStay, isPending } = useMutation({
   onSuccess: ({ error }) => {
     if (error._object[error?._key]?.message.length) {
       toast({
-        title: 'Nie udało się wysłać formularza.',
+        title: 'Nie udało się wysłać zaproszenia.',
         description: error._object[error._key]?.message,
         variant: 'destructive',
       });
       return;
     }
     toast({
-      title: 'Udało się wysłać formularz!.',
-      description: 'Skontaktujemy się z tobą jak najszybciej!',
+      title: 'Udało się wysłać zaproszenie!.',
+      description: 'Poinformowaliśmy użytkownika aby się z tobą skontaktował!',
     });
   },
   onError: (error) => {
     toast({
-      title: 'Nie udało się wysłać formularza.',
+      title: 'Nie udało się wysłać zaproszenia.',
       description: error.message,
       variant: 'destructive',
     });
@@ -369,30 +242,5 @@ function reservationIsInThePast(reservation) {
 
   // Check if the 'to' date is before today
   return toDate < today;
-}
-
-const animalsDialogOpen = ref(false);
-
-function reservationPetsCounts(reservation) {
-  const dogsCount = reservation?.petDtos.reduce((accumulator, currentValue) => {
-    console.log('current value', currentValue.petDto.petType);
-    if (currentValue.petDto.petType !== 'DOG') {
-      return accumulator;
-    }
-
-    return accumulator + 1;
-  }, 0);
-  const catsCount = reservation?.petDtos.reduce((accumulator, currentValue) => {
-    if (currentValue.petDto.petType !== 'CAT') {
-      return accumulator;
-    }
-
-    return accumulator + 1;
-  }, 0);
-
-  return {
-    dogsCount,
-    catsCount,
-  };
 }
 </script>

@@ -1,8 +1,8 @@
 <template>
   <div class="font-geist">
-    <!-- <div class="absolute">
+    <div class="absolute">
       <Toaster />
-    </div> -->
+    </div>
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

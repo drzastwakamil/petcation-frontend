@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div v-if="!isInThePast">
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
         <Button class="flex h-8 w-8 p-0 data-[state=open]:bg-muted" variant="ghost">
@@ -8,54 +8,39 @@
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <template v-if="isInThePast">
-          <DropdownMenuItem
-            :value="labels.accept.value"
-            @select="
-              () => {
-                acceptDialogOpen = true;
-              }
-            "
-          >
-            {{ labels.accept.label }}
-          </DropdownMenuItem>
-        </template>
-        <template v-else>
-          <DropdownMenuItem
-            v-if="canAccept"
-            :value="labels.accept.value"
-            @select="
-              () => {
-                acceptDialogOpen = true;
-              }
-            "
-          >
-            {{ labels.accept.label }}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            v-if="canReject"
-            :value="labels.reject.value"
-            @select="
-              () => {
-                rejectDialogOpen = true;
-              }
-            "
-          >
-            {{ labels.reject.label }}
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            v-if="status === ReservationStatus.PENDING"
-            :value="labels.invite_for_trial.value"
-            @select="
-              () => {
-                inviteDialogOpen = true;
-              }
-            "
-          >
-            {{ labels.invite_for_trial.label }}
-          </DropdownMenuItem>
-        </template>
+        <DropdownMenuItem
+          v-if="canAccept"
+          :value="labels.accept.value"
+          @select="
+            () => {
+              acceptDialogOpen = true;
+            }
+          "
+        >
+          {{ labels.accept.label }}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          v-if="canReject"
+          :value="labels.reject.value"
+          @select="
+            () => {
+              rejectDialogOpen = true;
+            }
+          "
+        >
+          {{ labels.reject.label }}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          v-if="status === ReservationStatus.PENDING"
+          :value="labels.invite_for_trial.value"
+          @select="
+            () => {
+              inviteDialogOpen = true;
+            }
+          "
+        >
+          {{ labels.invite_for_trial.label }}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
 
@@ -80,9 +65,6 @@
                   :disabled="acceptingIsLoading"
                   :onclick="
                     () => {
-                      // executeDeleteReservation({
-                      //   id: reservation?.id,
-                      // });
                       executeAcceptReservation();
                     }
                   "
@@ -130,6 +112,7 @@
           </AlertDialogContent>
         </div>
       </AlertDialog>
+
       <AlertDialog
         :open="inviteDialogOpen"
         @update:open="
@@ -142,7 +125,8 @@
           <AlertDialogContent>
             <div>
               <AlertDialogDescription>
-                Czy jesteś pewien że chcesz anulować rezerwację? Nie będziesz mógł cofnąć tej operacji!
+                Czy jesteś pewien że zaprosić użytkownika na próbny pobyt? Wyślemy mu informację z twoimi danymi oraz
+                poleceniem skontaktowania się z tobą!
               </AlertDialogDescription>
               <div class="grid grid-cols-4 gap-4 pt-12">
                 <AlertDialogCancel class="col-span-1"> Cofnij </AlertDialogCancel>
@@ -151,15 +135,12 @@
                   :disabled="false"
                   :onclick="
                     () => {
-                      // executeDeleteReservation({
-                      //   id: reservation?.id,
-                      // });
+                      executeInviteForTrialStay();
                     }
                   "
-                  variant="destructive"
                 >
-                  Odrzuć rezerwację
-                  <!-- <Loader2 v-if="deletingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" /> -->
+                  Zaproś na próbny pobyt
+                  <Loader2 v-if="invitingIsLoading" class="ml-2 h-4 w-4 animate-spin" />
                 </Button>
               </div>
             </div>
@@ -176,6 +157,7 @@ import { ReservationStatus } from '@/types/common';
 
 const props = defineProps<{
   isInThePast: boolean;
+  reservation: any;
   status: ReservationStatus;
   executeAcceptReservation: () => void;
   acceptingIsLoading: boolean;
@@ -184,7 +166,6 @@ const props = defineProps<{
   executeInviteForTrialStay: () => void;
   invitingIsLoading: boolean;
 }>();
-console.log('the status', props.status);
 const labels = {
   reject: {
     label: 'Odrzuć',
@@ -210,5 +191,9 @@ const canReject = computed(() => {
 
 const canAccept = computed(() => {
   return props.status === ReservationStatus.PENDING;
+});
+
+const owner = computed(() => {
+  return props.reservation.petDtos.at(0)?.petDto?.petOwnerDto ?? null;
 });
 </script>

@@ -5,7 +5,6 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
-
     const templateHTML = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html id="__vue-email" lang="en" dir="ltr">
        <head>
@@ -61,8 +60,8 @@ export default defineEventHandler(async (event) => {
        </body>
     </html>`;
     const data = await resend.emails.send({
-      from: 'petcation@resend.dev',
-      to: ['drzastwakamil@gmail.com'],
+      from: 'Petcation <hotel.joinrequest-noreply@petcation.pl>',
+      to: ['office@petcation.pl'],
       subject: 'Zgłoszenie hotelowe',
       html: templateHTML,
     });
