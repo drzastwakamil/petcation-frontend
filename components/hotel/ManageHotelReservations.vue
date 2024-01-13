@@ -125,7 +125,7 @@
                 </div>
               </AlertDialog>
               <Button
-                v-if="reservation.status === ReservationStatus.PENDING"
+                v-if="reservation?.status === ReservationStatus.PENDING"
                 :onclick="
                   () => {
                     executeInviteForTrialStay({
@@ -163,7 +163,9 @@ const {
 });
 
 const reservations = computed(() => {
-  return resultOfReservationsQuery.value?.data || [];
+  var array = resultOfReservationsQuery.value?.data?.length ? [...resultOfReservationsQuery.value?.data] : []
+  array.reverse()
+  return array;
 });
 const rejectDialogOpen = ref(false);
 const acceptDialogOpen = ref(false);
