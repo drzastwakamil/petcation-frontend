@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="">
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
         <Button class="flex h-8 w-8 p-0 data-[state=open]:bg-muted" variant="ghost">
@@ -8,45 +8,60 @@
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          v-if="status === ReservationStatus.PENDING"
-          :value="labels.accept.value"
-          @select="
-            () => {
-              acceptDialogOpen = true;
-            }
-          "
-        >
-          {{ labels.accept.label }}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          v-if="status === ReservationStatus.PENDING || status === ReservationStatus.ACCEPTED"
-          :value="labels.reject.value"
-          @select="
-            () => {
-              rejectDialogOpen = true;
-            }
-          "
-        >
-          {{ labels.reject.label }}
-        </DropdownMenuItem>
+        <template v-if="isInThePast">
+          <DropdownMenuItem
+            :value="labels.accept.value"
+            @select="
+              () => {
+                acceptDialogOpen = true;
+              }
+            "
+          >
+            {{ labels.accept.label }}
+          </DropdownMenuItem>
+        </template>
+        <template v-else>
+          <DropdownMenuItem
+            v-if="canAccept"
+            :value="labels.accept.value"
+            @select="
+              () => {
+                acceptDialogOpen = true;
+              }
+            "
+          >
+            {{ labels.accept.label }}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            v-if="canReject"
+            :value="labels.reject.value"
+            @select="
+              () => {
+                rejectDialogOpen = true;
+              }
+            "
+          >
+            {{ labels.reject.label }}
+          </DropdownMenuItem>
 
-        <DropdownMenuItem
-          v-if="status === ReservationStatus.PENDING"
-          :value="labels.invite_for_trial.value"
-          @select="
-            () => {
-              inviteDialogOpen = true;
-            }
-          "
-        >
-          {{ labels.invite_for_trial.label }}
-        </DropdownMenuItem>
+          <DropdownMenuItem
+            v-if="status === ReservationStatus.PENDING"
+            :value="labels.invite_for_trial.value"
+            @select="
+              () => {
+                inviteDialogOpen = true;
+              }
+            "
+          >
+            {{ labels.invite_for_trial.label }}
+          </DropdownMenuItem>
+        </template>
       </DropdownMenuContent>
     </DropdownMenu>
 
     <Teleport to="body">
       <AlertDialog
+        v-if="canAccept"
         :open="acceptDialogOpen"
         @update:open="
           (open) => {
@@ -81,6 +96,7 @@
         </div>
       </AlertDialog>
       <AlertDialog
+        v-if="canReject"
         :open="rejectDialogOpen"
         @update:open="
           (open) => {
@@ -101,15 +117,13 @@
                   :disabled="false"
                   :onclick="
                     () => {
-                      // executeDeleteReservation({
-                      //   id: reservation?.id,
-                      // });
+                      executeRejectReservation();
                     }
                   "
                   variant="destructive"
                 >
                   Odrzuć rezerwację
-                  <!-- <Loader2 v-if="deletingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" /> -->
+                  <Loader2 v-if="rejectingIsLoading" class="ml-2 h-4 w-4 animate-spin" />
                 </Button>
               </div>
             </div>
@@ -161,6 +175,7 @@ import { MoreHorizontalIcon, Loader2 } from 'lucide-vue-next';
 import { ReservationStatus } from '@/types/common';
 
 const props = defineProps<{
+  isInThePast: boolean;
   status: ReservationStatus;
   executeAcceptReservation: () => void;
   acceptingIsLoading: boolean;
@@ -188,4 +203,12 @@ const labels = {
 const rejectDialogOpen = ref(false);
 const acceptDialogOpen = ref(false);
 const inviteDialogOpen = ref(false);
+
+const canReject = computed(() => {
+  return props.status === ReservationStatus.PENDING || props.status === ReservationStatus.ACCEPTED;
+});
+
+const canAccept = computed(() => {
+  return props.status === ReservationStatus.PENDING;
+});
 </script>

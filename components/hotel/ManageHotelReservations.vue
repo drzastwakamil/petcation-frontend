@@ -18,24 +18,76 @@
         </TableHeader>
         <TableBody>
           <TableRow v-for="(reservation, index) in reservations" :key="index">
-            <TableCell>
+            <TableCell
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
               <NuxtLink class="underline" :to="`/hotels/${reservation?.hotelDto?.id}`">
                 {{ reservation?.hotelDto?.name }}</NuxtLink
               >
             </TableCell>
-            <TableCell>
-              {{ reservation?.hotelDto?.addressDto?.street }}, {{ reservation?.hotelDto?.addressDto?.city }}
-            </TableCell>
-            <TableCell class="flex gap-4">
-              <div v-for="pet in reservation?.petDtos || []" :key="pet.id">
-                <BoneIcon v-if="pet.petType === 'DOG'" class="inline-flex" />
-                <CatIcon v-else-if="pet.petType === 'CAT'" class="inline-flex" />
-                {{ pet.name }}
-              </div>
-            </TableCell>
-            <TableCell> {{ reservation?.from }} - {{ reservation?.to }}</TableCell>
             <TableCell
               :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
+              {{ reservation?.hotelDto?.addressDto?.street }}, {{ reservation?.hotelDto?.addressDto?.city }}
+            </TableCell>
+            <TableCell
+              class="flex gap-4"
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
+              <Button
+                class="flex gap-4"
+                :onclick="
+                  () => {
+                    animalsDialogOpen = true;
+                  }
+                "
+                variant="outline"
+              >
+                <div v-if="reservationPetsCounts(reservation).dogsCount" class="flex items-center gap-1">
+                  <BoneIcon />
+                  {{ reservationPetsCounts(reservation).dogsCount }}}
+                </div>
+
+                <div v-if="reservationPetsCounts(reservation).catsCount" class="flex items-center gap-1">
+                  <CatIcon />
+                  {{ reservationPetsCounts(reservation).catsCount }}
+                </div>
+                <ArrowRightIcon class="h-4 w-4" />
+              </Button>
+              <Teleport to="body">
+                <AlertDialog
+                  v-if="reservation?.status === ReservationStatus.PENDING"
+                  :key="reservation?.id || index"
+                  :open="animalsDialogOpen"
+                  @update:open="
+                    (open) => {
+                      animalsDialogOpen = open;
+                    }
+                  "
+                >
+                  <div class="flex justify-between p-5" rounded>
+                    <AlertDialogContent />
+                  </div>
+                </AlertDialog>
+              </Teleport>
+            </TableCell>
+            <TableCell
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
+              {{ reservation?.from }} - {{ reservation?.to }}
+            </TableCell>
+            <TableCell
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+
                 'text-red-500': reservation?.status === ReservationStatus.REJECTED,
                 'text-green-500': reservation?.status === ReservationStatus.ACCEPTED,
               }"
@@ -54,9 +106,16 @@
                   }
                 "
                 :execute-invite-for-trial-stay="() => {}"
-                :execute-reject-reservation="() => {}"
+                :execute-reject-reservation="
+                  () => {
+                    executeDeleteReservation({
+                      id: reservation?.id,
+                    });
+                  }
+                "
                 :inviting-is-loading="false"
-                :rejecting-is-loading="false"
+                :is-in-the-past="reservationIsInThePast(reservation)"
+                :rejecting-is-loading="deletingReservationIsLoading"
                 :status="reservation?.status"
               />
               <!-- <AlertDialog
@@ -169,7 +228,7 @@
 </template>
 
 <script setup lang="ts">
-import { BoneIcon, CatIcon, DeleteIcon } from 'lucide-vue-next';
+import { BoneIcon, CatIcon, DeleteIcon, HourglassIcon, ArrowRightIcon } from 'lucide-vue-next';
 import { useQuery, useMutation } from '@tanstack/vue-query';
 import { toast } from '../ui/commonToast';
 import { getReservationStatusTitle, ReservationStatus } from '@/types/common';
@@ -183,6 +242,10 @@ const {
   queryFn: (): Promise<unknown> => {
     return useGetFromBackend('/allReservations', undefined, 'WITH_AUTHORIZATION');
   },
+});
+
+watch(resultOfReservationsQuery, () => {
+  console.log('the fetched data', resultOfReservationsQuery.value);
 });
 
 const reservations = computed(() => {
@@ -295,4 +358,41 @@ const { mutate: executeInviteForTrialStay, isPending } = useMutation({
     });
   },
 });
+
+function reservationIsInThePast(reservation) {
+  // Get today's date and reset the time to midnight for comparison
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Parse the 'to' date from the deadline object
+  const toDate = new Date(reservation.to);
+
+  // Check if the 'to' date is before today
+  return toDate < today;
+}
+
+const animalsDialogOpen = ref(false);
+
+function reservationPetsCounts(reservation) {
+  const dogsCount = reservation?.petDtos.reduce((accumulator, currentValue) => {
+    console.log('current value', currentValue.petDto.petType);
+    if (currentValue.petDto.petType !== 'DOG') {
+      return accumulator;
+    }
+
+    return accumulator + 1;
+  }, 0);
+  const catsCount = reservation?.petDtos.reduce((accumulator, currentValue) => {
+    if (currentValue.petDto.petType !== 'CAT') {
+      return accumulator;
+    }
+
+    return accumulator + 1;
+  }, 0);
+
+  return {
+    dogsCount,
+    catsCount,
+  };
+}
 </script>
