@@ -11,11 +11,11 @@
           <form class="flex gap-4" @submit="onAddAnimalFormSubmit">
             <Popover v-model:open="open">
               <PopoverTrigger as-child>
-                <Button :aria-expanded="open" class="w-[200px] justify-between" role="combobox" variant="outline">
-                  <div class="flex">
+                <Button :aria-expanded="open" class="w-[200px] justify-between items-center" role="combobox" variant="outline">
+                  <div class="flex items-center">
                     <BoneIcon v-if="petType?.value === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
                     <CatIcon v-if="petType?.value === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
-                    {{ value ? petType.label : 'Zwierzę' }}
+                    {{ petType.label }}
                   </div>
                   <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>

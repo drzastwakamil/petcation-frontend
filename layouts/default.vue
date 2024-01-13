@@ -37,7 +37,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useRoute } from 'nuxt/app';
 
 const currentHash = computed(() => {
   return useRoute().hash;

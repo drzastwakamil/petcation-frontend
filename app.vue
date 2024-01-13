@@ -11,7 +11,6 @@
 
 <script setup lang="ts">
 import { VueQueryPlugin } from '@tanstack/vue-query';
-
 import VueSplide from '@splidejs/vue-splide';
 const { vueApp } = useNuxtApp();
 vueApp.use(VueQueryPlugin);

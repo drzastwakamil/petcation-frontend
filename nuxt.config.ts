@@ -42,4 +42,3 @@ export default defineNuxtConfig({
     },
   },
 });
-// import '@splidejs/vue-splide/css',

@@ -18,112 +18,81 @@
         </TableHeader>
         <TableBody>
           <TableRow v-for="(reservation, index) in reservations" :key="index">
-            <TableCell>
+            <TableCell
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
               <NuxtLink class="underline" :to="`/hotels/${reservation?.hotelDto?.id}`">
                 {{ reservation?.hotelDto?.name }}</NuxtLink
               >
             </TableCell>
-            <TableCell>
+            <TableCell
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
               {{ reservation?.hotelDto?.addressDto?.street }}, {{ reservation?.hotelDto?.addressDto?.city }}
             </TableCell>
-            <TableCell class="flex gap-4">
-              <div v-for="pet in reservation?.petDtos || []" :key="pet.id">
-                <BoneIcon v-if="pet.petType === 'DOG'" class="inline-flex" />
-                <CatIcon v-else-if="pet.petType === 'CAT'" class="inline-flex" />
-                {{ pet.name }}
-              </div>
+            <TableCell
+              class="flex gap-4"
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
+              <AnimalsDialog :reservation="reservation" />
             </TableCell>
-            <TableCell> {{ reservation?.from }} - {{ reservation?.to }}</TableCell>
-            <TableCell> {{ getReservationStatusTitle(reservation?.status as ReservationStatus) }}</TableCell>
+            <TableCell
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
+              {{ reservation?.from }} - {{ reservation?.to }}
+            </TableCell>
+            <TableCell
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+
+                'text-red-500': reservation?.status === ReservationStatus.REJECTED,
+                'text-green-500': reservation?.status === ReservationStatus.ACCEPTED,
+              }"
+            >
+              {{
+                reservationIsInThePast(reservation) && reservation?.status === ReservationStatus.ACCEPTED
+                  ? 'Zakończona'
+                  : getReservationStatusTitle(reservation?.status as ReservationStatus)
+              }}</TableCell
+            >
             <TableCell class="flex">
-              <AlertDialog
-                v-if="
-                  reservation?.status === ReservationStatus.PENDING ||
-                  reservation?.status === ReservationStatus.ACCEPTED
-                "
-                :key="reservation?.id || index"
-                :open="rejectDialogOpen"
-                @update:open="
-                  (open) => {
-                    rejectDialogOpen = open;
+              <HotelReservationActionsDropdown
+                v-if="reservation.status !== ReservationStatus.REJECTED"
+                :accepting-is-loading="acceptingReservationIsLoading"
+                :execute-accept-reservation="
+                  () => {
+                    executeAcceptReservation({
+                      id: reservation?.id,
+                    });
                   }
                 "
-              >
-                <div class="flex justify-between p-5" rounded>
-                  <AlertDialogTrigger as-child>
-                    <div>
-                      <Button variant="destructive"> Odrzuć </Button>
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <div>
-                      <AlertDialogDescription>
-                        Czy jesteś pewien że chcesz anulować rezerwację? Nie będziesz mógł cofnąć tej operacji!
-                      </AlertDialogDescription>
-                      <div class="grid grid-cols-4 gap-4 pt-12">
-                        <AlertDialogCancel class="col-span-1"> Cofnij </AlertDialogCancel>
-                        <Button
-                          class="col-span-3"
-                          :disabled="false"
-                          :onclick="
-                            () => {
-                              executeDeleteReservation({
-                                id: reservation?.id,
-                              });
-                            }
-                          "
-                          variant="destructive"
-                        >
-                          Odrzuć rezerwację
-                          <Loader2 v-if="deletingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
-                        </Button>
-                      </div>
-                    </div>
-                  </AlertDialogContent>
-                </div>
-              </AlertDialog>
-              <AlertDialog
-                v-if="reservation?.status === ReservationStatus.PENDING"
-                :key="reservation?.id || index"
-                :open="acceptDialogOpen"
-                @update:open="
-                  (open) => {
-                    acceptDialogOpen = open;
+                :execute-invite-for-trial-stay="
+                  () => {
+                    console.log('inviting executing ');
+                    executeInviteForTrialStay(reservation);
                   }
                 "
-              >
-                <div class="flex justify-between p-5" rounded>
-                  <AlertDialogTrigger as-child>
-                    <div>
-                      <Button class="bg-green-500"> Akceptuj </Button>
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <div>
-                      <AlertDialogDescription>
-                        Czy jesteś pewien że zaakceptować rezerwację? Nie będziesz mógł cofnąć tej operacji!
-                      </AlertDialogDescription>
-                      <div class="grid grid-cols-4 gap-4 pt-12">
-                        <AlertDialogCancel class="col-span-1"> Cofnij </AlertDialogCancel>
-                        <Button
-                          class="col-span-3"
-                          :disabled="false"
-                          :onclick="
-                            () => {
-                              executeAcceptReservation({
-                                id: reservation?.id,
-                              });
-                            }
-                          "
-                        >
-                          Akceptuj rezerwację
-                          <Loader2 v-if="acceptingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
-                        </Button>
-                      </div>
-                    </div>
-                  </AlertDialogContent>
-                </div>
-              </AlertDialog>
+                :execute-reject-reservation="
+                  () => {
+                    executeDeleteReservation({
+                      id: reservation?.id,
+                    });
+                  }
+                "
+                :inviting-is-loading="false"
+                :is-in-the-past="reservationIsInThePast(reservation)"
+                :rejecting-is-loading="deletingReservationIsLoading"
+                :reservation="reservation"
+                :status="reservation?.status"
+              />
             </TableCell>
           </TableRow>
         </TableBody>
@@ -133,7 +102,6 @@
 </template>
 
 <script setup lang="ts">
-import { BoneIcon, CatIcon, DeleteIcon } from 'lucide-vue-next';
 import { useQuery, useMutation } from '@tanstack/vue-query';
 import { toast } from '../ui/commonToast';
 import { getReservationStatusTitle, ReservationStatus } from '@/types/common';
@@ -149,11 +117,15 @@ const {
   },
 });
 
-const reservations = computed(() => {
-  return resultOfReservationsQuery.value?.data || [];
+watch(resultOfReservationsQuery, () => {
+  console.log('the fetched data', resultOfReservationsQuery.value);
 });
-const rejectDialogOpen = ref(false);
-const acceptDialogOpen = ref(false);
+
+const reservations = computed(() => {
+  const array = resultOfReservationsQuery.value?.data?.length ? [...resultOfReservationsQuery.value?.data] : [];
+  array.reverse();
+  return array;
+});
 
 const { mutate: executeDeleteReservation, isPending: deletingReservationIsLoading } = useMutation({
   mutationFn: (variables): Promise<unknown> => {
@@ -213,7 +185,6 @@ const { mutate: executeAcceptReservation, isPending: acceptingReservationIsLoadi
       return;
     }
     refetch();
-    isDialogOpen.value = false;
     toast({
       title: 'Udało się zaakceptować rezerwację!',
     });
@@ -226,4 +197,50 @@ const { mutate: executeAcceptReservation, isPending: acceptingReservationIsLoadi
     });
   },
 });
+
+const { mutate: executeInviteForTrialStay, isPending } = useMutation({
+  mutationFn: (reservation): Promise<unknown> => {
+    const owner = reservation.petDtos.at(0)?.petDto?.petOwnerDto ?? null;
+    return useFetch('/api/sendInviteForTrialStay', {
+      body: {
+        reservation,
+        owner,
+      },
+      method: 'POST',
+    });
+  },
+  onSuccess: ({ error }) => {
+    if (error._object[error?._key]?.message.length) {
+      toast({
+        title: 'Nie udało się wysłać zaproszenia.',
+        description: error._object[error._key]?.message,
+        variant: 'destructive',
+      });
+      return;
+    }
+    toast({
+      title: 'Udało się wysłać zaproszenie!.',
+      description: 'Poinformowaliśmy użytkownika aby się z tobą skontaktował!',
+    });
+  },
+  onError: (error) => {
+    toast({
+      title: 'Nie udało się wysłać zaproszenia.',
+      description: error.message,
+      variant: 'destructive',
+    });
+  },
+});
+
+function reservationIsInThePast(reservation) {
+  // Get today's date and reset the time to midnight for comparison
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Parse the 'to' date from the deadline object
+  const toDate = new Date(reservation.to);
+
+  // Check if the 'to' date is before today
+  return toDate < today;
+}
 </script>

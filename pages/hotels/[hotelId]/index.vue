@@ -155,12 +155,12 @@
                       <TooltipTrigger>
                         <div class="flex gap-2">
                           <AlertCircleIcon class="text-red-300" />
-                          <p class="text-left">Nie znaleziono psów na twoim profilu</p>
+                          <p class="text-left">Nie znaleziono kotów na twoim profilu</p>
                         </div></TooltipTrigger
                       >
                       <TooltipContent>
                         <NuxtLink class="underline" to="/settings/animals">
-                          Aby zarezerwować pobyt dla psa musisz dodać go do listy swoich zwierząt
+                          Aby zarezerwować pobyt dla kota musisz dodać go do listy swoich zwierząt
                         </NuxtLink>
                       </TooltipContent>
                     </Tooltip>
