@@ -30,7 +30,7 @@
           }
         "
       >
-        <div v-if="currentTab === 'forgotPassword'">
+        <div v-if="currentTab === 'forgotPassword' || currentTab === 'confirmEmail'">
           <Button
             :onclick="
               () => {
@@ -87,7 +87,7 @@
         </TabsContent>
 
         <TabsContent value="confirmEmail">
-          <div v-if="resetPasswordMailHasBeenTriedToBeSend">
+          <div>
             <CardTitle class="pt-4">Sprawdź swój email</CardTitle>
             <CardDescription class="pt-2">
               Otrzymasz wiadomość, z instrukcjami aby potwierdzić swój email
