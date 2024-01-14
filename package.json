@@ -42,7 +42,7 @@
     "lucide-vue-next": "^0.302.0",
     "radix-vue": "^1.2.5",
     "resend": "^2.1.0",
-    "tailwin d-merge": "^2.2.0",
+    "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
     "v-calendar": "^3.1.2",
     "vee-validate": "^4.12.4",
