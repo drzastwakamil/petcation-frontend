@@ -84,7 +84,6 @@ function reservationPetsCounts(reservation) {
   }
 
   const dogsCount = reservation?.petDtos.reduce((accumulator, currentValue) => {
-    console.log('current value', currentValue.petDto.petType);
     if (currentValue.petDto.petType !== 'DOG') {
       return accumulator;
     }

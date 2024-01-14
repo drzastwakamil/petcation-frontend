@@ -18,133 +18,70 @@
         </TableHeader>
         <TableBody>
           <TableRow v-for="(reservation, index) in reservations" :key="index">
-            <TableCell>
+            <TableCell
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
               <NuxtLink class="underline" :to="`/hotels/${reservation?.hotelDto?.id}`">
                 {{ reservation?.hotelDto?.name }}</NuxtLink
               >
             </TableCell>
-            <TableCell>
+            <TableCell
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
               {{ reservation?.hotelDto?.addressDto?.street }}, {{ reservation?.hotelDto?.addressDto?.city }}
             </TableCell>
-            <TableCell class="flex gap-4">
-              <div v-for="pet in reservation?.petDtos || []" :key="pet.id">
-                <BoneIcon v-if="pet.petType === 'DOG'" class="inline-flex" />
-                <CatIcon v-else-if="pet.petType === 'CAT'" class="inline-flex" />
-                {{ pet.name }}
-              </div>
+            <TableCell
+              class="flex gap-4"
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
+              <AnimalsDialog :reservation="reservation" />
             </TableCell>
-            <TableCell> {{ reservation?.from }} - {{ reservation?.to }}</TableCell>
-            <TableCell> {{ getReservationStatusTitle(reservation?.status as ReservationStatus) }}</TableCell>
+            <TableCell
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+              }"
+            >
+              {{ reservation?.from }} - {{ reservation?.to }}</TableCell
+            >
+            <TableCell
+              :class="{
+                'opacity-50': reservationIsInThePast(reservation),
+
+                'text-red-500':
+                  reservation?.status === ReservationStatus.REJECTED ||
+                  reservation?.status === ReservationStatus.DELETED,
+                'text-green-500': reservation?.status === ReservationStatus.ACCEPTED,
+              }"
+            >
+              {{
+                reservationIsInThePast(reservation) && reservation?.status === ReservationStatus.ACCEPTED
+                  ? 'Zakończona'
+                  : getReservationStatusTitle(reservation?.status as ReservationStatus)
+              }}
+            </TableCell>
             <TableCell class="flex">
-              <AlertDialog
-                v-if="reservation?.status === ReservationStatus.PENDING"
-                :key="reservation?.id || index"
-                :open="isDialogOpen"
-                @update:open="
-                  (open) => {
-                    isDialogOpen = open;
+              <ProfileReservationsActionsDropdown
+                :adding-hotel-rate-is-loading="addingHotelRateIsLoading"
+                :execute-add-hotel-rate="executeAddHotelRate"
+                :execute-reject-reservation="
+                  () => {
+                    executeDeleteReservation({
+                      id: reservation?.id,
+                    });
                   }
                 "
-              >
-                <div class="flex justify-between p-5" rounded>
-                  <AlertDialogTrigger as-child>
-                    <div>
-                      <Button variant="destructive"> Anuluj </Button>
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <div>
-                      <AlertDialogDescription>
-                        Czy jesteś pewien że chcesz anulować rezerwację? Nie będziesz mógł cofnąć tej operacji!
-                      </AlertDialogDescription>
-                      <div class="grid grid-cols-4 gap-4 pt-12">
-                        <AlertDialogCancel class="col-span-1"> Cofnij </AlertDialogCancel>
-                        <Button
-                          class="col-span-3"
-                          :disabled="false"
-                          :onclick="
-                            () => {
-                              executeDeleteReservation({
-                                id: reservation?.id,
-                              });
-                            }
-                          "
-                          variant="destructive"
-                        >
-                          Anuluj rezerwację
-                          <Loader2 v-if="deletingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
-                        </Button>
-                      </div>
-                    </div>
-                  </AlertDialogContent>
-                </div>
-              </AlertDialog>
-              <AlertDialog
-                v-if="true"
-                :key="reservation?.id || index"
-                :open="isDialogOpen"
-                @update:open="
-                  (open) => {
-                    isDialogOpen = open;
-                  }
-                "
-              >
-                <div class="flex justify-between p-5" rounded>
-                  <AlertDialogTrigger as-child>
-                    <div>
-                      <Button> Oceń pobyt </Button>
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <div>
-                      <AlertDialogDescription>
-                        <Select
-                          :model-value="value"
-                          @update:model-value="
-                            (value) => {
-                              selectedRate = value;
-                            }
-                          "
-                        >
-                          <SelectTrigger :id="`catsPicker${index}`">
-                            <SelectValue placeholder="Wybierz ocenę" />
-                          </SelectTrigger>
-                          <SelectContent position="popper">
-                            <SelectItem
-                              v-for="starsAmount in [1, 2, 3, 4, 5]"
-                              :key="starsAmount"
-                              class="flex"
-                              :value="starsAmount"
-                            >
-                              <StarIcon v-for="index in starsAmount" :key="index" class="inline-flex" />
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </AlertDialogDescription>
-                      <div class="grid grid-cols-4 gap-4 pt-12">
-                        <AlertDialogCancel class="col-span-1"> Cofnij </AlertDialogCancel>
-                        <Button
-                          class="col-span-3"
-                          :disabled="false"
-                          :onclick="
-                            () => {
-                              executeAddHotelRate({
-                                hotelId: reservation?.hotelDto?.id,
-                                reservationId: reservation?.id,
-                                rate: selectedRate,
-                                comment: '',
-                              });
-                            }
-                          "
-                        >
-                          Wystaw ocenę
-                          <Loader2 v-if="deletingReservationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
-                        </Button>
-                      </div>
-                    </div>
-                  </AlertDialogContent>
-                </div>
-              </AlertDialog>
+                :index="index"
+                :is-in-the-past="reservationIsInThePast(reservation)"
+                :rejecting-is-loading="deletingReservationIsLoading"
+                :reservation="reservation"
+                :status="reservation?.status"
+              />
             </TableCell>
           </TableRow>
         </TableBody>
@@ -166,12 +103,14 @@ const {
 } = useQuery({
   queryKey: ['user'],
   queryFn: (): Promise<unknown> => {
-    return useGetFromBackend('/allReservations', undefined, 'WITH_AUTHORIZATION');
+    return useGetFromBackend('allReservations', undefined, 'WITH_AUTHORIZATION');
   },
 });
 
 const reservations = computed(() => {
-  return resultOfReservationsQuery.value?.data || [];
+  const array = resultOfReservationsQuery.value?.data?.length ? [...resultOfReservationsQuery.value?.data] : [];
+  array.reverse();
+  return array;
 });
 const isDialogOpen = ref(false);
 const selectedRate = ref<number | null>(null);
@@ -250,4 +189,16 @@ const { mutate: executeAddHotelRate, isPending: addingHotelRateIsLoading } = use
     });
   },
 });
+
+function reservationIsInThePast(reservation) {
+  // Get today's date and reset the time to midnight for comparison
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Parse the 'to' date from the deadline object
+  const toDate = new Date(reservation.to);
+
+  // Check if the 'to' date is before today
+  return toDate < today;
+}
 </script>
