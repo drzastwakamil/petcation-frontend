@@ -1,10 +1,15 @@
 /* eslint-disable no-irregular-whitespace */
 import { Resend } from 'resend';
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
+    console.log('thats the body', body);
+    const response = await $fetch(`https://petcation-405617.lm.r.appspot.com/confirmMailToken?email=${body.email}`);
+    const token = response?.token || 'token_not_found';
+
     const templateHTML = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html id="__vue-email" lang="en" dir="ltr">
        <head>
@@ -40,7 +45,7 @@ export default defineEventHandler(async (event) => {
                                         <tr style="width: 100%">
                                            <td data-id="__vue-email-column" role="presentation">
                                               <h2 data-id="__vue-email-heading" style="padding-top:18px;font-size:26px;font-weight:bold;"> Witamy na platformie Petcation! Potwierdź swój email aby się zalogować. </h2>
-                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;margin-top:-5px;"> Kliknij <a data-id="__vue-email-link" style="color:#067df7;text-decoration:none;text-decoration:underline;" href="https://petcation.pl/confirmEmail?t=${body.token}" target="_blank"> tutaj </a> aby potwierdzić. </p>
+                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;margin-top:-5px;"> Kliknij <a data-id="__vue-email-link" style="color:#067df7;text-decoration:none;text-decoration:underline;" href="https://petcation.pl/confirmEmail?t=${token}" target="_blank"> tutaj </a> aby potwierdzić. </p>
                                               <br>
                                               <br>
                                               <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;">

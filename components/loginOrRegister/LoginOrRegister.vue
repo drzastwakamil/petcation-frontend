@@ -93,15 +93,25 @@
               Otrzymasz wiadomość, z instrukcjami aby potwierdzić swój email
             </CardDescription>
             <div class="flex justify-end space-y-3 pt-5">
-              <Button :disabled="askingForEmailConfirmationIsLoading" :onclick="executeAskForEmailConfirmation">
+              <Button
+                :disabled="sendingConfirmEmailIsLoading"
+                :onclick="
+                  () => {
+                    invokationOfSendConfirmEmail({
+                      email: registerForm.values.email || emailCache || 'emailNotFound',
+                    });
+                  }
+                "
+              >
                 Wyślij email ponownie!
-                <Loader2 v-if="askingForEmailConfirmationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
+                <Loader2 v-if="sendingConfirmEmailIsLoading" class="ml-2 h-4 w-4 animate-spin" />
               </Button>
             </div>
           </div>
         </TabsContent>
         <TabsContent value="login">
           <LoginForm
+            :invokation-of-send-confirm-email="invokationOfSendConfirmEmail"
             :set-current-tab="
               (tab: string) => {
                 currentTab = tab;
@@ -257,6 +267,18 @@ const onRegisterFormSubmit = registerForm.handleSubmit((_) => {
 });
 
 let sendConfirmEmailCallback: (() => void) | null = null;
+let emailCache: string | null = null;
+const invokationOfSendConfirmEmail = (data, toastData) => {
+  emailCache = data.email;
+  sendConfirmEmailCallback = () => {
+    if (toastData) {
+      toast(toastData);
+    }
+    currentTab.value = 'confirmEmail';
+  };
+  executeSendConfirmEmail(data);
+};
+
 const { mutate: executeRegisterMutate, isPending: registerIsLoading } = useMutation({
   mutationFn: (): Promise<unknown> => {
     return usePostOnBackend('signup', {
@@ -288,17 +310,15 @@ const { mutate: executeRegisterMutate, isPending: registerIsLoading } = useMutat
       });
       return;
     }
-    sendConfirmEmailCallback = () => {
-      toast({
+    invokationOfSendConfirmEmail(
+      {
+        email: registerForm.values.email,
+      },
+      {
         title: 'Udało się zarejestrować.',
         description: 'Potwierdź swój email aby się zalogować!',
-      });
-      currentTab.value = 'confirmEmail';
-    };
-    executeSendConfirmEmail({
-      token: data.value.token,
-      email: registerForm.values.email,
-    });
+      },
+    );
   },
   onError: (error) => {
     toast({
