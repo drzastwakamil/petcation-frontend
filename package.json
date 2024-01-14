@@ -14,7 +14,6 @@
     "@nuxt/image": "^1.1.0",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/eslint-module": "^4.1.0",
-    "@nuxtjs/tailwindcss": "^6.10.3",
     "@pinia/nuxt": "^0.5.1",
     "@types/node": "^20.10.5",
     "@vue-email/nuxt": "^0.8.7",
@@ -23,7 +22,6 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.2",
     "eslint-plugin-tailwindcss": "^3.13.0",
-    "nuxt": "^3.9.0",
     "nuxt-icon": "^0.6.8",
     "prettier": "^3.1.1",
     "typescript": "^5.3.3",
@@ -31,6 +29,8 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "nuxt": "^3.9.0",
+    "@nuxtjs/tailwindcss": "^6.10.3",
     "@popperjs/core": "^2.11.8",
     "@splidejs/vue-splide": "^0.6.12",
     "@tanstack/vue-query": "^5.15.0",
@@ -48,5 +48,5 @@
     "vee-validate": "^4.12.4",
     "zod": "^3.22.4"
   },
-  "packageManager": "pnpm@8.13.1"
+  "packageManager": "pnpm@8.14.1"
 }
