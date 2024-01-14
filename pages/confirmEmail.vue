@@ -1,11 +1,28 @@
 <template>
-  <div>
-    <div v-if="success">Mail potwierdzony. Przejdź do strony głównej aby się zalogować.</div>
-    <div v-else-if="confirmEmailIsLoading">...loading</div>
+  <div class="flex min-h-screen items-center justify-center bg-gray-100 p-4 dark:bg-black">
+    <div v-if="success">
+      <Card class="w-full max-w-md">
+        <CardContent class="flex flex-col items-center p-8 text-center">
+          <Check class="mb-4 h-16 w-16 text-green-500" />
+          <h2 class="mb-2 text-xl font-semibold">Sukces!</h2>
+          <p class="text-gray-600 dark:text-gray-300">Potwierdzono email. Wróć do strony głównej aby się zalogować.</p>
+        </CardContent>
+        <CardFooter>
+          <Button
+            class="w-full justify-center rounded-lg bg-blue-500 p-2 text-white transition-colors hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
+            @click="useRouter().push('/')"
+          >
+            Strona główna
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+    <Loader2 v-else-if="confirmEmailIsLoading" class="h-[50px] w-[50px] animate-spin text-[#C28686]" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { Check, Loader2 } from 'lucide-vue-next';
 import { useRouteQuery } from '@vueuse/router';
 import { useMutation } from '@tanstack/vue-query';
 import { toast } from '@/components/ui/commonToast';
