@@ -43,9 +43,9 @@
                     <BoneIcon v-if="pet.petDto.petType === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
                     <CatIcon v-if="pet.petDto.petType === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
 
-                    <div class="flex w-full items-center justify-end gap-1">
+                    <div v-if="pet.averageRate" class="flex w-full items-center justify-end gap-1">
                       <StarIcon />
-                      {{ pet.petDto.averageRate }}
+                      {{ pet?.averageRate }}
                     </div>
                   </div>
                 </div>
