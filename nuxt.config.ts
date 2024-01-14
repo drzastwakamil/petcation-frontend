@@ -9,6 +9,9 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vue-email/nuxt',
   ],
+  eslint: {
+    lintOnStart: false,
+  },
   vueEmail: {
     autoImport: true,
   },

@@ -61,8 +61,9 @@ import * as z from 'zod';
 import { FormField } from '@/components/ui/form';
 import { toast } from '@/components/ui/commonToast';
 
-defineProps<{
+const props = defineProps<{
   setCurrentTab: (tab: string) => void;
+  invokationOfSendConfirmEmail: (data: any, toast: any) => void;
 }>();
 const userSession = useUserSessionStore();
 
@@ -97,6 +98,20 @@ const { mutate: executeLogInMutate, isPending: loginIsLoading } = useMutation({
   },
   onSuccess: ({ data, error }) => {
     if (error._object[error?._key]?.message.length) {
+      if (error._object[error?._key]?.data?.confirmed === false) {
+        props.invokationOfSendConfirmEmail(
+          {
+            token: null,
+            email: loginForm.values.email,
+          },
+          {
+            title: 'Nie udało się zalogować.',
+            description: 'Potwierdź swój email aby się zalogować!',
+          },
+        );
+        return;
+      }
+
       toast({
         title: 'Nie udało się zalogować.',
         description: error._object[error._key]?.message,

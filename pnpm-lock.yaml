@@ -64,6 +64,9 @@ devDependencies:
   '@nuxt/devtools':
     specifier: ^1.0.6
     version: 1.0.8(nuxt@3.9.1)(vite@5.0.11)
+  '@nuxt/eslint-config':
+    specifier: ^0.2.0
+    version: 0.2.0(eslint@8.56.0)
   '@nuxt/image':
     specifier: ^1.1.0
     version: 1.2.0
@@ -1102,6 +1105,21 @@ packages:
       - supports-color
       - utf-8-validate
 
+  /@nuxt/eslint-config@0.2.0(eslint@8.56.0):
+    resolution: {integrity: sha512-NeJX8TLcnNAjQFiDs3XhP+9CHKK8jaKsP7eUyCSrQdgY7nqWe7VJx64lwzx5FTT4cW3RHMEyH+Y0qzLGYYoa/A==}
+    peerDependencies:
+      eslint: ^8.48.0
+    dependencies:
+      '@rushstack/eslint-patch': 1.6.1
+      '@typescript-eslint/eslint-plugin': 6.18.1(@typescript-eslint/parser@6.18.1)(eslint@8.56.0)(typescript@5.3.3)
+      '@typescript-eslint/parser': 6.18.1(eslint@8.56.0)(typescript@5.3.3)
+      eslint: 8.56.0
+      eslint-plugin-vue: 9.20.1(eslint@8.56.0)
+      typescript: 5.3.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@nuxt/image@1.2.0:
     resolution: {integrity: sha512-DxR1RVHZgVHVRHyZTFhAB5149Vbe3eyTLk32h8GLj/5Nt4WN1Du6VZs89fjbTP4sfjQTSYKBKgIJDdetf61heQ==}
     engines: {node: ^14.16.0 || >=16.11.0}
@@ -1746,6 +1764,10 @@ packages:
     os: [win32]
     requiresBuild: true
     optional: true
+
+  /@rushstack/eslint-patch@1.6.1:
+    resolution: {integrity: sha512-UY+FGM/2jjMkzQLn8pxcHGMaVLh9aEitG3zY2CiY7XHdLiz3bZOwa6oDxNqEMv7zZkV+cj5DOdz0cQ1BP5Hjgw==}
+    dev: true
 
   /@selderee/plugin-htmlparser2@0.11.0:
     resolution: {integrity: sha512-P33hHGdldxGabLFjPPpaTxVolMrzrcegejx+0GxjrIb9Zv48D8yAIA/QTDR2dFl7Uz7urX8aX6+5bCZslr+gWQ==}
