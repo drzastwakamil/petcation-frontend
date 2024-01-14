@@ -53,7 +53,9 @@
               :class="{
                 'opacity-50': reservationIsInThePast(reservation),
 
-                'text-red-500': reservation?.status === ReservationStatus.REJECTED,
+                'text-red-500':
+                  reservation?.status === ReservationStatus.REJECTED ||
+                  reservation?.status === ReservationStatus.DELETED,
                 'text-green-500': reservation?.status === ReservationStatus.ACCEPTED,
               }"
             >
@@ -61,11 +63,10 @@
                 reservationIsInThePast(reservation) && reservation?.status === ReservationStatus.ACCEPTED
                   ? 'Zakończona'
                   : getReservationStatusTitle(reservation?.status as ReservationStatus)
-              }}</TableCell
-            >
+              }}
+            </TableCell>
             <TableCell class="flex">
               <HotelReservationActionsDropdown
-                v-if="reservation.status !== ReservationStatus.REJECTED"
                 :accepting-is-loading="acceptingReservationIsLoading"
                 :execute-accept-reservation="
                   () => {
@@ -76,7 +77,6 @@
                 "
                 :execute-invite-for-trial-stay="
                   () => {
-                    console.log('inviting executing ');
                     executeInviteForTrialStay(reservation);
                   }
                 "
@@ -113,12 +113,8 @@ const {
 } = useQuery({
   queryKey: ['user'],
   queryFn: (): Promise<unknown> => {
-    return useGetFromBackend('/allReservations', undefined, 'WITH_AUTHORIZATION');
+    return useGetFromBackend('allReservations', undefined, 'WITH_AUTHORIZATION');
   },
-});
-
-watch(resultOfReservationsQuery, () => {
-  console.log('the fetched data', resultOfReservationsQuery.value);
 });
 
 const reservations = computed(() => {

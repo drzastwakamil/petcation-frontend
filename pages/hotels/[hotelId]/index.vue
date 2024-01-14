@@ -26,10 +26,7 @@
           />
         </div>
 
-        <!-- <div class="space-y-3">
-          <h1 class="text-2xl">Opinie</h1>
-          <ReviewsMasonry />
-        </div> -->
+        <ReviewsMasonry :rates="hotel?.rates || []" />
       </div>
       <div class="col-span-2">
         <Card class="flex flex-col overflow-hidden border">
@@ -459,7 +456,6 @@ const isDialogOpen = ref(false);
 
 const { mutate: executeAddReservationMutate, isPending: addingReservationIsLoading } = useMutation({
   mutationFn: (): Promise<unknown> => {
-    console.log('fromattt');
     return usePostOnBackend(
       'addReservation',
       {

@@ -6,7 +6,6 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
-    console.log('thats the body', body);
     const response = await $fetch(`https://petcation-405617.lm.r.appspot.com/confirmMailToken?email=${body.email}`);
     const token = response?.token || 'token_not_found';
 
