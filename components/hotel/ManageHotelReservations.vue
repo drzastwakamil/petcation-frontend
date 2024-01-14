@@ -87,7 +87,7 @@
                     });
                   }
                 "
-                :inviting-is-loading="false"
+                :inviting-is-loading="invitingForTrialStayIsLoading"
                 :is-in-the-past="reservationIsInThePast(reservation)"
                 :rejecting-is-loading="deletingReservationIsLoading"
                 :reservation="reservation"
@@ -198,7 +198,7 @@ const { mutate: executeAcceptReservation, isPending: acceptingReservationIsLoadi
   },
 });
 
-const { mutate: executeInviteForTrialStay, isPending } = useMutation({
+const { mutate: executeInviteForTrialStay, isPending: invitingForTrialStayIsLoading } = useMutation({
   mutationFn: (reservation): Promise<unknown> => {
     const owner = reservation.petDtos.at(0)?.petDto?.petOwnerDto ?? null;
     return useFetch('/api/sendInviteForTrialStay', {

@@ -85,6 +85,21 @@
             </div>
           </div>
         </TabsContent>
+
+        <TabsContent value="confirmEmail">
+          <div v-if="resetPasswordMailHasBeenTriedToBeSend">
+            <CardTitle class="pt-4">Sprawdź swój email</CardTitle>
+            <CardDescription class="pt-2">
+              Otrzymasz wiadomość, z instrukcjami aby potwierdzić swój email
+            </CardDescription>
+            <div class="flex justify-end space-y-3 pt-5">
+              <Button :disabled="askingForEmailConfirmationIsLoading" :onclick="executeAskForEmailConfirmation">
+                Wyślij email ponownie!
+                <Loader2 v-if="askingForEmailConfirmationIsLoading" class="ml-2 h-4 w-4 animate-spin" />
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
         <TabsContent value="login">
           <LoginForm
             :set-current-tab="
@@ -241,6 +256,7 @@ const onRegisterFormSubmit = registerForm.handleSubmit((_) => {
   executeRegisterMutate();
 });
 
+let sendConfirmEmailCallback: (() => void) | null = null;
 const { mutate: executeRegisterMutate, isPending: registerIsLoading } = useMutation({
   mutationFn: (): Promise<unknown> => {
     return usePostOnBackend('signup', {
@@ -262,7 +278,8 @@ const { mutate: executeRegisterMutate, isPending: registerIsLoading } = useMutat
       },
     });
   },
-  onSuccess: ({ error }) => {
+  onSuccess: (response) => {
+    const { error, data } = response;
     if (error._object[error?._key]?.message.length) {
       toast({
         title: 'Nie udało się zarejestrować.',
@@ -271,13 +288,17 @@ const { mutate: executeRegisterMutate, isPending: registerIsLoading } = useMutat
       });
       return;
     }
-
-    toast({
-      title: 'Udało się zarejestrować.',
-      description: 'Wprowadź swoje dane aby się zalogować!',
+    sendConfirmEmailCallback = () => {
+      toast({
+        title: 'Udało się zarejestrować.',
+        description: 'Potwierdź swój email aby się zalogować!',
+      });
+      currentTab.value = 'confirmEmail';
+    };
+    executeSendConfirmEmail({
+      token: data.value.token,
+      email: registerForm.values.email,
     });
-
-    currentTab.value = 'login';
   },
   onError: (error) => {
     toast({
@@ -328,5 +349,42 @@ userSessionStore.$onAction(({ name }) => {
   if (name === 'openLoginModal') {
     isDialogOpen.value = true;
   }
+});
+
+const { mutate: executeSendConfirmEmail, isPending: sendingConfirmEmailIsLoading } = useMutation({
+  mutationFn: (data): Promise<unknown> => {
+    return useFetch('/api/sendConfirmEmail', {
+      body: {
+        ...data,
+      },
+      method: 'POST',
+    });
+  },
+  onSuccess: ({ error }) => {
+    if (error._object[error?._key]?.message.length) {
+      toast({
+        title: 'Nie udało się wysłać maila.',
+        description: error._object[error._key]?.message,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (sendConfirmEmailCallback) {
+      sendConfirmEmailCallback();
+      return;
+    }
+    toast({
+      title: 'Udało się wysłać mail z potwierdzeniem!.',
+      description: 'Sprawdź swoją skrzynkę!',
+    });
+  },
+  onError: (error) => {
+    toast({
+      title: 'Nie udało się wysłać maila.',
+      description: error.message,
+      variant: 'destructive',
+    });
+  },
 });
 </script>

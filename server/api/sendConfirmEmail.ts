@@ -2,19 +2,6 @@
 import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-function getFormattedDate() {
-  const options = {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true,
-  };
-  const currentDate = new Date();
-  return new Intl.DateTimeFormat('pl-PL', options).format(currentDate);
-}
-
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
@@ -52,12 +39,14 @@ export default defineEventHandler(async (event) => {
                                      <tbody style="width: 100%">
                                         <tr style="width: 100%">
                                            <td data-id="__vue-email-column" role="presentation">
-                                              <h2 data-id="__vue-email-heading" style="padding-top:18px;font-size:26px;font-weight:bold;"> Otrzymaliśmy nowy formularz zgłoszeniowy! </h2>
-                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;"><b>Data wysłania: </b> ${getFormattedDate()} </p>
-                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;margin-top:-5px;"><b>Email kontaktowy: </b> ${body.contactEmail}</p>
-                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;margin-top:-5px;"><b>Telefon kontaktowy: </b> ${body.phoneNumber}</p>
-                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;margin-top:-5px;"><b>Treść zgłoszenia: </b></p>
-                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;"> ${body.message}</p>
+                                              <h2 data-id="__vue-email-heading" style="padding-top:18px;font-size:26px;font-weight:bold;"> Witamy na platformie Petcation! Potwierdź swój email aby się zalogować. </h2>
+                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;margin-top:-5px;"> Kliknij <a data-id="__vue-email-link" style="color:#067df7;text-decoration:none;text-decoration:underline;" href="https://petcation.pl/confirmEmail?t=${body.token}" target="_blank"> tutaj </a> aby potwierdzić. </p>
+                                              <br>
+                                              <br>
+                                              <p data-id="__vue-email-text" style="font-size:14px;line-height:24px;margin:16px 0;font-size:16px;word-wrap:break-word;">
+                                                Pozdrawiamy, <br>
+                                                Zespół Petcation
+                                              </p>
                                            </td>
                                         </tr>
                                      </tbody>
@@ -73,9 +62,9 @@ export default defineEventHandler(async (event) => {
        </body>
     </html>`;
     const data = await resend.emails.send({
-      from: 'Petcation <hotel.joinrequest-noreply@petcation.pl>',
-      to: ['office@petcation.pl'],
-      subject: 'Zgłoszenie hotelowe',
+      from: 'Petcation <noreply@petcation.pl>',
+      to: [body.email],
+      subject: 'Potwierdzenie emaila',
       html: templateHTML,
     });
 
