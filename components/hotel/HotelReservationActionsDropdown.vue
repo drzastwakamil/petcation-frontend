@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isInThePast">
+  <div v-if="canRate || canAccept || canReject || status === ReservationStatus.PENDING">
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
         <Button class="flex h-8 w-8 p-0 data-[state=open]:bg-muted" variant="ghost">
@@ -40,6 +40,30 @@
           "
         >
           {{ labels.invite_for_trial.label }}
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          v-if="canRate"
+          :value="labels.rate.value"
+          @select="
+            () => {
+              inviteDialogOpen = true;
+            }
+          "
+        >
+          {{ labels.invite_for_trial.label }}
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          v-if="canRate"
+          :value="labels.rate.value"
+          @select="
+            () => {
+              rateDialogOpen = true;
+            }
+          "
+        >
+          {{ labels.rate.label }}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -179,6 +203,10 @@ const labels = {
     label: 'Zaproś na próbny pobyt',
     value: 'invite_for_trial',
   },
+  rate: {
+    label: 'Oceń',
+    value: 'rate',
+  },
 };
 
 const rejectDialogOpen = ref(false);
@@ -186,6 +214,12 @@ const acceptDialogOpen = ref(false);
 const inviteDialogOpen = ref(false);
 
 const canReject = computed(() => {
+  if (props.isInThePast) {
+    return false;
+  }
+  if (props.status === ReservationStatus.DELETED) {
+    return false;
+  }
   return props.status === ReservationStatus.PENDING || props.status === ReservationStatus.ACCEPTED;
 });
 
@@ -193,7 +227,10 @@ const canAccept = computed(() => {
   return props.status === ReservationStatus.PENDING;
 });
 
-const owner = computed(() => {
-  return props.reservation.petDtos.at(0)?.petDto?.petOwnerDto ?? null;
+const canRate = computed(() => {
+  return (
+    props.isInThePast && props.reservation.status === ReservationStatus.ACCEPTED && !props.reservation.isAnyRateForHotel
+  );
 });
+const rateDialogOpen = ref(false);
 </script>

@@ -67,7 +67,6 @@
             </TableCell>
             <TableCell class="flex">
               <HotelReservationActionsDropdown
-                v-if="reservation.status !== ReservationStatus.REJECTED"
                 :accepting-is-loading="acceptingReservationIsLoading"
                 :execute-accept-reservation="
                   () => {
