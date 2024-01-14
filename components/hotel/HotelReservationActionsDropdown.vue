@@ -41,30 +41,21 @@
         >
           {{ labels.invite_for_trial.label }}
         </DropdownMenuItem>
-
-        <DropdownMenuItem
-          v-if="canRate"
-          :value="labels.rate.value"
-          @select="
-            () => {
-              inviteDialogOpen = true;
-            }
-          "
-        >
-          {{ labels.invite_for_trial.label }}
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          v-if="canRate"
-          :value="labels.rate.value"
-          @select="
-            () => {
-              rateDialogOpen = true;
-            }
-          "
-        >
-          {{ labels.rate.label }}
-        </DropdownMenuItem>
+        <div v-if="canRate">
+          <DropdownMenuItem
+            v-for="petToRateCandidate in petsToRate"
+            :key="petToRateCandidate?.petDto?.id"
+            :value="labels.rate.value"
+            @select="
+              () => {
+                petToRate = petToRateCandidate;
+              }
+            "
+          >
+            {{ console.log('pet trc', petToRateCandidate) }}
+            {{ labels.rate.label }} {{ petToRateCandidate?.petDto.name }}
+          </DropdownMenuItem>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
 
@@ -171,13 +162,111 @@
           </AlertDialogContent>
         </div>
       </AlertDialog>
+
+      <AlertDialog
+        v-if="canRate"
+        :open="rateDialogOpen"
+        @update:open="
+          (open) => {
+            petToRateCandidate = null;
+          }
+        "
+      >
+        <div class="flex justify-between p-5" rounded>
+          <AlertDialogContent>
+            <div>
+              <AlertDialogDescription>
+                <h1 class="py-3 text-lg text-black">Wystaw ocenę:</h1>
+
+                <Select
+                  :model-value="value"
+                  @update:model-value="
+                    (value) => {
+                      selectedRate = value;
+                    }
+                  "
+                >
+                  <SelectTrigger :id="`catsPicker${index}`">
+                    <SelectValue placeholder="Wybierz ocenę" />
+                    <div class="flex items-center gap-2 border-l-2 pl-4">
+                      <div v-if="petToRate?.petDto?.petType === 'DOG'" class="flex items-center">
+                        <Bone class="mr-1 h-4 w-4" />
+                        <Label> {{ petToRate?.petDto?.name }}</Label>
+                      </div>
+                      <div v-else-if="petToRate?.petDto?.petType === 'CAT'" class="flex items-center">
+                        <Cat class="mr-1 h-4 w-4" />
+                        <Label>{{ petToRate?.petDto?.name }}</Label>
+                      </div>
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent position="popper">
+                    <SelectItem
+                      v-for="starsAmount in [1, 2, 3, 4, 5]"
+                      :key="starsAmount"
+                      class="flex"
+                      :value="starsAmount"
+                    >
+                      <StarIcon v-for="index in starsAmount" :key="index" class="inline-flex" />
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <form @submit="onSendJoinRequestSubmit">
+                  <div class="space-y-3 pt-5">
+                    <FormField v-slot="{ componentField }" name="comment">
+                      <FormItem>
+                        <FormControl>
+                          <Textarea class="mb-4" placeholder="Komentarz do oceny" v-bind="componentField" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    </FormField>
+                    <div class="grid grid-cols-4 gap-4 pt-12">
+                      <Button
+                        class="col-span-1"
+                        :onclick="
+                          () => {
+                            petToRate = null;
+                          }
+                        "
+                        variant="outline"
+                      >
+                        Cofnij
+                      </Button>
+
+                      <Button
+                        class="col-span-3"
+                        :disabled="sendButtonDisabled"
+                        :onclick="
+                          () => {
+                            invokeExecuteAddRate();
+                          }
+                        "
+                      >
+                        Wystaw ocene
+                        <Loader2 v-if="addingRateLoading" class="ml-2 h-4 w-4 animate-spin" />
+                      </Button>
+                    </div>
+                  </div>
+                </form>
+              </AlertDialogDescription>
+            </div>
+          </AlertDialogContent>
+        </div>
+      </AlertDialog>
     </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { MoreHorizontalIcon, Loader2 } from 'lucide-vue-next';
+import { MoreHorizontalIcon, Loader2, StarIcon, Bone, Cat } from 'lucide-vue-next';
 import { ReservationStatus } from '@/types/common';
+import { useMutation } from '@tanstack/vue-query';
+
+import { useForm } from 'vee-validate';
+import * as z from 'zod';
+import { toTypedSchema } from '@vee-validate/zod';
+import { FormField } from '@/components/ui/form';
 
 const props = defineProps<{
   isInThePast: boolean;
@@ -227,10 +316,95 @@ const canAccept = computed(() => {
   return props.status === ReservationStatus.PENDING;
 });
 
+const { mutate: executeAddRate, isPending: addingRateLoading } = useMutation({
+  mutationFn: (variables): Promise<unknown> => {
+    return usePostOnBackend(
+      'addRate',
+      {
+        body: {
+          petId: variables?.petId || 0,
+          reservationId: variables?.reservationId || 0,
+          rate: variables?.rate || 0,
+          comment: variables?.comment || '',
+        },
+      },
+      'WITH_AUTHORIZATION',
+    );
+  },
+  onSuccess: ({ error }) => {
+    if (error._object[error?._key]?.message.length) {
+      toast({
+        title: 'Nie udało się dodać oceny!',
+        description: error._object[error._key]?.message,
+        variant: 'destructive',
+      });
+      return;
+    }
+    refetch();
+    isDialogOpen.value = false;
+    toast({
+      title: 'Udało się dodać ocenę!',
+    });
+  },
+  onError: (error) => {
+    toast({
+      title: 'Nie udało się dodać oceny!',
+      description: error.message,
+      variant: 'destructive',
+    });
+  },
+});
+
+const petsToRate = computed(() => {
+  return props?.reservation?.petDtos?.filter((petData) => {
+    console.log('wrr', petData?.petDto.isAnyRateForPet);
+    return petData?.petDto.isAnyRateForPet !== false;
+  });
+});
+
 const canRate = computed(() => {
+  return props.isInThePast && props.reservation.status === ReservationStatus.ACCEPTED;
+});
+
+const petToRate = ref(null);
+const rateDialogOpen = computed(() => {
+  return petToRate.value !== null;
+});
+
+const selectedRate = ref<number | null>(null);
+
+const sendingRateSchema = toTypedSchema(
+  z.object({
+    comment: z
+      .string({
+        required_error: 'Komentarz jest wymagany',
+        invalid_type_error: 'Komentarz musi być tekstem',
+      })
+      .min(10, 'Komentarz musi posiadać minimum 10 znaków ')
+      .max(350, 'Komentarz może posiadać maximum 350 znaków '),
+  }),
+);
+const form = useForm({
+  validationSchema: sendingRateSchema,
+});
+const onSendJoinRequestSubmit = form.handleSubmit(() => {});
+
+const invokeExecuteAddRate = () => {
+  const petId = petToRate?.value.petDto.id;
+  const reservationId = props?.reservation?.id;
+  const rate = selectedRate.value;
+  const comment = form?.values.comment || '';
+  debugger;
+  executeAddRate({
+    petId,
+    reservationId,
+    rate,
+    comment,
+  });
+};
+const sendButtonDisabled = computed(() => {
   return (
-    props.isInThePast && props.reservation.status === ReservationStatus.ACCEPTED && !props.reservation.isAnyRateForHotel
+    props.addingRateLoading || form.errors.value.comment?.length || !selectedRate.value || !form.values.comment?.length
   );
 });
-const rateDialogOpen = ref(false);
 </script>

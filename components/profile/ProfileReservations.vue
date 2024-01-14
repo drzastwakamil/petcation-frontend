@@ -113,7 +113,6 @@ const reservations = computed(() => {
   return array;
 });
 const isDialogOpen = ref(false);
-const selectedRate = ref<number | null>(null);
 
 const { mutate: executeDeleteReservation, isPending: deletingReservationIsLoading } = useMutation({
   mutationFn: (variables): Promise<unknown> => {
