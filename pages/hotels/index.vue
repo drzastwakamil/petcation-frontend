@@ -2,7 +2,7 @@
   <div class="container mx-auto">
     <div class="h-header" />
     <div class="flex justify-center gap-2 pt-10">
-      <Combobox />
+      <!-- <Combobox /> -->
       <DatePicker v-model="dateRange" />
       <AnimalsPicker v-model:catCount="catsCount" v-model:dogCount="dogsCount" />
     </div>

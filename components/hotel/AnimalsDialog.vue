@@ -37,11 +37,16 @@
                   class="flex justify-between border p-5"
                   rounded
                 >
-                  <div class="flex items-center gap-2">
+                  <div class="flex w-full items-center gap-2">
                     <div class="text-sm text-gray-500">#{{ pet.id }}</div>
                     {{ pet.petDto.name }}
                     <BoneIcon v-if="pet.petDto.petType === 'DOG'" :class="cn('mr-2 h-4 w-4')" />
                     <CatIcon v-if="pet.petDto.petType === 'CAT'" :class="cn('mr-2 h-4 w-4')" />
+
+                    <div class="flex w-full items-center justify-end gap-1">
+                      <StarIcon />
+                      {{ pet.petDto.averageRate }}
+                    </div>
                   </div>
                 </div>
               </AlertDialogDescription>
@@ -67,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { BoneIcon, CatIcon, DeleteIcon, HourglassIcon, ArrowRightIcon } from 'lucide-vue-next';
+import { BoneIcon, CatIcon, DeleteIcon, HourglassIcon, ArrowRightIcon, StarIcon } from 'lucide-vue-next';
 import { ReservationStatus } from '@/types/common';
 
 const props = defineProps<{
