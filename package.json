@@ -23,7 +23,6 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.2",
     "eslint-plugin-tailwindcss": "^3.13.0",
-    "nuxt": "^3.9.0",
     "nuxt-icon": "^0.6.8",
     "prettier": "^3.1.1",
     "typescript": "^5.3.3",
@@ -31,6 +30,7 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "nuxt": "^3.9.0",
     "@popperjs/core": "^2.11.8",
     "@splidejs/vue-splide": "^0.6.12",
     "@tanstack/vue-query": "^5.15.0",
