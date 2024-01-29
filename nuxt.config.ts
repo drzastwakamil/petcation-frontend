@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@pinia/nuxt',
     '@vue-email/nuxt',
+    'nuxt-security',
   ],
   eslint: {
     lintOnStart: false,
